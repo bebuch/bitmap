@@ -29,10 +29,10 @@ namespace bitmap{
 		using value_type = ValueType;
 
 		/// \brief Type of points in the bitmap
-		using point_type = bitmap::point< std::size_t >;
+		using point_type = ::bitmap::point< std::size_t >;
 
 		/// \brief Type of bitmap size
-		using size_type = bitmap::size< std::size_t >;
+		using size_type = ::bitmap::size< std::size_t >;
 
 		/// \brief Type of a iterator for data
 		using iterator = typename std::vector< value_type >::iterator;
