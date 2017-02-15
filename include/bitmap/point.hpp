@@ -206,6 +206,12 @@ namespace bitmap{
 	}
 
 
+	template < typename TX, typename TY >
+	inline auto make_point(TX const& x, TY const& y){
+		return point< TX, TY >(x, y);
+	}
+
+
 }
 
 #endif

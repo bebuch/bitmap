@@ -99,6 +99,13 @@ namespace bitmap{
 	}
 
 
+	template < typename ValueType >
+	inline auto make_size(ValueType const& width, ValueType const& height){
+		return size< ValueType >(width, height);
+	}
+
+
+
 }
 
 #endif

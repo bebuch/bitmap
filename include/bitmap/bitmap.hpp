@@ -112,6 +112,10 @@ namespace bitmap{
 		}
 
 
+		/// \brief Standard destructor
+		~bitmap() = default;
+
+
 		/// \brief Copy assignment
 		bitmap& operator=(bitmap const& bitmap) = default;
 
@@ -272,6 +276,27 @@ namespace bitmap{
 		/// \attention This function performs no range protection
 		std::size_t data_pos(point_type const& point)const{
 			return point.y() * width() + point.x();
+		}
+
+
+		bitmap subbitmap(
+			rect< std::size_t, std::size_t > const& rect,
+			value_type const& value = value_type()
+		)const{
+			bitmap result(rect.size(), value);
+
+			if(width() <= rect.x() || height() <= rect.y()) return result;
+
+			auto const x_end = std::min(rect.width(), width() - rect.x());
+			auto const y_end = std::min(rect.height(), height() - rect.y());
+
+			for(std::size_t y = 0; y < y_end; ++y){
+				for(std::size_t x = 0; x < x_end; ++x){
+					result(x, y) = (*this)(rect.x() + x, rect.y() + y);
+				}
+			}
+
+			return result;
 		}
 
 

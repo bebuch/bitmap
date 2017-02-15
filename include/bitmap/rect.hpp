@@ -339,6 +339,14 @@ namespace bitmap{
 			test.bottom() <= reference.bottom();
 	}
 
+	template < typename PositionType, typename SizeType >
+	inline auto make_rect(
+		bitmap::point< PositionType > const& top_left,
+		bitmap::size< SizeType > const& size
+	){
+		return rect< PositionType, SizeType >(top_left, size);
+	}
+
 
 }
 
