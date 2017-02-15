@@ -279,6 +279,7 @@ namespace bitmap{
 		}
 
 
+		/// \brief Return the pixels in rect as new bitmap
 		bitmap subbitmap(
 			rect< std::size_t, std::size_t > const& rect,
 			value_type const& value = value_type()
@@ -291,9 +292,9 @@ namespace bitmap{
 			auto const y_end = std::min(rect.height(), height() - rect.y());
 
 			for(std::size_t y = 0; y < y_end; ++y){
-				for(std::size_t x = 0; x < x_end; ++x){
-					result(x, y) = (*this)(rect.x() + x, rect.y() + y);
-				}
+				auto const in_offset = data() + y * width();
+				auto const out_offset = result.data() + y * result.width();
+				std::copy(in_offset, in_offset + x_end, out_offset);
 			}
 
 			return result;
