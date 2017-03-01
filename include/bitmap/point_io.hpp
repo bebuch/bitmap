@@ -9,10 +9,9 @@
 #ifndef _bitmap__point_io__hpp_INCLUDED_
 #define _bitmap__point_io__hpp_INCLUDED_
 
-#include "io.hpp"
 #include "point.hpp"
 
-#include <iostream>
+#include <io_tools/expect.hpp>
 
 
 namespace bitmap{
@@ -34,7 +33,7 @@ namespace bitmap{
 	){
 		point< T > tmp;
 		is >> tmp.x();
-		if(!io::equal(is, 'x')) return is;
+		if(!io_tools::expect(is, 'x')) return is;
 		is >> tmp.y();
 
 		data = std::move(tmp);

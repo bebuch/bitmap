@@ -9,10 +9,9 @@
 #ifndef _bitmap__size_io__hpp_INCLUDED_
 #define _bitmap__size_io__hpp_INCLUDED_
 
-#include "io.hpp"
 #include "size.hpp"
 
-#include <iostream>
+#include <io_tools/expect.hpp>
 
 
 namespace bitmap{
@@ -34,7 +33,7 @@ namespace bitmap{
 	){
 		size< T > tmp;
 		is >> tmp.width();
-		if(!io::equal(is, 'x')) return is;
+		if(!io_tools::expect(is, 'x')) return is;
 		is >> tmp.height();
 
 		data = std::move(tmp);
