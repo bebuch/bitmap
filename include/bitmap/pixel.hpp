@@ -16,12 +16,16 @@ namespace bitmap{ namespace pixel{
 
 
 	template < typename T >
-	struct basic_ga{ T g; T a; };
+	struct basic_ga{
+		using value_type = T;
+		T g;
+		T a;
+	};
 
-	using ga8  = basic_ga< std::int8_t >;
-	using ga16 = basic_ga< std::int16_t >;
-	using ga32 = basic_ga< std::int32_t >;
-	using ga64 = basic_ga< std::int64_t >;
+	using ga8   = basic_ga< std::int8_t >;
+	using ga16  = basic_ga< std::int16_t >;
+	using ga32  = basic_ga< std::int32_t >;
+	using ga64  = basic_ga< std::int64_t >;
 	using ga8u  = basic_ga< std::uint8_t >;
 	using ga16u = basic_ga< std::uint16_t >;
 	using ga32u = basic_ga< std::uint32_t >;
@@ -31,12 +35,17 @@ namespace bitmap{ namespace pixel{
 
 
 	template < typename T >
-	struct basic_rgb{ T r; T g; T b; };
+	struct basic_rgb{
+		using value_type = T;
+		T r;
+		T g;
+		T b;
+	};
 
-	using rgb8  = basic_rgb< std::int8_t >;
-	using rgb16 = basic_rgb< std::int16_t >;
-	using rgb32 = basic_rgb< std::int32_t >;
-	using rgb64 = basic_rgb< std::int64_t >;
+	using rgb8   = basic_rgb< std::int8_t >;
+	using rgb16  = basic_rgb< std::int16_t >;
+	using rgb32  = basic_rgb< std::int32_t >;
+	using rgb64  = basic_rgb< std::int64_t >;
 	using rgb8u  = basic_rgb< std::uint8_t >;
 	using rgb16u = basic_rgb< std::uint16_t >;
 	using rgb32u = basic_rgb< std::uint32_t >;
@@ -46,12 +55,18 @@ namespace bitmap{ namespace pixel{
 
 
 	template < typename T >
-	struct basic_rgba{ T r; T g; T b; T a; };
+	struct basic_rgba{
+		using value_type = T;
+		T r;
+		T g;
+		T b;
+		T a;
+	};
 
-	using rgba8  = basic_rgba< std::int8_t >;
-	using rgba16 = basic_rgba< std::int16_t >;
-	using rgba32 = basic_rgba< std::int32_t >;
-	using rgba64 = basic_rgba< std::int64_t >;
+	using rgba8   = basic_rgba< std::int8_t >;
+	using rgba16  = basic_rgba< std::int16_t >;
+	using rgba32  = basic_rgba< std::int32_t >;
+	using rgba64  = basic_rgba< std::int64_t >;
 	using rgba8u  = basic_rgba< std::uint8_t >;
 	using rgba16u = basic_rgba< std::uint16_t >;
 	using rgba32u = basic_rgba< std::uint32_t >;
