@@ -18,6 +18,9 @@ namespace bitmap{ namespace pixel{
 	template < typename T >
 	struct basic_ga{
 		using value_type = T;
+
+		static constexpr std::size_t channel_count = 2;
+
 		T g;
 		T a;
 	};
@@ -37,6 +40,9 @@ namespace bitmap{ namespace pixel{
 	template < typename T >
 	struct basic_rgb{
 		using value_type = T;
+
+		static constexpr std::size_t channel_count = 3;
+
 		T r;
 		T g;
 		T b;
@@ -57,6 +63,9 @@ namespace bitmap{ namespace pixel{
 	template < typename T >
 	struct basic_rgba{
 		using value_type = T;
+
+		static constexpr std::size_t channel_count = 4;
+
 		T r;
 		T g;
 		T b;
