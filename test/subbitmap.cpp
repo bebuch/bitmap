@@ -49,4 +49,64 @@ TEST(SubBitmapTest, IntegralThrowing){
 		subbitmap(bmp, rect{1, 0, 1, 2}),
 		calc(1, 2, [](auto x, auto y){ return (2 + x) * y; })
 	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{2, 1, 1, 1}),
+		calc(1, 1, [](auto, auto){ return 8; })
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0, 0, -1, 1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0, 0, 1, -1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0, 0, -1, -1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{-1, 0, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0, -1, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{-1, -1, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{3, 1, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{2, 2, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{3, 2, 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0, 1, 3, 2}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{1, 0, 3, 2}),
+		std::out_of_range
+	);
 }
