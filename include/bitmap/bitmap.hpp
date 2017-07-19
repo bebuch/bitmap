@@ -279,28 +279,6 @@ namespace bitmap{
 		}
 
 
-		/// \brief Return the pixels in rect as new bitmap
-		bitmap subbitmap(
-			rect< std::size_t, std::size_t > const& rect,
-			value_type const& value = value_type()
-		)const{
-			bitmap result(rect.size(), value);
-
-			if(width() <= rect.x() || height() <= rect.y()) return result;
-
-			auto const x_end = std::min(rect.width(), width() - rect.x());
-			auto const y_end = std::min(rect.height(), height() - rect.y());
-
-			for(std::size_t y = 0; y < y_end; ++y){
-				auto const in_offset = data() + y * width();
-				auto const out_offset = result.data() + y * result.width();
-				std::copy(in_offset, in_offset + x_end, out_offset);
-			}
-
-			return result;
-		}
-
-
 	protected:
 		/// \brief The rectangle for global position and size
 		size_type size_;
@@ -364,6 +342,18 @@ namespace bitmap{
 			return false;
 		}
 		return true;
+	}
+
+
+	template < typename T >
+	bool operator==(bitmap< T > const& l, bitmap< T > const& r){
+		return l.size() == r.size()
+			&& std::equal(l.begin(), l.end(), r.begin());
+	}
+
+	template < typename T >
+	bool operator!=(bitmap< T > const& l, bitmap< T > const& r){
+		return !(l == r);
 	}
 
 

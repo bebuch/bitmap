@@ -1,4 +1,6 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.8)
 
-project(bebuch_bitmap)
-subdirs(include)
+project(BEBUCH_BITMAP)
+
+add_subdirectory(include)
+add_subdirectory(test)

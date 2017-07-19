@@ -13,7 +13,7 @@
 namespace bitmap{
 
 
-	namespace detail{ namespace point{
+	namespace detail{
 
 
 		template < typename TX, typename TY >
@@ -26,14 +26,14 @@ namespace bitmap{
 		};
 
 
-	} }
+	}
 
 
 	/// \brief A class for representing points
 	/// \tparam TX Type of the x position data
 	/// \tparam TY Type of the y position data
 	template < typename TX, typename TY = TX >
-	class point: public detail::point::point_base< TX, TY >{
+	class point: public detail::point_base< TX, TY >{
 	public:
 		/// \brief Type of the x positions
 		using x_value_type = TX;

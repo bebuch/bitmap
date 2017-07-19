@@ -1,7 +1,5 @@
-cmake_minimum_required (VERSION 2.8.11)
+# cmake_minimum_required(VERSION 3.8)
 
-file(GLOB header "bitmap/*.hpp")
-add_library(BEBUCH_BITMAP STATIC ${header})
+add_library(bitmap INTERFACE)
 
-set_target_properties(BEBUCH_BITMAP PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(BEBUCH_BITMAP PROPERTIES CXX_STANDARD 14)
+target_include_directories(bitmap INTERFACE "${BEBUCH_BITMAP_SOURCE_DIR}/include")

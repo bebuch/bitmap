@@ -18,7 +18,6 @@ namespace bitmap{
 
 
 	/// \brief A class for manipulating rectangles
-	/// \tparam ValueType Type of the position data
 	template < typename PositionType, typename SizeType = PositionType >
 	class rect{
 	public:
