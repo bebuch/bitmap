@@ -95,7 +95,7 @@ namespace bitmap{
 
 	template < typename ValueType >
 	bool operator!=(size< ValueType > const& a, size< ValueType > const& b){
-		return a != b;
+		return !(a == b);
 	}
 
 
