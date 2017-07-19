@@ -21,12 +21,12 @@ namespace bitmap{
 
 
 	/// \brief A bitmap for data manipulation
-	/// \tparam ValueType Type of the data that administrates the bitmap
-	template < typename ValueType >
+	/// \tparam T Type of the data that administrates the bitmap
+	template < typename T >
 	class bitmap{
 	public:
 		/// \brief Type of the data that administrates the bitmap
-		using value_type = ValueType;
+		using value_type = T;
 
 		/// \brief Type of points in the bitmap
 		using point_type = ::bitmap::point< std::size_t >;
@@ -327,11 +327,10 @@ namespace bitmap{
 	};
 
 
-	template < typename ValueType >
-	inline
+	template < typename T >
 	bool is_point_in_bitmap(
-		bitmap< ValueType > const& image,
-		typename bitmap< ValueType >::point_type const& point
+		bitmap< T > const& image,
+		typename bitmap< T >::point_type const& point
 	){
 		if(
 			point.x() <  0              ||
@@ -345,16 +344,23 @@ namespace bitmap{
 	}
 
 
+	/// \brief true, if size and contents are equal, otherwise false
 	template < typename T >
 	bool operator==(bitmap< T > const& l, bitmap< T > const& r){
 		return l.size() == r.size()
 			&& std::equal(l.begin(), l.end(), r.begin());
 	}
 
+	/// \brief true, if size and contents are not equal, otherwise false
 	template < typename T >
 	bool operator!=(bitmap< T > const& l, bitmap< T > const& r){
 		return !(l == r);
 	}
+
+
+	/// \brief std::vector of bitmaps
+	template < typename T >
+	using bitmap_vector = std::vector< bitmap< T > >;
 
 
 }
