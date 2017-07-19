@@ -119,6 +119,16 @@ namespace bitmap::detail{
 		return os.str();
 	}
 
+	template < typename XY_T, typename WH_T >
+	std::string neg_size_msg(rect< XY_T, WH_T > const& rect){
+		std::ostringstream os;
+		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
+			<< rect.y() << "), size(width = " << rect.width()
+			<< ", height = " << rect.height() << ")) has negetive size";
+		return os.str();
+	}
+
+
 }
 
 
@@ -137,6 +147,20 @@ namespace bitmap{
 		static_assert(std::is_integral_v< WH_T >,
 			"rect must have integral width and height");
 
+		if(rect.width() < 0 || rect.height() < 0){
+			throw std::logic_error(detail::neg_size_msg(rect));
+		}
+
+		auto const integral_rect = ::bitmap::rect(
+			point(
+				static_cast< std::size_t >(rect.x()),
+				static_cast< std::size_t >(rect.y())
+			),
+			size(
+				static_cast< std::size_t >(rect.width()),
+				static_cast< std::size_t >(rect.height())
+			));
+
 		if constexpr(std::is_integral_v< XY_T >){
 			auto const is_out_of_range =
 				rect.x() < 0 ||
@@ -148,8 +172,8 @@ namespace bitmap{
 					detail::out_of_range_msg(org.size(), rect));
 			}
 
-			bitmap< T > result(rect.size());
-			detail::copy(result, org, rect);
+			bitmap< T > result(integral_rect.size());
+			detail::copy(result, org, integral_rect);
 			return result;
 		}else{
 			auto const is_out_of_range =
@@ -157,16 +181,15 @@ namespace bitmap{
 				rect.y() < 0 ||
 				std::floor(rect.x()) + 1 + rect.width() > org.width() ||
 				std::floor(rect.y()) + 1 + rect.height() > org.height();
+			if(is_out_of_range){
+				throw std::out_of_range(
+					detail::out_of_range_msg(org.size(), rect));
+			}
 
-			auto const integral_rect = ::bitmap::rect(
-				point(
-					static_cast< std::size_t >(rect.x()),
-					static_cast< std::size_t >(rect.y())
-				), rect.size());
 			auto const ratio = point(
 				rect.x() - std::floor(rect.x()),
 				rect.y() - std::floor(rect.y()));
-			bitmap< T > result(rect.size());
+			bitmap< T > result(integral_rect.size());
 			detail::full_interpolate(result, org, integral_rect, ratio);
 			return result;
 		}

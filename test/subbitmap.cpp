@@ -14,7 +14,7 @@ auto calc(std::size_t const w, std::size_t const h, F const& f){
 	return bmp;
 }
 
-using rect = bitmap::rect< std::size_t, std::size_t >;
+using bitmap::rect;
 
 
 TEST(SubBitmapTest, IntegralThrowing){
