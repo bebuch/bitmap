@@ -197,8 +197,8 @@ namespace bitmap{
 				), bitmap_size);
 
 			if(
-				int_rect.y() + 1 + int_rect.width() > org.width() ||
-				int_rect.x() + 1 + int_rect.height() > org.height()
+				int_rect.x() + 1 + int_rect.width() > org.width() ||
+				int_rect.y() + 1 + int_rect.height() > org.height()
 			){
 				throw std::out_of_range(
 					detail::out_of_range_msg(org.size(), rect));
