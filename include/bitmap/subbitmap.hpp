@@ -94,8 +94,8 @@ namespace bitmap::detail{
 	){
 		for(std::size_t y = 0; y < rect.height(); ++y){
 			for(std::size_t x = 0; x < rect.width(); ++x){
-				auto const ax = target_start.x() + x;
-				auto const ay = target_start.y() + y;
+				auto const ax = rect.x() + x;
+				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
 					interpolate(
 						ratio.x(), ratio.y(),
@@ -112,7 +112,14 @@ namespace bitmap::detail{
 	){
 		std::ostringstream os;
 		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
-			<< rect.y() << "), size(width = " << rect.width()
+			<< rect.y() << ")[";
+		if(std::is_integral_v< XY_T >){
+			os << "int";
+		}else{
+			os << "float -> max(x) = " << std::floor(rect.x())
+				<< " + 1, max(y) = " << std::floor(rect.y()) << " + 1";
+		}
+		os << "], size(width = " << rect.width()
 			<< ", height = " << rect.height()
 			<< ")) is outside the original bitmap(width = "
 			<< bmp_size.width() << ", height = " << bmp_size.height() << ")";
@@ -129,6 +136,20 @@ namespace bitmap::detail{
 	}
 
 
+	template < typename XY_T, typename WH_T >
+	void subbitmap_check_rect(rect< XY_T, WH_T > const& rect){
+		static_assert(std::is_arithmetic_v< XY_T >,
+			"rect must have arithmetic x and y");
+
+		static_assert(std::is_integral_v< WH_T >,
+			"rect must have integral width and height");
+
+		if(rect.width() < 0 || rect.height() < 0){
+			throw std::logic_error(detail::neg_size_msg(rect));
+		}
+	}
+
+
 }
 
 
@@ -141,56 +162,53 @@ namespace bitmap{
 		bitmap< T > const& org,
 		rect< XY_T, WH_T > const& rect
 	){
-		static_assert(std::is_arithmetic_v< XY_T >,
-			"rect must have arithmetic x and y");
+		detail::subbitmap_check_rect(rect);
 
-		static_assert(std::is_integral_v< WH_T >,
-			"rect must have integral width and height");
-
-		if(rect.width() < 0 || rect.height() < 0){
-			throw std::logic_error(detail::neg_size_msg(rect));
+		if(rect.x() < 0 || rect.y() < 0){
+			throw std::out_of_range(detail::out_of_range_msg(org.size(), rect));
 		}
 
-		auto const integral_rect = ::bitmap::rect(
-			point(
-				static_cast< std::size_t >(rect.x()),
-				static_cast< std::size_t >(rect.y())
-			),
-			size(
+		auto const bitmap_size = size(
 				static_cast< std::size_t >(rect.width()),
 				static_cast< std::size_t >(rect.height())
-			));
+			);
 
 		if constexpr(std::is_integral_v< XY_T >){
-			auto const is_out_of_range =
-				rect.x() < 0 ||
-				rect.y() < 0 ||
-				rect.x() + rect.width() > org.width() ||
-				rect.y() + rect.height() > org.height();
-			if(is_out_of_range){
+			auto const int_rect = ::bitmap::rect(point(
+					static_cast< std::size_t >(rect.x()),
+					static_cast< std::size_t >(rect.y())
+				), bitmap_size);
+
+			if(
+				int_rect.x() + int_rect.width() > org.width() ||
+				int_rect.y() + int_rect.height() > org.height()
+			){
 				throw std::out_of_range(
 					detail::out_of_range_msg(org.size(), rect));
 			}
 
-			bitmap< T > result(integral_rect.size());
-			detail::copy(result, org, integral_rect);
+			bitmap< T > result(bitmap_size);
+			detail::copy(result, org, int_rect);
 			return result;
 		}else{
-			auto const is_out_of_range =
-				rect.x() < 0 ||
-				rect.y() < 0 ||
-				std::floor(rect.x()) + 1 + rect.width() > org.width() ||
-				std::floor(rect.y()) + 1 + rect.height() > org.height();
-			if(is_out_of_range){
+			auto const int_rect = ::bitmap::rect(point(
+					static_cast< std::size_t >(std::floor(rect.x())),
+					static_cast< std::size_t >(std::floor(rect.y()))
+				), bitmap_size);
+
+			if(
+				int_rect.y() + 1 + int_rect.width() > org.width() ||
+				int_rect.x() + 1 + int_rect.height() > org.height()
+			){
 				throw std::out_of_range(
 					detail::out_of_range_msg(org.size(), rect));
 			}
 
 			auto const ratio = point(
-				rect.x() - std::floor(rect.x()),
-				rect.y() - std::floor(rect.y()));
-			bitmap< T > result(integral_rect.size());
-			detail::full_interpolate(result, org, integral_rect, ratio);
+				1 - (rect.x() - std::floor(rect.x())),
+				1 - (rect.y() - std::floor(rect.y())));
+			bitmap< T > result(bitmap_size);
+			detail::full_interpolate(result, org, int_rect, ratio);
 			return result;
 		}
 	}
