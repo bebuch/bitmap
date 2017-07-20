@@ -40,28 +40,28 @@ namespace bitmap::detail{
 
 	template < typename FT, typename T >
 	constexpr T interpolate(FT ratio, T a, T b)noexcept{
-		return ratio * a + (1 - ratio) * b;
+		return static_cast< T >(ratio * a + (1 - ratio) * b);
 	}
 
 	template < typename FT, typename T >
-	constexpr T interpolate(
+	constexpr pixel::basic_ga< T > interpolate(
 		FT ratio,
 		pixel::basic_ga< T > const& a,
 		pixel::basic_ga< T > const& b
 	)noexcept{
-		return pixel::basic_ga< T >{
+		return {
 			interpolate(ratio, a.g, b.g),
 			interpolate(ratio, a.a, b.a)
 		};
 	}
 
 	template < typename FT, typename T >
-	constexpr T interpolate(
+	constexpr pixel::basic_rgb< T > interpolate(
 		FT ratio,
 		pixel::basic_rgb< T > const& a,
 		pixel::basic_rgb< T > const& b
 	)noexcept{
-		return pixel::basic_rgb< T >{
+		return {
 			interpolate(ratio, a.r, b.r),
 			interpolate(ratio, a.g, b.g),
 			interpolate(ratio, a.b, b.b)
@@ -69,12 +69,12 @@ namespace bitmap::detail{
 	}
 
 	template < typename FT, typename T >
-	constexpr T interpolate(
+	constexpr pixel::basic_rgba< T > interpolate(
 		FT ratio,
 		pixel::basic_rgba< T > const& a,
 		pixel::basic_rgba< T > const& b
 	)noexcept{
-		return pixel::basic_rgba< T >{
+		return {
 			interpolate(ratio, a.r, b.r),
 			interpolate(ratio, a.g, b.g),
 			interpolate(ratio, a.b, b.b),
@@ -250,7 +250,6 @@ namespace bitmap::detail{
 			bitmap< T > result(int_rect.size());
 			x_interpolate(result, org, int_rect, x_ratio);
 			return result;
-
 		}else{
 			if(
 				int_rect.x() + 1 + int_rect.width() > org.width() ||
