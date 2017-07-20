@@ -9,7 +9,8 @@
 #ifndef _bitmap__bitmap__hpp_INCLUDED_
 #define _bitmap__bitmap__hpp_INCLUDED_
 
-#include "rect.hpp"
+#include "point.hpp"
+#include "size.hpp"
 
 #include <vector>
 #include <utility>
@@ -72,7 +73,7 @@ namespace bitmap{
 		/// \throw std::out_of_range
 		bitmap(size_type const& size, value_type const& value = value_type()):
 			size_(size),
-			data_(size_.point_count(), value)
+			data_(point_count(), value)
 		{
 			throw_if_size_is_negative(size_);
 		}
@@ -86,7 +87,7 @@ namespace bitmap{
 			data_(first, last)
 		{
 			throw_if_size_is_negative(size_);
-			if (data_.size() != size_.point_count()){
+			if (data_.size() != point_count()){
 				throw std::logic_error(
 					"bitmap constructor size (" +
 					std::to_string(size_.width()) + "x" +
@@ -106,7 +107,7 @@ namespace bitmap{
 			value_type const& value = value_type()
 		):
 			size_(width, height),
-			data_(size_.point_count(), value)
+			data_(point_count(), value)
 		{
 			throw_if_size_is_negative(size_);
 		}
@@ -201,8 +202,8 @@ namespace bitmap{
 			value_type const& value = value_type()
 		){
 			throw_if_size_is_negative(size);
-			data_.resize(size.point_count(), value);
-			size_= size;
+			data_.resize(size.area(), value);
+			size_ = size;
 		}
 
 
@@ -223,7 +224,7 @@ namespace bitmap{
 
 		/// \brief Get the number of points in the bitmap
 		std::size_t point_count()const{
-			return size_.width() * size_.height();
+			return size_.area();
 		}
 
 

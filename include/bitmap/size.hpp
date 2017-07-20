@@ -13,97 +13,109 @@
 namespace bitmap{
 
 
+	namespace detail{
+
+
+		template < typename WT, typename HT >
+		struct size_base{};
+
+		template < typename T >
+		struct size_base< T, T >{
+			/// \brief Type of width and height
+			using value_type = T;
+		};
+
+
+	}
+
+
 	/// \brief A class for manipulating sizes
-	/// \tparam ValueType Type of the size data
-	template < typename ValueType >
-	class size{
+	template < typename WT, typename HT = WT >
+	class size: public detail::size_base< WT, HT >{
 	public:
-		/// \brief Type of the positions
-		using value_type = ValueType;
+		/// \brief Type of the width
+		using w_type = WT;
+
+		/// \brief Type of the height
+		using h_type = HT;
+
+
+		/// \brief Constructs a size with width 0 and height 0
+		constexpr size(): width_(), height_() {}
+
+		/// \brief Constructs a copy
+		constexpr size(size const&) = default;
+
+		/// \brief Constructs a copy
+		constexpr size(size&&) = default;
+
+		/// \brief Constructs a size width width and height
+		constexpr size(w_type const& width, h_type const& height):
+			width_(width), height_(height) {}
+
+
+		/// \brief Copy assignment
+		constexpr size& operator=(size const&) = default;
+
+		/// \brief Move assignment
+		constexpr size& operator=(size&&) = default;
 
 
 		/// \brief The width
-		value_type& width(){
+		constexpr w_type& width(){
 			return width_;
 		}
 
 		/// \brief The height
-		value_type& height(){
+		constexpr h_type& height(){
 			return height_;
 		}
 
 
 		/// \brief The width
-		value_type const& width()const{
+		constexpr w_type const width()const{
 			return width_;
 		}
 
 		/// \brief The height
-		value_type const& height()const{
+		constexpr h_type const height()const{
 			return height_;
 		}
 
 
 		/// \brief Set width and height
-		void set(value_type const& width, value_type const& height){
+		constexpr void set(w_type const& width, h_type const& height){
 			width_ = width;
 			height_ = height;
 		}
 
 
-		/// \brief Constructs a size with width 0 and height 0
-		size(): width_(), height_() {}
-
-		/// \brief Constructs a copy
-		size(size const&) = default;
-
-		/// \brief Constructs a copy
-		size(size&&) = default;
-
-		/// \brief Constructs a size width width and height
-		size(value_type const& width, value_type const& height):
-			width_(width), height_(height) {}
-
-
-		/// \brief Copy assignment
-		size& operator=(size const&) = default;
-
-		/// \brief Move assignment
-		size& operator=(size&&) = default;
-
-
 		/// \brief Get true, if width and height are positiv
-		bool is_positive()const{
-			return width() >= value_type() && height() >= value_type();
+		constexpr bool is_positive()const{
+			return width() >= w_type() && height() >= h_type();
 		}
 
 
 		/// \brief Get width * height
-		value_type const point_count()const{
+		constexpr auto area()const{
 			return width() * height();
 		}
 
 	private:
-		value_type width_;
-		value_type height_;
+		w_type width_;
+		h_type height_;
 	};
 
-	template < typename ValueType >
-	bool operator==(size< ValueType > const& a, size< ValueType > const& b){
+
+	template < typename T >
+	constexpr bool operator==(size< T > const& a, size< T > const& b){
 		return a.width() == b.width() && a.height() == b.height();
 	}
 
-	template < typename ValueType >
-	bool operator!=(size< ValueType > const& a, size< ValueType > const& b){
+	template < typename T >
+	constexpr bool operator!=(size< T > const& a, size< T > const& b){
 		return !(a == b);
 	}
-
-
-	template < typename ValueType >
-	inline auto make_size(ValueType const& width, ValueType const& height){
-		return size< ValueType >(width, height);
-	}
-
 
 
 }

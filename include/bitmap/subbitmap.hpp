@@ -10,6 +10,7 @@
 #define _bitmap__subbitmap__hpp_INCLUDED_
 
 #include "bitmap.hpp"
+#include "rect.hpp"
 #include "pixel.hpp"
 
 #include <type_traits>
@@ -22,7 +23,7 @@ namespace bitmap::detail{
 	template < typename T >
 	void copy(
 		bitmap< T >& target, bitmap< T > const& ref,
-		rect< std::size_t, std::size_t > const& rect,
+		rect< std::size_t > const& rect,
 		point< std::size_t > const& target_start = {}
 	){
 		for(std::size_t y = 0; y < rect.height(); ++y){
@@ -88,7 +89,7 @@ namespace bitmap::detail{
 	template < typename FT, typename T >
 	void full_interpolate(
 		bitmap< T >& target, bitmap< T > const& ref,
-		rect< std::size_t, std::size_t > const& rect,
+		rect< std::size_t > const& rect,
 		point< FT > const& ratio,
 		point< std::size_t > const& target_start = {}
 	){
@@ -105,15 +106,15 @@ namespace bitmap::detail{
 		}
 	}
 
-	template < typename XY_T, typename WH_T >
+	template < typename XT, typename YT, typename WT, typename HT >
 	std::string out_of_range_msg(
 		size< std::size_t > const& bmp_size,
-		rect< XY_T, WH_T > const& rect
+		rect< XT, YT, WT, HT > const& rect
 	){
 		std::ostringstream os;
 		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
 			<< rect.y() << ")[";
-		if(std::is_integral_v< XY_T >){
+		if(std::is_integral_v< XT > || std::is_integral_v< YT >){
 			os << "int";
 		}else{
 			os << "float -> max(x) = " << std::floor(rect.x())
@@ -126,8 +127,8 @@ namespace bitmap::detail{
 		return os.str();
 	}
 
-	template < typename XY_T, typename WH_T >
-	std::string neg_size_msg(rect< XY_T, WH_T > const& rect){
+	template < typename XT, typename YT, typename WT, typename HT >
+	std::string neg_size_msg(rect< XT, YT, WT, HT > const& rect){
 		std::ostringstream os;
 		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
 			<< rect.y() << "), size(width = " << rect.width()
@@ -136,12 +137,14 @@ namespace bitmap::detail{
 	}
 
 
-	template < typename XY_T, typename WH_T >
-	void subbitmap_check_rect(rect< XY_T, WH_T > const& rect){
-		static_assert(std::is_arithmetic_v< XY_T >,
+	template < typename XT, typename YT, typename WT, typename HT >
+	void subbitmap_check_rect(rect< XT, YT, WT, HT > const& rect){
+		static_assert(
+			std::is_arithmetic_v< XT > && std::is_arithmetic_v< YT >,
 			"rect must have arithmetic x and y");
 
-		static_assert(std::is_integral_v< WH_T >,
+		static_assert(
+			std::is_integral_v< WT > && std::is_integral_v< HT >,
 			"rect must have integral width and height");
 
 		if(rect.width() < 0 || rect.height() < 0){
@@ -157,10 +160,10 @@ namespace bitmap{
 
 
 	/// \brief Return the pixels in rect as new bitmap, throw if out of range
-	template < typename T, typename XY_T, typename WH_T >
+	template < typename T, typename XT, typename YT, typename WT, typename HT >
 	bitmap< T > subbitmap(
 		bitmap< T > const& org,
-		rect< XY_T, WH_T > const& rect
+		rect< XT, YT, WT, HT > const& rect
 	){
 		detail::subbitmap_check_rect(rect);
 
@@ -173,7 +176,7 @@ namespace bitmap{
 				static_cast< std::size_t >(rect.height())
 			);
 
-		if constexpr(std::is_integral_v< XY_T >){
+		if constexpr(std::is_integral_v< XT > && std::is_integral_v< YT >){
 			auto const int_rect = ::bitmap::rect(point(
 					static_cast< std::size_t >(rect.x()),
 					static_cast< std::size_t >(rect.y())

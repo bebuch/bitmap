@@ -18,303 +18,329 @@ namespace bitmap{
 
 
 	/// \brief A class for manipulating rectangles
-	template < typename PositionType, typename SizeType = PositionType >
+	template <
+		typename XT,
+		typename YT = XT,
+		typename WT = XT,
+		typename HT = YT >
 	class rect{
 	public:
+		/// \brief Type of the x position
+		using x_type = XT;
+
+		/// \brief Type of the y position
+		using y_type = YT;
+
+		/// \brief Type of the width
+		using width_type = WT;
+
+		/// \brief Type of the height
+		using height_type = HT;
+
 		/// \brief Type of the rect position
-		using position_type = PositionType;
+		using pos_type = ::bitmap::point< x_type, y_type >;
 
 		/// \brief Type of the rect size
-		using size_type = SizeType;
+		using size_type = ::bitmap::size< width_type, height_type >;
 
 
 		/// \brief Constructs a blank rect
-		rect() = default;
+		constexpr rect() = default;
 
 		/// \brief Copy constructor
-		rect(rect const&) = default;
+		constexpr rect(rect const&) = default;
 
 		/// \brief Move constuctor
-		rect(rect&&) = default;
+		constexpr rect(rect&&) = default;
 
-		/// \brief Constructs a rect on position (0, 0), with size width and height
-		rect(size_type const& width, size_type const& height):
+		/// \brief Constructs a rect on position (0, 0), with size width and
+		///        height
+		constexpr rect(width_type const& width, height_type const& height):
 			size_(width, height)
 			{}
 
-		/// \brief Constructs a rect on position (0, 0), with size size.width and size.height
-		rect(bitmap::size< size_type > const& size):
+		/// \brief Constructs a rect on position (0, 0), with size size.width
+		///        and size.height
+		constexpr rect(size_type const& size):
 			size_(size)
 			{}
 
-		/// \brief Constructs a rect on position (x, y), with size width and height
-		rect(position_type const& x, position_type const& y, size_type const& width, size_type const& height):
+		/// \brief Constructs a rect on position (x, y), with size width and
+		///        height
+		constexpr rect(
+			x_type const& x,
+			y_type const& y,
+			width_type const& width,
+			height_type const& height
+		):
 			top_left_(x, y),
 			size_(width, height)
 			{}
 
-		/// \brief Constructs a rect on position (0, 0), with size bottom_right.x + 1 as width and bottom_right.y + 1 as height
-		rect(point< position_type > const& bottom_right):
+		/// \brief Constructs a rect on position (0, 0), with size
+		///        bottom_right.x + 1 as width and bottom_right.y + 1 as height
+		constexpr rect(pos_type const& bottom_right):
 			size_(bottom_right.x() + 1, bottom_right.y() + 1)
 			{}
 
-		/// \brief Constructs a rect on position (top_left.x, top_left.y), with size bottom_right.x - top_left.x + 1 as width and bottom_right.y - top_left.x + 1 as height
-		rect(point< position_type > const& top_left, point< position_type > const& bottom_right):
+		/// \brief Constructs a rect on position (top_left.x, top_left.y), with
+		///        size bottom_right.x - top_left.x + 1 as width and
+		///        bottom_right.y - top_left.x + 1 as height
+		constexpr rect(pos_type const& top_left, pos_type const& bottom_right):
 			top_left_(top_left),
-			size_(bottom_right.x() - top_left.x() + 1, bottom_right.y() - top_left.y() + 1)
+			size_(
+				bottom_right.x() - top_left.x() + 1,
+				bottom_right.y() - top_left.y() + 1)
 			{}
 
-		/// \brief Constructs a rect on position (top_left.x, top_left.y), with size size.width and size.height
-		rect(point< position_type > const& top_left, size< size_type > const& size):
+		/// \brief Constructs a rect on position (top_left.x, top_left.y), with
+		///        size size.width and size.height
+		constexpr rect(pos_type const& top_left, size_type const& size):
 			top_left_(top_left),
 			size_(size)
 			{}
 
 
+		/// \brief Copy assignment
+		constexpr rect& operator=(rect const&) = default;
+
+		/// \brief Move assignment
+		constexpr rect& operator=(rect&&) = default;
+
+
 		/// \brief Get true, if width or height is zero
-		bool is_empty()const{
-			return width() == size_type() && height() == size_type();
+		constexpr bool is_empty()const{
+			return width() == width_type() && height() == height_type();
 		}
 
 		/// \brief Get true, if width and height are positv
-		bool is_positive()const{
+		constexpr bool is_positive()const{
 			return size_.is_positive();
 		}
 
 
-		/// \brief Copy assignment
-		rect& operator=(rect const&) = default;
-
-		/// \brief Move assignment
-		rect& operator=(rect&&) = default;
-
-
 		/// \brief Get the x position
-		position_type const x()const{
+		constexpr x_type const x()const{
 			return top_left_.x();
 		}
 
 		/// \brief Get the y position
-		position_type const y()const{
+		constexpr y_type const y()const{
 			return top_left_.y();
 		}
 
 		/// \brief Get the width
-		size_type const width()const{
+		constexpr width_type const width()const{
 			return size_.width();
 		}
 
 		/// \brief Get the height
-		size_type const height()const{
+		constexpr height_type const height()const{
 			return size_.height();
 		}
 
 		/// \brief Get the size
-		bitmap::size< size_type > const size()const{
+		constexpr size_type const size()const{
 			return size_;
 		}
 
 		/// \brief Get width() * height()
-		size_type const number_of_points()const{
-			return width() * height();
+		constexpr auto area()const{
+			return size_.area();
 		}
 
 
 		/// \brief Get the top point
-		position_type const top()const{
+		constexpr y_type const top()const{
 			return y();
 		}
 
 		/// \brief Get the bottom point
-		position_type const bottom()const{
+		constexpr y_type const bottom()const{
 			return size_.height() + top_left_.y() - 1;
 		}
 
 		/// \brief Get the left point
-		position_type const left()const{
+		constexpr x_type const left()const{
 			return x();
 		}
 
 		/// \brief Get the right point
-		position_type const right()const{
+		constexpr x_type const right()const{
 			return size_.width() + top_left_.x() - 1;
 		}
 
 
 		/// \brief Get the top left corner
-		point< position_type > const top_left()const{
+		constexpr pos_type const top_left()const{
 			return top_left_;
 		}
 
 		/// \brief Get the top right corner
-		point< position_type > const top_right()const{
-			return point< PositionType >(top(), right());
+		constexpr pos_type const top_right()const{
+			return {top(), right()};
 		}
 
 		/// \brief Get the bottom left corner
-		point< position_type > const bottom_left()const{
-			return point< PositionType >(bottom(), left());
+		constexpr pos_type const bottom_left()const{
+			return {bottom(), left()};
 		}
 
 		/// \brief Get the bottom right corner
-		point< position_type > const bottom_right()const{
-			return point< PositionType >(bottom(), right());
+		constexpr pos_type const bottom_right()const{
+			return {bottom(), right()};
 		}
 
 
 		/// \brief Set the x position
-		void set_x(position_type const& x){
+		constexpr void set_x(x_type const& x){
 			top_left_.x() = x;
 		}
 
 		/// \brief Set the y position
-		void set_y(position_type const& y){
+		constexpr void set_y(y_type const& y){
 			top_left_.y() = y;
 		}
 
 		/// \brief Set the width
-		void set_width(size_type const& width){
+		constexpr void set_width(width_type const& width){
 			size_.width() = width;
 		}
 
 		/// \brief Set the height
-		void set_height(size_type const& height){
+		constexpr void set_height(height_type const& height){
 			size_.height() = height;
 		}
 
 		/// \brief Set width and height
-		void set_size(bitmap::size< size_type > const& size){
+		constexpr void set_size(size_type const& size){
 			size_ = size;
 		}
 
 		/// \brief Set width and height
-		void set_size(size_type const& width, size_type const& height){
-			set_size(bitmap::size< size_type >{width, height});
+		constexpr void set_size(
+			width_type const& width,
+			height_type const& height
+		){
+			set_size(size_type{width, height});
 		}
 
 
 		/// \brief Set the top point
-		void set_top(position_type const& top){
+		constexpr void set_top(y_type const& top){
 			top_left_.x() = top;
 		}
 
 		/// \brief Set the bottom point
-		void set_bottom(position_type const& bottom){
+		constexpr void set_bottom(y_type const& bottom){
 			size_.height() = bottom - top_left_.y() + 1;
 		}
 
 		/// \brief Set the left point
-		void set_left(position_type const& left){
+		constexpr void set_left(x_type const& left){
 			top_left_.y() = left;
 		}
 
 		/// \brief Set the right point
-		void set_right(position_type const& right){
+		constexpr void set_right(x_type const& right){
 			size_.width() = right - top_left_.x() + 1;
 		}
 
 
 		/// \brief Set the top left corner
-		void set_top_left(point< position_type > const& topLeft){
-			top_left_ = topLeft;
+		constexpr void set_top_left(pos_type const& top_left){
+			top_left_ = top_left;
 		}
 
 		/// \brief Set the top right corner
-		void set_top_right(point< position_type > const& topRight){
-			set_top(topRight.x);
-			set_right(topRight.y);
+		constexpr void set_top_right(pos_type const& top_right){
+			set_top(top_right.x);
+			set_right(top_right.y);
 		}
 
 		/// \brief Set the bottom left corner
-		void set_bottom_left(point< position_type > const& bottomLeft){
-			set_left(bottomLeft.x);
-			set_bottom(bottomLeft.y);
+		constexpr void set_bottom_left(pos_type const& bottom_left){
+			set_left(bottom_left.x);
+			set_bottom(bottom_left.y);
 		}
 
 		/// \brief Set the bottom right corner
-		void set_bottom_right(point< position_type > const& bottomRight){
-			set_right(bottomRight.x);
-			set_bottom(bottomRight.y);
+		constexpr void set_bottom_right(pos_type const& bottom_right){
+			set_right(bottom_right.x);
+			set_bottom(bottom_right.y);
 		}
 
 
 		/// \brief Moves the rect in horizontal direction
-		void move(point< position_type > const& translation){
+		constexpr void move(pos_type const& translation){
 			move_horizontally(translation.x);
 			move_vertically(translation.y);
 		}
 
 		/// \brief Moves the rect in horizontal direction
-		void move_horizontally(position_type const& translation){
+		constexpr void move_horizontally(x_type const& translation){
 			top_left_.x() += translation;
 		}
 
 		/// \brief Moves the rect in vertical direction
-		void move_vertically(position_type const& translation){
+		constexpr void move_vertically(y_type const& translation){
 			top_left_.y() += translation;
 		}
 
 	private:
 		/// \brief The point in the top left corner
-		bitmap::point< position_type > top_left_;
+		pos_type top_left_;
 
 		/// \brief The point in the bottom right corner
-		bitmap::size< size_type > size_;
+		size_type size_;
 	};
 
 
 
 	/// \brief true, if the rectangles are identical; false otherwise
-	template < typename PositionType, typename SizeType >
-	inline
-	bool
-	operator==(
-		rect< PositionType, SizeType > const& lhs,
-		rect< PositionType, SizeType > const& rhs
+	template < typename XT, typename YT, typename WT, typename HT >
+	constexpr bool operator==(
+		rect< XT, YT, WT, HT > const& l,
+		rect< XT, YT, WT, HT > const& r
 	){
-		return lhs.top_left() == rhs.top_left() && lhs.size() == rhs.size();
+		return l.top_left() == r.top_left() && l.size() == r.size();
 	}
 
 	/// \brief false, if the rectangles are identical; true otherwise
-	template < typename PositionType, typename SizeType >
-	inline
-	bool
-	operator!=(
-		rect< PositionType, SizeType > const& lhs,
-		rect< PositionType, SizeType > const& rhs
+	template < typename XT, typename YT, typename WT, typename HT >
+	constexpr bool operator!=(
+		rect< XT, YT, WT, HT > const& l,
+		rect< XT, YT, WT, HT > const& r
 	){
-		return !(lhs == rhs);
+		return !(l == r);
 	}
 
 
 	/// \brief Get a rect that contains both rects
-	template < typename PositionType, typename SizeType >
-	inline
-	rect< PositionType, SizeType >
-	join(
-		rect< PositionType, SizeType > const& lhs,
-		rect< PositionType, SizeType > const& rhs
+	template < typename XT, typename YT, typename WT, typename HT >
+	constexpr auto join(
+		rect< XT, YT, WT, HT > const& l,
+		rect< XT, YT, WT, HT > const& r
 	){
-		return rect< PositionType, SizeType >(
-			bitmap::point< PositionType >(
-				std::min(lhs.left(), rhs.left()),
-				std::min(lhs.top(), rhs.top())
+		return rect< XT, YT, WT, HT >(
+			point< XT, YT >(
+				std::min(l.left(), r.left()),
+				std::min(l.top(), r.top())
 			),
-			bitmap::point< PositionType >(
-				std::max(lhs.right(), rhs.right()),
-				std::max(lhs.bottom(), rhs.bottom())
+			point< XT, YT >(
+				std::max(l.right(), r.right()),
+				std::max(l.bottom(), r.bottom())
 			)
 		);
 	}
 
 
 	/// \brief Get true, if point is in rect
-	template < typename PositionType, typename SizeType, typename DataType >
-	inline
-	bool
-	contains(
-		rect< PositionType, SizeType > const& rect,
-		point< DataType > const& point
+	template < typename XT, typename YT, typename WT, typename HT,
+		typename PXT, typename PYT >
+	constexpr bool contains(
+		rect< XT, YT, WT, HT > const& rect,
+		point< PXT, PYT > const& point
 	){
 		return
 			point.x() >= rect.left()  &&
@@ -324,26 +350,16 @@ namespace bitmap{
 	}
 
 	/// \brief Get true, if test is in reference
-	template < typename PositionType, typename SizeType >
-	inline
-	bool
-	contains(
-		rect< PositionType, SizeType > const& reference,
-		rect< PositionType, SizeType > const& test
+	template < typename XT, typename YT, typename WT, typename HT >
+	constexpr bool contains(
+		rect< XT, YT, WT, HT > const& reference,
+		rect< XT, YT, WT, HT > const& test
 	){
 		return
 			test.left()   >= reference.left()  &&
 			test.top()    >= reference.top()   &&
 			test.right()  <= reference.right() &&
 			test.bottom() <= reference.bottom();
-	}
-
-	template < typename PositionType, typename SizeType >
-	inline auto make_rect(
-		bitmap::point< PositionType > const& top_left,
-		bitmap::size< SizeType > const& size
-	){
-		return rect< PositionType, SizeType >(top_left, size);
 	}
 
 

@@ -16,7 +16,7 @@ namespace bitmap{
 	namespace detail{
 
 
-		template < typename TX, typename TY >
+		template < typename XT, typename YT >
 		struct point_base{};
 
 		template < typename T >
@@ -30,37 +30,16 @@ namespace bitmap{
 
 
 	/// \brief A class for representing points
-	/// \tparam TX Type of the x position data
-	/// \tparam TY Type of the y position data
-	template < typename TX, typename TY = TX >
-	class point: public detail::point_base< TX, TY >{
+	/// \tparam XT Type of the x position data
+	/// \tparam YT Type of the y position data
+	template < typename XT, typename YT = XT >
+	class point: public detail::point_base< XT, YT >{
 	public:
 		/// \brief Type of the x positions
-		using x_value_type = TX;
+		using x_type = XT;
 
 		/// \brief Type of the y positions
-		using y_value_type = TY;
-
-
-		/// \brief The x
-		constexpr x_value_type& x(){ return x_; }
-
-		/// \brief The y
-		constexpr y_value_type& y(){ return y_; }
-
-
-		/// \brief The x
-		constexpr x_value_type const& x()const{ return x_; }
-
-		/// \brief The y
-		constexpr y_value_type const& y()const{ return y_; }
-
-
-		/// \brief Set x and y
-		constexpr void set(x_value_type const& x, y_value_type const& y){
-			x_ = x;
-			y_ = y;
-		}
+		using y_type = YT;
 
 
 		/// \brief Constructs a point by (0, 0)
@@ -73,7 +52,7 @@ namespace bitmap{
 		constexpr point(point&&) = default;
 
 		/// \brief Constructs a point by (x, y)
-		constexpr point(x_value_type const& x, y_value_type const& y):
+		constexpr point(x_type const& x, y_type const& y):
 			x_(x), y_(y)
 			{}
 
@@ -85,79 +64,100 @@ namespace bitmap{
 		constexpr point& operator=(point&&) = default;
 
 
+		/// \brief The x
+		constexpr x_type& x(){ return x_; }
+
+		/// \brief The y
+		constexpr y_type& y(){ return y_; }
+
+
+		/// \brief The x
+		constexpr x_type const x()const{ return x_; }
+
+		/// \brief The y
+		constexpr y_type const y()const{ return y_; }
+
+
+		/// \brief Set x and y
+		constexpr void set(x_type const& x, y_type const& y){
+			x_ = x;
+			y_ = y;
+		}
+
+
 		/// \brief Get true, if x and y are positiv
 		constexpr bool is_positive()const{
-			return x() >= x_value_type() && y() >= y_value_type();
+			return x() >= x_type() && y() >= y_type();
 		}
 
 
 	private:
-		x_value_type x_;
-		y_value_type y_;
+		x_type x_;
+		y_type y_;
 	};
 
 
-	template < typename TX, typename TY >
+	template < typename XT, typename YT >
 	constexpr bool operator==(
-		point< TX, TY > const& a,
-		point< TX, TY > const& b
+		point< XT, YT > const& a,
+		point< XT, YT > const& b
 	){
 		return a.x() == b.x() && a.y() == b.y();
 	}
 
-	template < typename TX, typename TY >
+	template < typename XT, typename YT >
 	constexpr bool operator!=(
-		point< TX, TY > const& a,
-		point< TX, TY > const& b
+		point< XT, YT > const& a,
+		point< XT, YT > const& b
 	){
 		return !(a == b);
 	}
 
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY >& operator+=(
-		point< TX, TY >& a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT >& operator+=(
+		point< XT, YT >& a,
+		point< XT, YT > const& b
 	){
 		a.x() += b.x();
 		a.y() += b.y();
 		return a;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY >& operator-=(
-		point< TX, TY >& a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT >& operator-=(
+		point< XT, YT >& a,
+		point< XT, YT > const& b
 	){
 		a.x() -= b.x();
 		a.y() -= b.y();
 		return a;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY >& operator*=(
-		point< TX, TY >& a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT >& operator*=(
+		point< XT, YT >& a,
+		point< XT, YT > const& b
 	){
 		a.x() *= b.x();
 		a.y() *= b.y();
 		return a;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY >& operator/=(
-		point< TX, TY >& a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT >& operator/=(
+		point< XT, YT >& a,
+		point< XT, YT > const& b
 	){
 		a.x() /= b.x();
 		a.y() /= b.y();
 		return a;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY >& operator%=(
-		point< TX, TY >& a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT >& operator%=(
+		point< XT, YT >& a,
+		point< XT, YT > const& b
 	){
 		a.x() %= b.x();
 		a.y() %= b.y();
@@ -165,50 +165,50 @@ namespace bitmap{
 	}
 
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY > operator+(
-		point< TX, TY > a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT > operator+(
+		point< XT, YT > a,
+		point< XT, YT > const& b
 	){
 		return a += b;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY > operator-(
-		point< TX, TY > a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT > operator-(
+		point< XT, YT > a,
+		point< XT, YT > const& b
 	){
 		return a -= b;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY > operator*(
-		point< TX, TY > a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT > operator*(
+		point< XT, YT > a,
+		point< XT, YT > const& b
 	){
 		return a *= b;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY > operator/(
-		point< TX, TY > a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT > operator/(
+		point< XT, YT > a,
+		point< XT, YT > const& b
 	){
 		return a /= b;
 	}
 
-	template < typename TX, typename TY >
-	constexpr point< TX, TY > operator%(
-		point< TX, TY > a,
-		point< TX, TY > const& b
+	template < typename XT, typename YT >
+	constexpr point< XT, YT > operator%(
+		point< XT, YT > a,
+		point< XT, YT > const& b
 	){
 		return a %= b;
 	}
 
 
-	template < typename TX, typename TY >
-	inline auto make_point(TX const& x, TY const& y){
-		return point< TX, TY >(x, y);
+	template < typename XT, typename YT >
+	inline auto make_point(XT const& x, YT const& y){
+		return point< XT, YT >(x, y);
 	}
 
 
