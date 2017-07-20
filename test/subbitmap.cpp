@@ -114,6 +114,102 @@ TEST(SubBitmapTest, IntIntThrow){
 	);
 }
 
+// TODO: Use all possible integer types
+TEST(SubBitmapTest, FloatIFloatIThrow){
+	auto bmp = calc(3, 2, [](auto x, auto y){ return (1 + x) * y; });
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{0., 0., 3, 2}),
+		calc(3, 2, [](auto x, auto y){ return (1 + x) * y; })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{0., 0., 1, 1}),
+		calc(1, 1, [](auto, auto){ return 2; })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{1., 0., 1, 1}),
+		calc(1, 1, [](auto, auto){ return 3; })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{0., 1., 1, 1}),
+		calc(1, 1, [](auto, auto){ return 4; })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{0., 1., 2, 1}),
+		calc(2, 1, [](auto x, auto y){ return (1 + x) * (1 + y); })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{1., 0., 1, 2}),
+		calc(1, 2, [](auto x, auto y){ return (2 + x) * y; })
+	);
+
+	EXPECT_EQ(
+		subbitmap(bmp, rect{2., 1., 1, 1}),
+		calc(1, 1, [](auto, auto){ return 8; })
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0., 0., -1, 1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0., 0., 1, -1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0., 0., -1, -1}),
+		std::logic_error
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{-1., 0., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0., -1., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{-1., -1., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{3., 1., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{2., 2., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{3., 2., 1, 1}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{0., 1., 3, 2}),
+		std::out_of_range
+	);
+
+	EXPECT_THROW(
+		subbitmap(bmp, rect{1., 0., 3, 2}),
+		std::out_of_range
+	);
+}
+
+
 // TODO; use all possible float types
 TEST(SubBitmapTest, IntFloatThrow){
 	auto bmp = calc(3, 3, [](auto x, auto y){ return (1 + x) * y; });

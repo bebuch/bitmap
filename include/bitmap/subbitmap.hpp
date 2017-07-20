@@ -149,22 +149,23 @@ namespace bitmap::detail{
 
 
 
-	template < typename XT, typename YT, typename WT, typename HT >
+	template < typename XT, typename YT >
 	std::string out_of_range_msg(
 		size< std::size_t > const& bmp_size,
-		rect< XT, YT, WT, HT > const& rect
+		point< XT, YT > const& tl,
+		size< std::size_t > const& rect_size
 	){
 		std::ostringstream os;
-		os << "subbitmap: rect(point(x = " << rect.x();
+		os << "subbitmap: rect(point(x = " << tl.x();
 		if(std::is_floating_point_v< XT >){
-			os << "[float -> max(x) = " << std::floor(rect.x()) << " + 1]";
+			os << "[float -> max(x) = " << std::floor(tl.x()) << " + 1]";
 		}
-		os << ", y = " << rect.y();
+		os << ", y = " << tl.y();
 		if(std::is_floating_point_v< YT >){
-			os << "[float -> max(y) = " << std::floor(rect.y()) << " + 1]";
+			os << "[float -> max(y) = " << std::floor(tl.y()) << " + 1]";
 		}
-		os << "), size(width = " << rect.width()
-			<< ", height = " << rect.height()
+		os << "), size(width = " << rect_size.width()
+			<< ", height = " << rect_size.height()
 			<< ")) is outside the original bitmap(width = "
 			<< bmp_size.width() << ", height = " << bmp_size.height() << ")";
 		return os.str();
@@ -178,7 +179,6 @@ namespace bitmap::detail{
 			<< ", height = " << rect.height() << ")) has negetive size";
 		return os.str();
 	}
-
 
 	template < typename XT, typename YT, typename WT, typename HT >
 	void subbitmap_check_rect(rect< XT, YT, WT, HT > const& rect){
@@ -206,6 +206,70 @@ namespace bitmap::detail{
 	}
 
 
+	template < typename T, typename XT, typename YT >
+	bitmap< T > subbitmap(
+		bitmap< T > const& org,
+		point< XT, YT > const& top_left,
+		rect< std::size_t > const& int_rect
+	){
+		if constexpr(std::is_integral_v< XT > && std::is_integral_v< YT >){
+			if(
+				int_rect.x() + int_rect.width() > org.width() ||
+				int_rect.y() + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(out_of_range_msg(
+					org.size(), top_left, int_rect.size()));
+			}
+
+			bitmap< T > result(int_rect.size());
+			copy(result, org, int_rect);
+			return result;
+		}else if constexpr(std::is_integral_v< XT >){
+			if(
+				int_rect.x() + int_rect.width() > org.width() ||
+				int_rect.y() + 1 + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(out_of_range_msg(
+					org.size(), top_left, int_rect.size()));
+			}
+
+			auto const y_ratio =  1 - (top_left.y() - std::floor(top_left.y()));
+			bitmap< T > result(int_rect.size());
+			y_interpolate(result, org, int_rect, y_ratio);
+			return result;
+		}else if constexpr(std::is_integral_v< YT >){
+			if(
+				int_rect.x() + 1 + int_rect.width() > org.width() ||
+				int_rect.y() + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(out_of_range_msg(
+					org.size(), top_left, int_rect.size()));
+			}
+
+			auto const x_ratio = 1 - (top_left.x() - std::floor(top_left.x()));
+			bitmap< T > result(int_rect.size());
+			x_interpolate(result, org, int_rect, x_ratio);
+			return result;
+
+		}else{
+			if(
+				int_rect.x() + 1 + int_rect.width() > org.width() ||
+				int_rect.y() + 1 + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(out_of_range_msg(
+					org.size(), top_left, int_rect.size()));
+			}
+
+			auto const ratio = point(
+				1 - (top_left.x() - std::floor(top_left.x())),
+				1 - (top_left.y() - std::floor(top_left.y())));
+			bitmap< T > result(int_rect.size());
+			interpolate_2d(result, org, int_rect, ratio);
+			return result;
+		}
+	}
+
+
 }
 
 
@@ -220,10 +284,6 @@ namespace bitmap{
 	){
 		detail::subbitmap_check_rect(rect);
 
-		if(rect.x() < 0 || rect.y() < 0){
-			throw std::out_of_range(detail::out_of_range_msg(org.size(), rect));
-		}
-
 		auto const int_rect = ::bitmap::rect(point(
 				detail::to_size_t(rect.x()),
 				detail::to_size_t(rect.y())
@@ -232,61 +292,23 @@ namespace bitmap{
 				detail::to_size_t(rect.height())
 			));
 
-		if constexpr(std::is_integral_v< XT > && std::is_integral_v< YT >){
+		if(rect.x() < 0 || rect.y() < 0){
+			throw std::out_of_range(detail::out_of_range_msg(
+				org.size(), rect.top_left(), int_rect.size()));
+		}
 
-			if(
-				int_rect.x() + int_rect.width() > org.width() ||
-				int_rect.y() + int_rect.height() > org.height()
-			){
-				throw std::out_of_range(
-					detail::out_of_range_msg(org.size(), rect));
-			}
-
-			bitmap< T > result(int_rect.size());
-			detail::copy(result, org, int_rect);
-			return result;
-		}else if constexpr(std::is_integral_v< XT >){
-			if(
-				int_rect.x() + int_rect.width() > org.width() ||
-				int_rect.y() + 1 + int_rect.height() > org.height()
-			){
-				throw std::out_of_range(
-					detail::out_of_range_msg(org.size(), rect));
-			}
-
-			auto const y_ratio =  1 - (rect.y() - std::floor(rect.y()));
-			bitmap< T > result(int_rect.size());
-			detail::y_interpolate(result, org, int_rect, y_ratio);
-			return result;
-		}else if constexpr(std::is_integral_v< YT >){
-			if(
-				int_rect.x() + 1 + int_rect.width() > org.width() ||
-				int_rect.y() + int_rect.height() > org.height()
-			){
-				throw std::out_of_range(
-					detail::out_of_range_msg(org.size(), rect));
-			}
-
-			auto const x_ratio = 1 - (rect.x() - std::floor(rect.x()));
-			bitmap< T > result(int_rect.size());
-			detail::x_interpolate(result, org, int_rect, x_ratio);
-			return result;
-
+		auto const is_x_int = rect.x() == int_rect.x();
+		auto const is_y_int = rect.y() == int_rect.y();
+		if(is_x_int && is_y_int){
+			return detail::subbitmap(org, int_rect.top_left(), int_rect);
+		}else if(is_x_int){
+			return detail::subbitmap(org, point(int_rect.x(), rect.y()),
+				int_rect);
+		}else if(is_y_int){
+			return detail::subbitmap(org, point(rect.x(), int_rect.y()),
+				int_rect);
 		}else{
-			if(
-				int_rect.x() + 1 + int_rect.width() > org.width() ||
-				int_rect.y() + 1 + int_rect.height() > org.height()
-			){
-				throw std::out_of_range(
-					detail::out_of_range_msg(org.size(), rect));
-			}
-
-			auto const ratio = point(
-				1 - (rect.x() - std::floor(rect.x())),
-				1 - (rect.y() - std::floor(rect.y())));
-			bitmap< T > result(int_rect.size());
-			detail::interpolate_2d(result, org, int_rect, ratio);
-			return result;
+			return detail::subbitmap(org, rect.top_left(), int_rect);
 		}
 	}
 
