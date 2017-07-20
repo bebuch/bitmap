@@ -39,58 +39,64 @@ namespace bitmap::detail{
 
 
 	template < typename FT, typename T >
-	constexpr T interpolate(
-		FT x_ratio, FT y_ratio, T tl, T tr, T bl, T br
-	)noexcept{
-		return
-			(x_ratio * tl + (1 - x_ratio) * tr) * y_ratio +
-			(x_ratio * bl + (1 - x_ratio) * br) * (1 - y_ratio);
+	constexpr T interpolate(FT ratio, T a, T b)noexcept{
+		return ratio * a + (1 - ratio) * b;
 	}
 
 	template < typename FT, typename T >
 	constexpr T interpolate(
-		FT x_ratio, FT y_ratio,
-		pixel::basic_ga< T > const& tl, pixel::basic_ga< T > const& tr,
-		pixel::basic_ga< T > const& bl, pixel::basic_ga< T > const& br
+		FT ratio,
+		pixel::basic_ga< T > const& a,
+		pixel::basic_ga< T > const& b
 	)noexcept{
 		return pixel::basic_ga< T >{
-			interpolate(x_ratio, y_ratio, tl.g, tr.g, bl.g, br.g),
-			interpolate(x_ratio, y_ratio, tl.a, tr.a, bl.a, br.a)
+			interpolate(ratio, a.g, b.g),
+			interpolate(ratio, a.a, b.a)
 		};
 	}
 
 	template < typename FT, typename T >
 	constexpr T interpolate(
-		FT x_ratio, FT y_ratio,
-		pixel::basic_rgb< T > const& tl, pixel::basic_rgb< T > const& tr,
-		pixel::basic_rgb< T > const& bl, pixel::basic_rgb< T > const& br
+		FT ratio,
+		pixel::basic_rgb< T > const& a,
+		pixel::basic_rgb< T > const& b
 	)noexcept{
 		return pixel::basic_rgb< T >{
-			interpolate(x_ratio, y_ratio, tl.r, tr.r, bl.r, br.r),
-			interpolate(x_ratio, y_ratio, tl.g, tr.g, bl.g, br.g),
-			interpolate(x_ratio, y_ratio, tl.b, tr.b, bl.b, br.b)
+			interpolate(ratio, a.r, b.r),
+			interpolate(ratio, a.g, b.g),
+			interpolate(ratio, a.b, b.b)
 		};
 	}
 
 	template < typename FT, typename T >
 	constexpr T interpolate(
-		FT x_ratio, FT y_ratio,
-		pixel::basic_rgba< T > const& tl, pixel::basic_rgba< T > const& tr,
-		pixel::basic_rgba< T > const& bl, pixel::basic_rgba< T > const& br
+		FT ratio,
+		pixel::basic_rgba< T > const& a,
+		pixel::basic_rgba< T > const& b
 	)noexcept{
 		return pixel::basic_rgba< T >{
-			interpolate(x_ratio, y_ratio, tl.r, tr.r, bl.r, br.r),
-			interpolate(x_ratio, y_ratio, tl.g, tr.g, bl.g, br.g),
-			interpolate(x_ratio, y_ratio, tl.b, tr.b, bl.b, br.b),
-			interpolate(x_ratio, y_ratio, tl.a, tr.a, bl.a, br.a)
+			interpolate(ratio, a.r, b.r),
+			interpolate(ratio, a.g, b.g),
+			interpolate(ratio, a.b, b.b),
+			interpolate(ratio, a.a, b.a)
 		};
 	}
 
-	template < typename FT, typename T >
-	void full_interpolate(
+
+	template < typename FXT, typename FYT, typename T >
+	constexpr T interpolate_2d(
+		FXT x_ratio, FYT y_ratio, T tl, T tr, T bl, T br
+	)noexcept{
+		return interpolate(y_ratio,
+			interpolate(x_ratio, tl, tr), interpolate(x_ratio, bl, br));
+	}
+
+
+	template < typename FXT, typename FYT, typename T >
+	void interpolate_2d(
 		bitmap< T >& target, bitmap< T > const& ref,
 		rect< std::size_t > const& rect,
-		point< FT > const& ratio,
+		point< FXT, FYT > const& ratio,
 		point< std::size_t > const& target_start = {}
 	){
 		for(std::size_t y = 0; y < rect.height(); ++y){
@@ -98,7 +104,7 @@ namespace bitmap::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					interpolate(
+					interpolate_2d(
 						ratio.x(), ratio.y(),
 						ref(ax, ay), ref(ax + 1, ay),
 						ref(ax, ay + 1), ref(ax + 1, ay + 1));
@@ -106,21 +112,58 @@ namespace bitmap::detail{
 		}
 	}
 
+
+	template < typename FT, typename T >
+	void x_interpolate(
+		bitmap< T >& target, bitmap< T > const& ref,
+		rect< std::size_t > const& rect,
+		FT xratio,
+		point< std::size_t > const& target_start = {}
+	){
+		for(std::size_t y = 0; y < rect.height(); ++y){
+			for(std::size_t x = 0; x < rect.width(); ++x){
+				auto const ax = rect.x() + x;
+				auto const ay = rect.y() + y;
+				target(target_start.x() + x, target_start.y() + y) =
+					interpolate(xratio, ref(ax, ay), ref(ax + 1, ay));
+			}
+		}
+	}
+
+	template < typename FT, typename T >
+	void y_interpolate(
+		bitmap< T >& target, bitmap< T > const& ref,
+		rect< std::size_t > const& rect,
+		FT y_ratio,
+		point< std::size_t > const& target_start = {}
+	){
+		for(std::size_t y = 0; y < rect.height(); ++y){
+			for(std::size_t x = 0; x < rect.width(); ++x){
+				auto const ax = rect.x() + x;
+				auto const ay = rect.y() + y;
+				target(target_start.x() + x, target_start.y() + y) =
+					interpolate(y_ratio, ref(ax, ay), ref(ax, ay + 1));
+			}
+		}
+	}
+
+
+
 	template < typename XT, typename YT, typename WT, typename HT >
 	std::string out_of_range_msg(
 		size< std::size_t > const& bmp_size,
 		rect< XT, YT, WT, HT > const& rect
 	){
 		std::ostringstream os;
-		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
-			<< rect.y() << ")[";
-		if(std::is_integral_v< XT > || std::is_integral_v< YT >){
-			os << "int";
-		}else{
-			os << "float -> max(x) = " << std::floor(rect.x())
-				<< " + 1, max(y) = " << std::floor(rect.y()) << " + 1";
+		os << "subbitmap: rect(point(x = " << rect.x();
+		if(std::is_floating_point_v< XT >){
+			os << "[float -> max(x) = " << std::floor(rect.x()) << " + 1]";
 		}
-		os << "], size(width = " << rect.width()
+		os << ", y = " << rect.y();
+		if(std::is_floating_point_v< YT >){
+			os << "[float -> max(y) = " << std::floor(rect.y()) << " + 1]";
+		}
+		os << "), size(width = " << rect.width()
 			<< ", height = " << rect.height()
 			<< ")) is outside the original bitmap(width = "
 			<< bmp_size.width() << ", height = " << bmp_size.height() << ")";
@@ -153,6 +196,16 @@ namespace bitmap::detail{
 	}
 
 
+	template < typename T >
+	std::size_t to_size_t(T v)noexcept{
+		if constexpr(std::is_integral_v< T >){
+			return static_cast< std::size_t >(v);
+		}else{
+			return static_cast< std::size_t >(std::floor(v));
+		}
+	}
+
+
 }
 
 
@@ -171,16 +224,15 @@ namespace bitmap{
 			throw std::out_of_range(detail::out_of_range_msg(org.size(), rect));
 		}
 
-		auto const bitmap_size = size(
-				static_cast< std::size_t >(rect.width()),
-				static_cast< std::size_t >(rect.height())
-			);
+		auto const int_rect = ::bitmap::rect(point(
+				detail::to_size_t(rect.x()),
+				detail::to_size_t(rect.y())
+			), size(
+				detail::to_size_t(rect.width()),
+				detail::to_size_t(rect.height())
+			));
 
 		if constexpr(std::is_integral_v< XT > && std::is_integral_v< YT >){
-			auto const int_rect = ::bitmap::rect(point(
-					static_cast< std::size_t >(rect.x()),
-					static_cast< std::size_t >(rect.y())
-				), bitmap_size);
 
 			if(
 				int_rect.x() + int_rect.width() > org.width() ||
@@ -190,15 +242,37 @@ namespace bitmap{
 					detail::out_of_range_msg(org.size(), rect));
 			}
 
-			bitmap< T > result(bitmap_size);
+			bitmap< T > result(int_rect.size());
 			detail::copy(result, org, int_rect);
 			return result;
-		}else{
-			auto const int_rect = ::bitmap::rect(point(
-					static_cast< std::size_t >(std::floor(rect.x())),
-					static_cast< std::size_t >(std::floor(rect.y()))
-				), bitmap_size);
+		}else if constexpr(std::is_integral_v< XT >){
+			if(
+				int_rect.x() + int_rect.width() > org.width() ||
+				int_rect.y() + 1 + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(
+					detail::out_of_range_msg(org.size(), rect));
+			}
 
+			auto const y_ratio =  1 - (rect.y() - std::floor(rect.y()));
+			bitmap< T > result(int_rect.size());
+			detail::y_interpolate(result, org, int_rect, y_ratio);
+			return result;
+		}else if constexpr(std::is_integral_v< YT >){
+			if(
+				int_rect.x() + 1 + int_rect.width() > org.width() ||
+				int_rect.y() + int_rect.height() > org.height()
+			){
+				throw std::out_of_range(
+					detail::out_of_range_msg(org.size(), rect));
+			}
+
+			auto const x_ratio = 1 - (rect.x() - std::floor(rect.x()));
+			bitmap< T > result(int_rect.size());
+			detail::x_interpolate(result, org, int_rect, x_ratio);
+			return result;
+
+		}else{
 			if(
 				int_rect.x() + 1 + int_rect.width() > org.width() ||
 				int_rect.y() + 1 + int_rect.height() > org.height()
@@ -210,8 +284,8 @@ namespace bitmap{
 			auto const ratio = point(
 				1 - (rect.x() - std::floor(rect.x())),
 				1 - (rect.y() - std::floor(rect.y())));
-			bitmap< T > result(bitmap_size);
-			detail::full_interpolate(result, org, int_rect, ratio);
+			bitmap< T > result(int_rect.size());
+			detail::interpolate_2d(result, org, int_rect, ratio);
 			return result;
 		}
 	}
