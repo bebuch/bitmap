@@ -84,6 +84,48 @@ namespace bitmap{ namespace pixel{
 	using rgba64f = basic_rgba< double >;
 
 
+	template < typename T >
+	struct is_pixel_type: std::false_type{};
+
+	template < typename T >
+	struct is_pixel_type< basic_ga< T > >: std::true_type{};
+
+	template < typename T >
+	struct is_pixel_type< basic_rgb< T > >: std::true_type{};
+
+	template < typename T >
+	struct is_pixel_type< basic_rgba< T > >: std::true_type{};
+
+	template < typename T >
+	constexpr bool is_pixel_type_v = is_pixel_type< T >::value;
+
+
+	template < typename T, bool = is_pixel_type_v< T > >
+	struct channel_type{
+		using type = T;
+	};
+
+	template < typename T >
+	struct channel_type< T, true >{
+		using type = typename T::value_type;
+	};
+
+	template < typename T >
+	using channel_type_t = typename channel_type< T >::type;
+
+
+	template < typename T, bool = is_pixel_type_v< T > >
+	struct channel_count: std::integral_constant< std::size_t, 1 >{};
+
+	template < typename T >
+	struct channel_count< T, true >:
+		std::integral_constant< std::size_t, T::channel_count >{};
+
+	template < typename T >
+	constexpr std::size_t channel_count_v = channel_count< T >::value;
+
+
+
 } }
 
 
