@@ -223,6 +223,20 @@ namespace bmp{
 		}
 	}
 
+	/// \brief Read binary bitmap format data from std::istream
+	///
+	/// \throw binary_io_error
+	template < typename T >
+	bitmap< T > binary_read_data(
+		std::istream& is,
+		binary_header const& header,
+		bool ignore_signed = true
+	){
+		bitmap< T > bitmap;
+		binary_read_data(bitmap, is, header, ignore_signed);
+		return bitmap;
+	}
+
 	/// \brief Read bitmap from std::istream
 	///
 	/// \throw binary_io_error
