@@ -193,7 +193,7 @@ namespace bmp{
 		bitmap.resize(header.width, header.height);
 		auto pixel_count = bitmap.point_count();
 		if constexpr(std::is_same_v< T, bool >){
-			std::vector< big_uint64_t > buffer((pixel_count + 7) / 8);
+			std::vector< big_uint8_t > buffer((pixel_count + 7) / 8);
 			is.read(
 				reinterpret_cast< char* >(buffer.data()),
 				buffer.size());
