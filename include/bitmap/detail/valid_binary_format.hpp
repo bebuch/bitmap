@@ -14,10 +14,10 @@
 #include <type_traits>
 
 
-namespace bitmap::detail{
+namespace bmp::detail{
 
 
-	template < typename T, bool = ::bitmap::pixel::is_pixel_type_v< T > >
+	template < typename T, bool = ::bmp::pixel::is_pixel_type_v< T > >
 	struct is_valid_binary_format
 		: std::bool_constant< std::is_arithmetic_v< T >
 			&& !std::is_same_v< T, long double > >{};

@@ -15,7 +15,7 @@
 #include <boost/endian/conversion.hpp>
 
 
-namespace bitmap::detail{
+namespace bmp::detail{
 
 
 	constexpr std::uint32_t io_magic = 0x62626621;

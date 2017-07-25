@@ -22,7 +22,7 @@
 #include <cstdint>
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	struct binary_header{
@@ -87,7 +87,7 @@ namespace bitmap{
 		bool ignore_signed = true
 	){
 		static_assert(detail::is_valid_binary_format_v< T >,
-			"Your value_type is not supported by bitmap::binary_read");
+			"Your value_type is not supported by bmp::binary_read");
 
 		using pixel::channel_count_v;
 		using value_type = pixel::channel_type_t< T >;

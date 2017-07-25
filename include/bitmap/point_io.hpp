@@ -14,7 +14,7 @@
 #include <io_tools/expect.hpp>
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	template < typename charT, typename traits, typename T >

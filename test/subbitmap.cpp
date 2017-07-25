@@ -7,7 +7,7 @@
 
 template < typename F >
 auto calc(std::size_t const w, std::size_t const h, F const& f){
-	bitmap::bitmap< float > bmp(w, h);
+	bmp::bitmap< float > bmp(w, h);
 	for(std::size_t y = 0; y < h; ++y){
 		for(std::size_t x = 0; x < w; ++x){
 			bmp(x, y) = f(x + 1, y + 1);
@@ -16,7 +16,7 @@ auto calc(std::size_t const w, std::size_t const h, F const& f){
 	return bmp;
 }
 
-using bitmap::rect;
+using bmp::rect;
 
 
 // TODO: Use all possible integer types

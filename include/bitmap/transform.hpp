@@ -12,7 +12,7 @@
 #include "bitmap.hpp"
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief Rotate and mirror transformations
@@ -38,7 +38,7 @@ namespace bitmap{
 	inline
 	bitmap< decltype(std::devlval< ConvertFn >()(std::devlval< T >())) > bitmap_transform(
 		bitmap< T > const& image,
-		::bitmap::transform transform,
+		::bmp::transform transform,
 		ConvertFn&& converter = &no_convert
 	){
 		using result_type

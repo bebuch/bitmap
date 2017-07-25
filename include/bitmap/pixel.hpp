@@ -12,7 +12,7 @@
 #include <cstdint>
 
 
-namespace bitmap{ namespace pixel{
+namespace bmp{ namespace pixel{
 
 
 	template < typename T >

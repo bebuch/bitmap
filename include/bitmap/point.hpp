@@ -10,7 +10,7 @@
 #define _bitmap__point__hpp_INCLUDED_
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	namespace detail{

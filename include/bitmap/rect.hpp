@@ -14,7 +14,7 @@
 #include "point.hpp"
 #include "size.hpp"
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief A class for manipulating rectangles
@@ -38,10 +38,10 @@ namespace bitmap{
 		using height_type = HT;
 
 		/// \brief Type of the rect position
-		using pos_type = ::bitmap::point< x_type, y_type >;
+		using pos_type = ::bmp::point< x_type, y_type >;
 
 		/// \brief Type of the rect size
-		using size_type = ::bitmap::size< width_type, height_type >;
+		using size_type = ::bmp::size< width_type, height_type >;
 
 
 		/// \brief Constructs a blank rect

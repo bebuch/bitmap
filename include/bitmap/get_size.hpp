@@ -15,7 +15,7 @@
 #include <functional>
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief Get size of the bitmaps, throw if different sizes

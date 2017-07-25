@@ -12,7 +12,7 @@
 #include <stdexcept>
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief Exception class for binary_write and binary_read bitmaps

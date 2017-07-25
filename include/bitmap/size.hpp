@@ -10,7 +10,7 @@
 #define _bitmap__size__hpp_INCLUDED_
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	namespace detail{

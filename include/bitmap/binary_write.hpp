@@ -22,7 +22,7 @@
 #include <cstdint>
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief Write bitmap to std::ostream
@@ -35,7 +35,7 @@ namespace bitmap{
 		boost::endian::order endianness = boost::endian::order::native
 	){
 		static_assert(detail::is_valid_binary_format_v< T >,
-			"Your value_type is not supported by bitmap::binary_write");
+			"Your value_type is not supported by bmp::binary_write");
 
 		using namespace boost::endian;
 		using pixel::channel_count_v;

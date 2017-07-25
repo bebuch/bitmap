@@ -17,7 +17,7 @@
 #include <cmath>
 
 
-namespace bitmap::detail{
+namespace bmp::detail{
 
 
 	template < typename T >
@@ -272,7 +272,7 @@ namespace bitmap::detail{
 }
 
 
-namespace bitmap{
+namespace bmp{
 
 
 	/// \brief Return the pixels in rect as new bitmap, throw if out of range
@@ -283,7 +283,7 @@ namespace bitmap{
 	){
 		detail::subbitmap_check_rect(rect);
 
-		auto const int_rect = ::bitmap::rect(point(
+		auto const int_rect = ::bmp::rect(point(
 				detail::to_size_t(rect.x()),
 				detail::to_size_t(rect.y())
 			), size(
