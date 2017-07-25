@@ -193,13 +193,13 @@ namespace bmp{
 		bitmap.resize(header.width, header.height);
 		auto pixel_count = bitmap.point_count();
 		if constexpr(std::is_same_v< T, bool >){
-			std::vector< big_uint64_t > buffer((pixel_count + 63) / 64);
+			std::vector< big_uint64_t > buffer((pixel_count + 7) / 8);
 			is.read(
 				reinterpret_cast< char* >(buffer.data()),
 				buffer.size());
 			for(std::size_t i = 0; i < pixel_count; ++i){
 				*(bitmap.begin() + i) =
-					(buffer[i / 64] & (1 << (63 - (i % 64)))) != 0;
+					(buffer[i / 8] & (1 << (7 - (i % 8)))) != 0;
 			}
 		}else{
 			is.read(

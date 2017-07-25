@@ -69,18 +69,18 @@ namespace bmp{
 		}
 
 		if constexpr(std::is_same_v< T, bool >){
-			big_uint64_t data = 0;
+			big_uint8_t data = 0;
 			std::size_t i = 0;
 			for(bool v: bitmap){
 				data <<= 1;
 				data |= v ? 1 : 0;
-				if(++i % 64 == 0){
-					os.write(reinterpret_cast< char const* >(&data), 8);
+				if(++i % 8 == 0){
+					os.write(reinterpret_cast< char const* >(&data), 1);
 					data = 0;
 				}
 			}
-			if(i % 64 != 0){
-				os.write(reinterpret_cast< char const* >(&data), 8);
+			if(i % 8 != 0){
+				os.write(reinterpret_cast< char const* >(&data), 1);
 			}
 		}else{
 			os.write(
