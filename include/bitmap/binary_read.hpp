@@ -77,13 +77,14 @@ namespace bmp{
 		};
 	}
 
-	/// \brief Read bitmap from std::istream
+	/// \brief Read binary bitmap format data from std::istream
 	///
 	/// \throw binary_io_error
 	template < typename T >
-	void binary_read(
+	void binary_read_data(
 		bitmap< T >& bitmap,
 		std::istream& is,
+		binary_header const& header,
 		bool ignore_signed = true
 	){
 		static_assert(detail::is_valid_binary_format_v< T >,
@@ -98,9 +99,6 @@ namespace bmp{
 
 		static_assert(sizeof(value_type) <= 256);
 		static_assert(sizeof(T) == sizeof(value_type) * channel_count_v< T >);
-
-
-		auto const header = binary_read_header(is);
 
 		auto const fix_flag = [ignore_signed](binary_type_flags flag){
 				if(!ignore_signed) return flag;
@@ -223,6 +221,19 @@ namespace bmp{
 		if(!is.good()){
 			throw binary_io_error("can't read binary bitmap format data");
 		}
+	}
+
+	/// \brief Read bitmap from std::istream
+	///
+	/// \throw binary_io_error
+	template < typename T >
+	void binary_read(
+		bitmap< T >& bitmap,
+		std::istream& is,
+		bool ignore_signed = true
+	){
+		auto const header = binary_read_header(is);
+		binary_read_data(bitmap, is, header, ignore_signed);
 	}
 
 	/// \brief Read bitmap from std::istream
