@@ -38,18 +38,18 @@ namespace bmp{
 	/// \brief Read binary bitmap format header from std::istream
 	///
 	/// \throw binary_io_error
-	binary_header binary_read_header(std::istream& os){
+	binary_header binary_read_header(std::istream& is){
 		using namespace boost::endian;
 
 		// read the file header
 		big_uint32_t magic;
-		os.read(reinterpret_cast< char* >(&magic), 4);
+		is.read(reinterpret_cast< char* >(&magic), 4);
 		if(magic != detail::io_magic){
 			throw binary_io_error("wrong magic number");
 		}
 
 		big_uint8_t version;
-		os.read(reinterpret_cast< char* >(&version), 1);
+		is.read(reinterpret_cast< char* >(&version), 1);
 		if(version != 0x00){
 			throw binary_io_error("file format version is "
 				+ std::to_string(version)
@@ -62,13 +62,13 @@ namespace bmp{
 		big_uint64_t width;
 		big_uint64_t height;
 
-		os.read(reinterpret_cast< char* >(&size_in_byte),  1);
-		os.read(reinterpret_cast< char* >(&channel_count), 1);
-		os.read(reinterpret_cast< char* >(&flags),         1);
-		os.read(reinterpret_cast< char* >(&width),         8);
-		os.read(reinterpret_cast< char* >(&height),        8);
+		is.read(reinterpret_cast< char* >(&size_in_byte),  1);
+		is.read(reinterpret_cast< char* >(&channel_count), 1);
+		is.read(reinterpret_cast< char* >(&flags),         1);
+		is.read(reinterpret_cast< char* >(&width),         8);
+		is.read(reinterpret_cast< char* >(&height),        8);
 
-		if(!os.good()){
+		if(!is.good()){
 			throw binary_io_error("can't read binary bitmap format header");
 		}
 
@@ -83,7 +83,7 @@ namespace bmp{
 	template < typename T >
 	void binary_read(
 		bitmap< T >& bitmap,
-		std::istream& os,
+		std::istream& is,
 		bool ignore_signed = true
 	){
 		static_assert(detail::is_valid_binary_format_v< T >,
@@ -100,7 +100,7 @@ namespace bmp{
 		static_assert(sizeof(T) == sizeof(value_type) * channel_count_v< T >);
 
 
-		auto const header = binary_read_header(os);
+		auto const header = binary_read_header(is);
 
 		auto const fix_flag = [ignore_signed](binary_type_flags flag){
 				if(!ignore_signed) return flag;
@@ -145,10 +145,10 @@ namespace bmp{
 					}
 				};
 
-			std::ostringstream os;
-			os << "wrong type " << print_type_flag(test_type_flag)
+			std::ostringstream is;
+			is << "wrong type " << print_type_flag(test_type_flag)
 				<< ", expected " << print_type_flag(ref_type_flag);
-			throw binary_io_error(os.str());
+			throw binary_io_error(is.str());
 		}
 
 
@@ -194,7 +194,7 @@ namespace bmp{
 		auto pixel_count = bitmap.point_count();
 		if constexpr(std::is_same_v< T, bool >){
 			std::vector< big_uint64_t > buffer((pixel_count + 63) / 64);
-			os.read(
+			is.read(
 				reinterpret_cast< char* >(buffer.data()),
 				buffer.size());
 			for(std::size_t i = 0; i < pixel_count; ++i){
@@ -202,7 +202,7 @@ namespace bmp{
 					(buffer[i / 64] & (1 << (63 - (i % 64)))) != 0;
 			}
 		}else{
-			os.read(
+			is.read(
 				reinterpret_cast< char* >(bitmap.data()),
 				pixel_count * sizeof(T));
 
@@ -220,7 +220,7 @@ namespace bmp{
 			}
 		}
 
-		if(!os.good()){
+		if(!is.good()){
 			throw binary_io_error("can't read binary bitmap format data");
 		}
 	}
@@ -230,11 +230,11 @@ namespace bmp{
 	/// \throw binary_io_error
 	template < typename T >
 	bitmap< T > binary_read(
-		std::istream& os,
+		std::istream& is,
 		bool ignore_signed = true
 	){
 		bitmap< T > bitmap;
-		binary_read(bitmap, os, ignore_signed);
+		binary_read(bitmap, is, ignore_signed);
 		return bitmap;
 	}
 
