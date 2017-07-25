@@ -69,7 +69,7 @@ namespace bitmap{
 		}
 
 		if constexpr(std::is_same_v< T, bool >){
-			std::uint64_t data = 0;
+			big_uint64_t data = 0;
 			std::size_t i = 0;
 			for(bool v: bitmap){
 				data <<= 1;
