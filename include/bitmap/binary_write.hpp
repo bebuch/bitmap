@@ -86,6 +86,7 @@ namespace bmp{
 				}
 			}
 			if(i % 8 != 0){
+				data <<= (8 - (i % 8));
 				os.write(reinterpret_cast< char const* >(&data), 1);
 			}
 		}else if(endianness == boost::endian::order::native){
