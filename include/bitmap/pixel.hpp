@@ -25,6 +25,16 @@ namespace bmp{ namespace pixel{
 		T a;
 	};
 
+	template < typename T >
+	constexpr bool operator==(basic_ga< T > const& l, basic_ga< T > const& r){
+		return l.g == r.g && l.a == r.a;
+	}
+
+	template < typename T >
+	constexpr bool operator!=(basic_ga< T > const& l, basic_ga< T > const& r){
+		return !(l == r);
+	}
+
 	using ga8   = basic_ga< std::int8_t >;
 	using ga16  = basic_ga< std::int16_t >;
 	using ga32  = basic_ga< std::int32_t >;
@@ -47,6 +57,22 @@ namespace bmp{ namespace pixel{
 		T g;
 		T b;
 	};
+
+	template < typename T >
+	constexpr bool operator==(
+		basic_rgb< T > const& l,
+		basic_rgb< T > const& r
+	){
+		return l.r == r.r && l.g == r.g && l.b == r.b;
+	}
+
+	template < typename T >
+	constexpr bool operator!=(
+		basic_rgb< T > const& l,
+		basic_rgb< T > const& r
+	){
+		return !(l == r);
+	}
 
 	using rgb8   = basic_rgb< std::int8_t >;
 	using rgb16  = basic_rgb< std::int16_t >;
@@ -71,6 +97,22 @@ namespace bmp{ namespace pixel{
 		T b;
 		T a;
 	};
+
+	template < typename T >
+	constexpr bool operator==(
+		basic_rgba< T > const& l,
+		basic_rgba< T > const& r
+	){
+		return l.r == r.r && l.g == r.g && l.b == r.b && l.a == r.a;
+	}
+
+	template < typename T >
+	constexpr bool operator!=(
+		basic_rgba< T > const& l,
+		basic_rgba< T > const& r
+	){
+		return !(l == r);
+	}
 
 	using rgba8   = basic_rgba< std::int8_t >;
 	using rgba16  = basic_rgba< std::int16_t >;

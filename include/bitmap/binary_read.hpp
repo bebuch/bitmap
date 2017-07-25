@@ -141,7 +141,7 @@ namespace bmp{
 						default:
 							throw std::logic_error(
 								"unknown binary_type_flags flag: "
-								+ std::to_string(std::uint8_t(flag)));
+								+ std::to_string(std::uint32_t(flag)));
 					}
 				};
 
@@ -174,7 +174,7 @@ namespace bmp{
 					default:
 						throw std::logic_error(
 							"unknown binary_endian_flags flag: "
-							+ std::to_string(std::uint8_t(flag)));
+							+ std::to_string(std::uint32_t(flag)));
 				}
 			};
 

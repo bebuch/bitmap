@@ -56,7 +56,22 @@ namespace bmp{
 		big_uint8_t const version = 0x00;
 		big_uint8_t const size_in_byte = sizeof(value_type);
 		big_uint8_t const channel_count = channel_count_v< T >;
-		big_uint8_t const flags = detail::binary_io_flags_v< value_type >;
+		auto const endian_flag = [endianness]{
+			switch(endianness){
+				case boost::endian::order::little:
+					return detail::binary_endian_flags::is_little_endian;
+				case boost::endian::order::big:
+					return detail::binary_endian_flags::is_big_endian;
+				default:
+					throw std::logic_error(
+						"unknown boost::endian::order: "
+						+ std::to_string(std::uint32_t(endianness)));
+			}
+		}();
+		big_uint8_t const flags = [endian_flag]()->std::uint8_t{
+				return (detail::binary_io_flags_v< value_type > & 0x0F) |
+					std::uint8_t(endian_flag);
+			}();
 
 		big_uint64_t const width  = bitmap.width();
 		big_uint64_t const height = bitmap.height();
