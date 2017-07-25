@@ -43,6 +43,12 @@ namespace bmp{
 
 		static_assert(sizeof(value_type) <= 256);
 		static_assert(sizeof(T) == sizeof(value_type) * channel_count_v< T >);
+		if constexpr(std::is_floating_point_v< value_type >){
+			if(endianness != boost::endian::order::native){
+				throw std::runtime_error("endian conversion is "
+					"not supported for floating point types");
+			}
+		}
 
 		// header informations
 		big_uint32_t const magic = detail::io_magic;
@@ -82,10 +88,18 @@ namespace bmp{
 			if(i % 8 != 0){
 				os.write(reinterpret_cast< char const* >(&data), 1);
 			}
-		}else{
+		}else if(endianness == boost::endian::order::native){
 			os.write(
 				reinterpret_cast< char const* >(bitmap.data()),
 				width * height * sizeof(T));
+		}else if constexpr(!std::is_floating_point_v< value_type >){
+			for(auto v: bitmap){
+				for(std::size_t i = 0; i < channel_count_v< T >; ++i){
+					auto& c = *(reinterpret_cast< value_type* >(&v) + i);
+					c = endian_reverse(c);
+				}
+				os.write(reinterpret_cast< char const* >(&v), sizeof(T));
+			}
 		}
 
 		if(!os.good()){
