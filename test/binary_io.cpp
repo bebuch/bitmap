@@ -204,3 +204,32 @@ TYPED_TEST(endian_read_write_test, BigRWTest){
 	auto img2 = binary_read< type >(s);
 	EXPECT_EQ(img, img2);
 }
+
+template < typename T >
+struct float_read_write_test: public ::testing::Test{
+	using type = T;
+};
+
+using float_types = ::testing::Types<
+		float
+		, double
+		, pixel::ga32f
+		, pixel::ga64f
+		, pixel::rgb32f
+		, pixel::rgb64f
+		, pixel::rgba32f
+		, pixel::rgba64f
+	>;
+TYPED_TEST_CASE(float_read_write_test, float_types);
+TYPED_TEST(float_read_write_test, RWTest){
+	auto endianness = []{
+		using boost::endian::order;
+		return order::native == order::big ? order::little : order::big;
+	}();
+	using type = typename TestFixture::type;
+	auto img = make< type >(9, 9);
+	std::stringstream s;
+	EXPECT_THROW(binary_write(img, s, endianness), std::runtime_error);
+	EXPECT_THROW(binary_read(img, s), std::runtime_error);
+}
+
