@@ -27,7 +27,7 @@ namespace bmp{
 
 	struct binary_header{
 		uint8_t version;
-		uint8_t size_in_byte;
+		uint8_t channel_size;
 		uint8_t channel_count;
 		uint8_t flags;
 
@@ -56,13 +56,13 @@ namespace bmp{
 				+ ", but only version 0 is supported");
 		}
 
-		big_uint8_t size_in_byte;
+		big_uint8_t channel_size;
 		big_uint8_t channel_count;
 		big_uint8_t flags;
 		big_uint64_t width;
 		big_uint64_t height;
 
-		is.read(reinterpret_cast< char* >(&size_in_byte),  1);
+		is.read(reinterpret_cast< char* >(&channel_size),  1);
 		is.read(reinterpret_cast< char* >(&channel_count), 1);
 		is.read(reinterpret_cast< char* >(&flags),         1);
 		is.read(reinterpret_cast< char* >(&width),         8);
@@ -73,7 +73,7 @@ namespace bmp{
 		}
 
 		return {
-			version, size_in_byte, channel_count, flags, width, height
+			version, channel_size, channel_count, flags, width, height
 		};
 	}
 
@@ -150,9 +150,9 @@ namespace bmp{
 		}
 
 
-		if(header.size_in_byte != sizeof(value_type)){
+		if(header.channel_size != sizeof(value_type)){
 			throw binary_io_error("wrong value_type size "
-				+ std::to_string(header.size_in_byte) + ", expected "
+				+ std::to_string(header.channel_size) + ", expected "
 				+ std::to_string(sizeof(value_type)));
 		}
 
