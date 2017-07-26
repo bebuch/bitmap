@@ -9,10 +9,11 @@
 #ifndef _bitmap__rect__hpp_INCLUDED_
 #define _bitmap__rect__hpp_INCLUDED_
 
-#include <algorithm>
-
 #include "point.hpp"
 #include "size.hpp"
+
+#include <algorithm>
+
 
 namespace bmp{
 
