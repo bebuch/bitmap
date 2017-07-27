@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2016 Benjamin Buch
+// Copyright (c) 2016-2017 Benjamin Buch
 //
 // https://github.com/bebuch/bitmap
 //
