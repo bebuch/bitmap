@@ -26,34 +26,31 @@ namespace bmp{
 		}
 	}
 
-	template < typename T >
-	constexpr matrix3x3< T > invert(matrix3x3< T > const& d){
-		T m[3][6] = {
-			{d.d[0][0], d.d[0][1], d.d[0][2], 1, 0, 0},
-			{d.d[1][0], d.d[1][1], d.d[1][2], 0, 1, 0},
-			{d.d[2][0], d.d[2][1], d.d[2][2], 0, 0, 1}};
+	template < typename T, std::size_t Y, std::size_t X >
+	void gaussian_elimination(T(&m)[Y][X]){
+		static_assert(X > Y);
 
-		for(std::size_t i = 0; i < 3; ++i){
+		for(std::size_t i = 0; i < Y; ++i){
 			if(m[i][i] == 0){
 				std::size_t y = i + 1;
-				for(; y < 3; ++y){
+				for(; y < Y; ++y){
 					if(m[y][i] != 0){
 						swap_lines(m, i, y);
 						break;
 					}
 				}
-				if(y == 3){
+				if(y == Y){
 					throw std::logic_error("can't invert matrix");
 				}
 			}
 
-			for(std::size_t x = i + 1; x < 6; ++x){
+			for(std::size_t x = i + 1; x < X; ++x){
 				m[i][x] /= m[i][i];
 			}
 			m[i][i] = 1;
 
-			for(std::size_t y = i + 1; y < 3; ++y){
-				for(std::size_t x = i + 1; x < 6; ++x){
+			for(std::size_t y = i + 1; y < Y; ++y){
+				for(std::size_t x = i + 1; x < X; ++x){
 					m[y][x] -= m[y][i] * m[i][x];
 				}
 				m[y][i] = 0;
@@ -62,11 +59,21 @@ namespace bmp{
 
 		for(std::size_t i = 2; i > 0; --i){
 			for(std::size_t y = 0; y < i; ++y){
-				for(std::size_t x = 3; x < 6; ++x){
+				for(std::size_t x = Y; x < X; ++x){
 					m[y][x] -= m[y][i] * m[i][x];
 				}
 			}
 		}
+	}
+
+	template < typename T >
+	constexpr matrix3x3< T > invert(matrix3x3< T > const& d){
+		T m[3][6] = {
+			{d.d[0][0], d.d[0][1], d.d[0][2], 1, 0, 0},
+			{d.d[1][0], d.d[1][1], d.d[1][2], 0, 1, 0},
+			{d.d[2][0], d.d[2][1], d.d[2][2], 0, 0, 1}};
+
+		gaussian_elimination(m);
 
 		return matrix3x3< T >{{
 			{m[0][3], m[0][4], m[0][5]},
@@ -86,39 +93,7 @@ namespace bmp{
 			{p1.y(), p2.y(), p3.y(), p4.y()},
 			{1, 1, 1, 1}};
 
-
-		for(std::size_t i = 0; i < 3; ++i){
-			if(m[i][i] == 0){
-				std::size_t y = i + 1;
-				for(; y < 3; ++y){
-					if(m[y][i] != 0){
-						swap_lines(m, i, y);
-						break;
-					}
-				}
-				if(y == 3){
-					throw std::logic_error("can't solve equation");
-				}
-			}
-
-			for(std::size_t x = i + 1; x < 4; ++x){
-				m[i][x] /= m[i][i];
-			}
-			m[i][i] = 1;
-
-			for(std::size_t y = i + 1; y < 3; ++y){
-				for(std::size_t x = i + 1; x < 4; ++x){
-					m[y][x] -= m[y][i] * m[i][x];
-				}
-				m[y][i] = 0;
-			}
-		}
-
-		for(std::size_t i = 2; i > 0; --i){
-			for(std::size_t y = 0; y < i; ++y){
-				m[y][3] -= m[y][i] * m[i][3];
-			}
-		}
+		gaussian_elimination(m);
 
 		return matrix3x3< T >{{
 			{m[0][3] * p1.x(), m[1][3] * p2.x(), m[2][3] * p3.x()},
