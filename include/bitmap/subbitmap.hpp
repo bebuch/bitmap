@@ -11,7 +11,7 @@
 
 #include "bitmap.hpp"
 #include "rect.hpp"
-#include "pixel.hpp"
+#include "interpolate.hpp"
 
 #include <type_traits>
 #include <cmath>
@@ -38,60 +38,6 @@ namespace bmp::detail{
 	}
 
 
-	template < typename FT, typename T >
-	constexpr T interpolate(FT ratio, T a, T b)noexcept{
-		return static_cast< T >(ratio * a + (1 - ratio) * b);
-	}
-
-	template < typename FT, typename T >
-	constexpr pixel::basic_ga< T > interpolate(
-		FT ratio,
-		pixel::basic_ga< T > const& a,
-		pixel::basic_ga< T > const& b
-	)noexcept{
-		return {
-			interpolate(ratio, a.g, b.g),
-			interpolate(ratio, a.a, b.a)
-		};
-	}
-
-	template < typename FT, typename T >
-	constexpr pixel::basic_rgb< T > interpolate(
-		FT ratio,
-		pixel::basic_rgb< T > const& a,
-		pixel::basic_rgb< T > const& b
-	)noexcept{
-		return {
-			interpolate(ratio, a.r, b.r),
-			interpolate(ratio, a.g, b.g),
-			interpolate(ratio, a.b, b.b)
-		};
-	}
-
-	template < typename FT, typename T >
-	constexpr pixel::basic_rgba< T > interpolate(
-		FT ratio,
-		pixel::basic_rgba< T > const& a,
-		pixel::basic_rgba< T > const& b
-	)noexcept{
-		return {
-			interpolate(ratio, a.r, b.r),
-			interpolate(ratio, a.g, b.g),
-			interpolate(ratio, a.b, b.b),
-			interpolate(ratio, a.a, b.a)
-		};
-	}
-
-
-	template < typename FXT, typename FYT, typename T >
-	constexpr T interpolate_2d(
-		FXT x_ratio, FYT y_ratio, T tl, T tr, T bl, T br
-	)noexcept{
-		return interpolate(y_ratio,
-			interpolate(x_ratio, tl, tr), interpolate(x_ratio, bl, br));
-	}
-
-
 	template < typename FXT, typename FYT, typename T >
 	void interpolate_2d(
 		bitmap< T >& target, bitmap< T > const& ref,
@@ -104,7 +50,7 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					interpolate_2d(
+					bmp::interpolate_2d(
 						ratio.x(), ratio.y(),
 						ref(ax, ay), ref(ax + 1, ay),
 						ref(ax, ay + 1), ref(ax + 1, ay + 1));
@@ -125,7 +71,7 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					interpolate(xratio, ref(ax, ay), ref(ax + 1, ay));
+					bmp::interpolate(xratio, ref(ax, ay), ref(ax + 1, ay));
 			}
 		}
 	}
@@ -142,7 +88,7 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					interpolate(y_ratio, ref(ax, ay), ref(ax, ay + 1));
+					bmp::interpolate(y_ratio, ref(ax, ay), ref(ax, ay + 1));
 			}
 		}
 	}
