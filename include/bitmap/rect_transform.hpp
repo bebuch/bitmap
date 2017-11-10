@@ -9,77 +9,15 @@
 #ifndef _bitmap__rect_transform__hpp_INCLUDED_
 #define _bitmap__rect_transform__hpp_INCLUDED_
 
-#include "point.hpp"
+#include "rect.hpp"
 #include "matrix3x3.hpp"
 
 #include <array>
+#include <cmath>
 
 
 namespace bmp{
 
-
-	template < typename T, std::size_t Y, std::size_t X >
-	void swap_lines(T(&m)[Y][X], std::size_t y1, std::size_t y2){
-		for(std::size_t i = 0; i < X; ++i){
-			using std::swap;
-			swap(m[y1][i], m[y2][i]);
-		}
-	}
-
-	template < typename T, std::size_t Y, std::size_t X >
-	void gaussian_elimination(T(&m)[Y][X]){
-		static_assert(X > Y);
-
-		for(std::size_t i = 0; i < Y; ++i){
-			if(m[i][i] == 0){
-				std::size_t y = i + 1;
-				for(; y < Y; ++y){
-					if(m[y][i] != 0){
-						swap_lines(m, i, y);
-						break;
-					}
-				}
-				if(y == Y){
-					throw std::logic_error("can't invert matrix");
-				}
-			}
-
-			for(std::size_t x = i + 1; x < X; ++x){
-				m[i][x] /= m[i][i];
-			}
-			m[i][i] = 1;
-
-			for(std::size_t y = i + 1; y < Y; ++y){
-				for(std::size_t x = i + 1; x < X; ++x){
-					m[y][x] -= m[y][i] * m[i][x];
-				}
-				m[y][i] = 0;
-			}
-		}
-
-		for(std::size_t i = 2; i > 0; --i){
-			for(std::size_t y = 0; y < i; ++y){
-				for(std::size_t x = Y; x < X; ++x){
-					m[y][x] -= m[y][i] * m[i][x];
-				}
-			}
-		}
-	}
-
-	template < typename T >
-	constexpr matrix3x3< T > invert(matrix3x3< T > const& d){
-		T m[3][6] = {
-			{d.d[0][0], d.d[0][1], d.d[0][2], 1, 0, 0},
-			{d.d[1][0], d.d[1][1], d.d[1][2], 0, 1, 0},
-			{d.d[2][0], d.d[2][1], d.d[2][2], 0, 0, 1}};
-
-		gaussian_elimination(m);
-
-		return matrix3x3< T >{{
-			{m[0][3], m[0][4], m[0][5]},
-			{m[1][3], m[1][4], m[1][5]},
-			{m[2][3], m[2][4], m[2][5]}}};
-	}
 
 	template < typename T >
 	constexpr matrix3x3< T > solve(std::array< point< T >, 4 > const& points){
@@ -121,7 +59,7 @@ namespace bmp{
 	}
 
 	template < typename T >
-	constexpr point< T > convert(
+	constexpr point< T > transform(
 		matrix3x3< T > const& m,
 		point< T > const& p
 	){
@@ -144,6 +82,43 @@ namespace bmp{
 		std::array< point< T >, 4 > const& to
 	){
 		return solve(to) * invert(solve(from));
+	}
+
+	template < typename T >
+	std::array< point< T >, 4 > transform_image_contour(
+		matrix3x3< T > const& homography,
+		size< std::size_t > const& image_size
+	){
+		return {
+				transform(homography, point< T >{0, 0}),
+				transform(homography,
+					point< T >{static_cast< T >(image_size.width()), 0}),
+				transform(homography,
+					point< T >{0, static_cast< T >(image_size.height())}),
+				transform(homography, to_point< T >(image_size))
+			};
+	}
+
+	template < typename T >
+	rect< long, long, std::size_t, std::size_t > image_contour(
+		std::array< point< T >, 4 > const& c
+	){
+		using std::min;
+		using std::max;
+		return {
+				point< long >{
+					static_cast< long >(std::floor(
+						min(min(c[0].x(), c[1].x()), min(c[2].x(), c[3].x())))),
+					static_cast< long >(std::floor(
+						min(min(c[0].y(), c[1].y()), min(c[2].y(), c[3].y())))),
+				},
+				point< long >{
+					static_cast< long >(std::floor(
+						max(max(c[0].x(), c[1].x()), max(c[2].x(), c[3].x())))),
+					static_cast< long >(std::floor(
+						max(max(c[0].y(), c[1].y()), max(c[2].y(), c[3].y())))),
+				}
+			};
 	}
 
 
