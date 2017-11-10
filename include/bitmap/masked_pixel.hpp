@@ -24,23 +24,29 @@ namespace bmp{ namespace pixel{
 	};
 
 	template < typename T >
-	constexpr bool operator==(basic_ga< T > const& l, basic_ga< T > const& r){
-		return l.g == r.g && l.a == r.a;
+	constexpr bool operator==(
+		basic_masked_pixel< T > const& l,
+		basic_masked_pixel< T > const& r
+	){
+		return l.v == r.v && l.m == r.m;
 	}
 
 	template < typename T >
-	constexpr bool operator!=(basic_ga< T > const& l, basic_ga< T > const& r){
+	constexpr bool operator!=(
+		basic_masked_pixel< T > const& l,
+		basic_masked_pixel< T > const& r
+	){
 		return !(l == r);
 	}
 
-	using masked_g8   = basic_masked_pixel< std::int8_t > >;
-	using masked_g16  = basic_masked_pixel< std::int16_t > >;
-	using masked_g32  = basic_masked_pixel< std::int32_t > >;
-	using masked_g64  = basic_masked_pixel< std::int64_t > >;
-	using masked_g8u  = basic_masked_pixel< std::uint8_t > >;
-	using masked_g16u = basic_masked_pixel< std::uint16_t > >;
-	using masked_g32u = basic_masked_pixel< std::uint32_t > >;
-	using masked_g64u = basic_masked_pixel< std::uint64_t > >;
+	using masked_g8   = basic_masked_pixel< std::int8_t >;
+	using masked_g16  = basic_masked_pixel< std::int16_t >;
+	using masked_g32  = basic_masked_pixel< std::int32_t >;
+	using masked_g64  = basic_masked_pixel< std::int64_t >;
+	using masked_g8u  = basic_masked_pixel< std::uint8_t >;
+	using masked_g16u = basic_masked_pixel< std::uint16_t >;
+	using masked_g32u = basic_masked_pixel< std::uint32_t >;
+	using masked_g64u = basic_masked_pixel< std::uint64_t >;
 
 	using masked_ga8   = basic_masked_pixel< basic_ga< std::int8_t > >;
 	using masked_ga16  = basic_masked_pixel< basic_ga< std::int16_t > >;

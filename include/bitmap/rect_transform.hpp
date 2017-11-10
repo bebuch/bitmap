@@ -9,11 +9,15 @@
 #ifndef _bitmap__rect_transform__hpp_INCLUDED_
 #define _bitmap__rect_transform__hpp_INCLUDED_
 
+#include "bitmap.hpp"
 #include "rect.hpp"
+#include "masked_pixel.hpp"
+#include "interpolate.hpp"
 #include "matrix3x3.hpp"
 
 #include <array>
 #include <cmath>
+#include <limits>
 
 
 namespace bmp{
@@ -59,7 +63,7 @@ namespace bmp{
 	}
 
 	template < typename T >
-	constexpr point< T > transform(
+	constexpr point< T > transform_point(
 		matrix3x3< T > const& m,
 		point< T > const& p
 	){
@@ -90,12 +94,12 @@ namespace bmp{
 		size< std::size_t > const& image_size
 	){
 		return {
-				transform(homography, point< T >{0, 0}),
-				transform(homography,
+				transform_point(homography, point< T >{0, 0}),
+				transform_point(homography,
 					point< T >{static_cast< T >(image_size.width()), 0}),
-				transform(homography,
+				transform_point(homography,
 					point< T >{0, static_cast< T >(image_size.height())}),
-				transform(homography, to_point< T >(image_size))
+				transform_point(homography, to_point< T >(image_size))
 			};
 	}
 
@@ -119,6 +123,72 @@ namespace bmp{
 						max(max(c[0].y(), c[1].y()), max(c[2].y(), c[3].y())))),
 				}
 			};
+	}
+
+	template < typename TVT, typename VT, typename T >
+	auto transform_bitmap(
+		matrix3x3< T > const& homography,
+		bitmap< VT > const& image,
+		rect< long, long, std::size_t, std::size_t > const& target_contour
+	){
+		using pixel_type = std::conditional_t<
+			std::numeric_limits< TVT >::has_quiet_NaN,
+			TVT, pixel::basic_masked_pixel< TVT > >;
+
+		bitmap< pixel_type > result(target_contour.size());
+
+		for(std::size_t y = 0; y < result.height(); ++y){
+			for(std::size_t x = 0; x < result.width(); ++x){
+				auto const source_point = transform_point(homography,
+					point< T >{
+						static_cast< T >(x) +
+						static_cast< T >(target_contour.x()),
+						static_cast< T >(y) +
+						static_cast< T >(target_contour.y())
+					});
+
+				auto const source_x = std::floor(source_point.x());
+				auto const source_y = std::floor(source_point.y());
+
+				if(
+					source_x < 0 || source_y < 0 ||
+					source_x + 1 >= image.width() ||
+					source_y + 1 >= image.height()
+				){
+					if constexpr(std::numeric_limits< TVT >::has_quiet_NaN){
+						result(x, y) = std::numeric_limits< TVT >::quiet_NaN();
+					}else{
+						result(x, y).m = false;
+					}
+				}else{
+					auto const ratio_x = source_point.x() - source_x;
+					auto const ratio_y = source_point.y() - source_y;
+					auto const sx = static_cast< std::size_t >(source_x);
+					auto const sy = static_cast< std::size_t >(source_y);
+					TVT v = interpolate_2d(
+						ratio_x, ratio_y,
+						image(sx, sy), image(sx + 1, sy),
+						image(sx, sy + 1), image(sx + 1, sy + 1));
+					if constexpr(std::numeric_limits< TVT >::has_quiet_NaN){
+						result(x, y) = v;
+					}else{
+						result(x, y).v = v;
+						result(x, y).m = true;
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	template < typename VT, typename T >
+	auto transform_bitmap(
+		matrix3x3< T > const& homography,
+		bitmap< VT > const& image,
+		rect< long, long, std::size_t, std::size_t > const& target_contour
+	){
+		return transform_bitmap< VT, VT, T >(homography, image, target_contour);
 	}
 
 

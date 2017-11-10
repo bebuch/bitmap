@@ -22,14 +22,14 @@ TEST(RectTransformTest, Test){
 		{{{10, 10}, {20, 10}, {10, 20}, {20, 20}}};
 
 	auto const c = bmp::rect_transform_homography(from, to);
-	EXPECT_TRUE(nearly_eq(to[0], transform(c, from[0])));
-	EXPECT_TRUE(nearly_eq(to[1], transform(c, from[1])));
-	EXPECT_TRUE(nearly_eq(to[2], transform(c, from[2])));
-	EXPECT_TRUE(nearly_eq(to[3], transform(c, from[3])));
+	EXPECT_TRUE(nearly_eq(to[0], transform_point(c, from[0])));
+	EXPECT_TRUE(nearly_eq(to[1], transform_point(c, from[1])));
+	EXPECT_TRUE(nearly_eq(to[2], transform_point(c, from[2])));
+	EXPECT_TRUE(nearly_eq(to[3], transform_point(c, from[3])));
 
 
-	auto const contour
-		= transform_image_contour(c, bmp::size< std::size_t >{300, 300});
+	auto const image_size = bmp::size< std::size_t >{300, 300};
+	auto const contour = transform_image_contour(c, image_size);
 
 	{
 		using ::io_tools::std_array::operator<<;
@@ -38,4 +38,12 @@ TEST(RectTransformTest, Test){
 
 	auto ic = bmp::image_contour(contour);
 	std::cout << ic << '\n';
+
+	bmp::bitmap< std::uint8_t > source(image_size);
+
+	auto const target = transform_bitmap(invert(c), source, ic);
+	std::cout << target.size() << '\n';
+
+	auto const target_d = bmp::transform_bitmap< double >(invert(c), source, ic);
+	std::cout << target_d.size() << '\n';
 }
