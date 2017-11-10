@@ -107,34 +107,34 @@ namespace bmp{
 	};
 
 
-	template < typename XT, typename YT >
+	template < typename WT, typename HT >
 	constexpr bool operator==(
-		size< XT, YT > const& a,
-		size< XT, YT > const& b
+		size< WT, HT > const& a,
+		size< WT, HT > const& b
 	){
 		return a.width() == b.width() && a.height() == b.height();
 	}
 
-	template < typename XT, typename YT >
+	template < typename WT, typename HT >
 	constexpr bool operator!=(
-		size< XT, YT > const& a,
-		size< XT, YT > const& b
+		size< WT, HT > const& a,
+		size< WT, HT > const& b
 	){
 		return !(a == b);
 	}
 
 
-	template < typename XT, typename YT >
+	template < typename WT, typename HT >
 	class point;
 
-	template < typename XT, typename YT >
-	point< XT, YT > to_point(size< XT, YT > const& s){
+	template < typename WT, typename HT >
+	point< WT, HT > to_point(size< WT, HT > const& s){
 		return {s.width(), s.height()};
 	}
 
-	template < typename PXT, typename PYT = PXT, typename SXT, typename SYT >
-	point< PXT, PYT > to_point(size< SXT, SYT > const& s){
-		return {static_cast< PXT >(s.width()), static_cast< PYT >(s.height())};
+	template < typename XT, typename YT = XT, typename WT, typename HT >
+	point< XT, YT > to_point(size< WT, HT > const& s){
+		return {static_cast< XT >(s.width()), static_cast< YT >(s.height())};
 	}
 
 
