@@ -17,21 +17,21 @@
 namespace bmp{
 
 
-	template < typename charT, typename traits, typename T >
+	template < typename charT, typename traits, typename XT, typename YT >
 	std::basic_ostream< charT, traits >& operator<<(
 		std::basic_ostream< charT, traits >& os,
-		point< T > const& data
+		point< XT, YT > const& data
 	){
 		return os << data.x() << "x" << data.y();
 	}
 
 
-	template < typename charT, typename traits, typename T >
+	template < typename charT, typename traits, typename XT, typename YT >
 	std::basic_istream< charT, traits >& operator>>(
 		std::basic_istream< charT, traits >& is,
-		point< T >& data
+		point< XT, YT >& data
 	){
-		point< T > tmp;
+		point< XT, YT > tmp;
 		is >> tmp.x();
 		if(!io_tools::expect(is, 'x')) return is;
 		is >> tmp.y();

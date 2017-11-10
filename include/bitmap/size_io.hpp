@@ -17,21 +17,21 @@
 namespace bmp{
 
 
-	template < typename charT, typename traits, typename T >
+	template < typename charT, typename traits, typename WT, typename HT >
 	std::basic_ostream< charT, traits >& operator<<(
 		std::basic_ostream< charT, traits >& os,
-		size< T > const& data
+		size< WT, HT > const& data
 	){
 		return os << data.width() << "x" << data.height();
 	}
 
 
-	template < typename charT, typename traits, typename T >
+	template < typename charT, typename traits, typename WT, typename HT >
 	std::basic_istream< charT, traits >& operator>>(
 		std::basic_istream< charT, traits >& is,
-		size< T >& data
+		size< WT, HT >& data
 	){
-		size< T > tmp;
+		size< WT, HT > tmp;
 		is >> tmp.width();
 		if(!io_tools::expect(is, 'x')) return is;
 		is >> tmp.height();
