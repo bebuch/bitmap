@@ -107,14 +107,34 @@ namespace bmp{
 	};
 
 
-	template < typename T >
-	constexpr bool operator==(size< T > const& a, size< T > const& b){
+	template < typename XT, typename YT >
+	constexpr bool operator==(
+		size< XT, YT > const& a,
+		size< XT, YT > const& b
+	){
 		return a.width() == b.width() && a.height() == b.height();
 	}
 
-	template < typename T >
-	constexpr bool operator!=(size< T > const& a, size< T > const& b){
+	template < typename XT, typename YT >
+	constexpr bool operator!=(
+		size< XT, YT > const& a,
+		size< XT, YT > const& b
+	){
 		return !(a == b);
+	}
+
+
+	template < typename XT, typename YT >
+	class point;
+
+	template < typename XT, typename YT >
+	point< XT, YT > to_point(size< XT, YT > const& s){
+		return {s.width(), s.height()};
+	}
+
+	template < typename PXT, typename PYT = PXT, typename SXT, typename SYT >
+	point< PXT, PYT > to_point(size< SXT, SYT > const& s){
+		return {static_cast< PXT >(s.width()), static_cast< PYT >(s.height())};
 	}
 
 
