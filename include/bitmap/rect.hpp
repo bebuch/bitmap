@@ -90,8 +90,8 @@ namespace bmp{
 		constexpr rect(pos_type const& top_left, pos_type const& bottom_right):
 			top_left_(top_left),
 			size_(
-				bottom_right.x() - top_left.x() + 1,
-				bottom_right.y() - top_left.y() + 1)
+				static_cast< width_type >(bottom_right.x() - top_left.x() + 1),
+				static_cast< height_type >(bottom_right.y() - top_left.y() + 1))
 			{}
 
 		/// \brief Constructs a rect on position (top_left.x, top_left.y), with
