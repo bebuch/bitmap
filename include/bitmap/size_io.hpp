@@ -36,7 +36,9 @@ namespace bmp{
 		if(!io_tools::expect(is, 'x')) return is;
 		is >> tmp.height();
 
-		data = std::move(tmp);
+		if(is){
+			data = std::move(tmp);
+		}
 
 		return is;
 	}
