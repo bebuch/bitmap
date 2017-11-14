@@ -161,8 +161,8 @@ namespace bmp{
 						result(x, y).m = false;
 					}
 				}else{
-					auto const ratio_x = source_point.x() - source_x;
-					auto const ratio_y = source_point.y() - source_y;
+					auto const ratio_x = 1 - (source_point.x() - source_x);
+					auto const ratio_y = 1 - (source_point.y() - source_y);
 					auto const sx = static_cast< std::size_t >(source_x);
 					auto const sy = static_cast< std::size_t >(source_y);
 					TVT v = interpolate_2d(
