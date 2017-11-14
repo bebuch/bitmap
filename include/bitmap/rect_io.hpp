@@ -17,10 +17,10 @@
 namespace bmp{
 
 
-	template < typename charT, typename traits,
+	template < typename CharT, typename Traits,
 		typename XT, typename YT, typename WT, typename HT >
-	std::basic_ostream< charT, traits >& operator<<(
-		std::basic_ostream< charT, traits >& os,
+	std::basic_ostream< CharT, Traits >& operator<<(
+		std::basic_ostream< CharT, Traits >& os,
 		rect< XT, YT, WT, HT > const& data
 	){
 		return os << data.top_left() << ":" << data.size();
