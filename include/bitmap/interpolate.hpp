@@ -17,7 +17,7 @@ namespace bmp{
 
 	template < typename FT, typename T >
 	constexpr T interpolate(FT ratio, T a, T b)noexcept{
-		return static_cast< T >(ratio * a + (1 - ratio) * b);
+		return static_cast< T >((1 - ratio) * a + ratio * b);
 	}
 
 	template < typename FT, typename T >

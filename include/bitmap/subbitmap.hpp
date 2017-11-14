@@ -206,8 +206,8 @@ namespace bmp::detail{
 			}
 
 			auto const ratio = point(
-				1 - (top_left.x() - std::floor(top_left.x())),
-				1 - (top_left.y() - std::floor(top_left.y())));
+				top_left.x() - std::floor(top_left.x()),
+				top_left.y() - std::floor(top_left.y()));
 			bitmap< T > result(int_rect.size());
 			interpolate_2d(result, org, int_rect, ratio);
 			return result;
