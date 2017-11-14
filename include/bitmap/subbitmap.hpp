@@ -50,10 +50,10 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					bmp::interpolate_2d(
+					static_cast< T >(bmp::interpolate_2d(
 						ratio.x(), ratio.y(),
 						ref(ax, ay), ref(ax + 1, ay),
-						ref(ax, ay + 1), ref(ax + 1, ay + 1));
+						ref(ax, ay + 1), ref(ax + 1, ay + 1)));
 			}
 		}
 	}
@@ -71,7 +71,8 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					bmp::interpolate(xratio, ref(ax, ay), ref(ax + 1, ay));
+					static_cast< T >(bmp::interpolate(
+						xratio, ref(ax, ay), ref(ax + 1, ay)));
 			}
 		}
 	}
@@ -88,7 +89,8 @@ namespace bmp::detail{
 				auto const ax = rect.x() + x;
 				auto const ay = rect.y() + y;
 				target(target_start.x() + x, target_start.y() + y) =
-					bmp::interpolate(y_ratio, ref(ax, ay), ref(ax, ay + 1));
+					static_cast< T >(bmp::interpolate(
+						y_ratio, ref(ax, ay), ref(ax, ay + 1)));
 			}
 		}
 	}

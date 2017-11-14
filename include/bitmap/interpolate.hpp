@@ -11,17 +11,21 @@
 
 #include "pixel.hpp"
 
+#include <type_traits>
+
 
 namespace bmp{
 
 
 	template < typename FT, typename T >
-	constexpr T interpolate(FT ratio, T a, T b)noexcept{
-		return static_cast< T >((1 - ratio) * a + ratio * b);
+	constexpr std::common_type_t< T, FT > interpolate(
+		FT ratio, T a, T b
+	)noexcept{
+		return (1 - ratio) * a + ratio * b;
 	}
 
 	template < typename FT, typename T >
-	constexpr pixel::basic_ga< T > interpolate(
+	constexpr pixel::basic_ga< std::common_type_t< T, FT > > interpolate(
 		FT ratio,
 		pixel::basic_ga< T > const& a,
 		pixel::basic_ga< T > const& b
@@ -33,7 +37,7 @@ namespace bmp{
 	}
 
 	template < typename FT, typename T >
-	constexpr pixel::basic_rgb< T > interpolate(
+	constexpr pixel::basic_rgb< std::common_type_t< T, FT > > interpolate(
 		FT ratio,
 		pixel::basic_rgb< T > const& a,
 		pixel::basic_rgb< T > const& b
@@ -46,7 +50,7 @@ namespace bmp{
 	}
 
 	template < typename FT, typename T >
-	constexpr pixel::basic_rgba< T > interpolate(
+	constexpr pixel::basic_rgba< std::common_type_t< T, FT > > interpolate(
 		FT ratio,
 		pixel::basic_rgba< T > const& a,
 		pixel::basic_rgba< T > const& b
@@ -61,7 +65,7 @@ namespace bmp{
 
 
 	template < typename FXT, typename FYT, typename T >
-	constexpr T interpolate_2d(
+	constexpr auto interpolate_2d(
 		FXT x_ratio, FYT y_ratio, T tl, T tr, T bl, T br
 	)noexcept{
 		return interpolate(y_ratio,

@@ -21,6 +21,15 @@ namespace bmp{ namespace pixel{
 
 		static constexpr std::size_t channel_count = 2;
 
+		template < typename U >
+		explicit constexpr operator basic_ga< U >()
+		noexcept(noexcept(static_cast< U >(std::declval< T >()))){
+			return {
+					static_cast< U >(g),
+					static_cast< U >(a)
+				};
+		}
+
 		T g;
 		T a;
 	};
@@ -52,6 +61,16 @@ namespace bmp{ namespace pixel{
 		using value_type = T;
 
 		static constexpr std::size_t channel_count = 3;
+
+		template < typename U >
+		explicit constexpr operator basic_rgb< U >()
+		noexcept(noexcept(static_cast< U >(std::declval< T >()))){
+			return {
+					static_cast< U >(r),
+					static_cast< U >(g),
+					static_cast< U >(b)
+				};
+		}
 
 		T r;
 		T g;
@@ -91,6 +110,17 @@ namespace bmp{ namespace pixel{
 		using value_type = T;
 
 		static constexpr std::size_t channel_count = 4;
+
+		template < typename U >
+		explicit constexpr operator basic_rgba< U >()
+		noexcept(noexcept(static_cast< U >(std::declval< T >()))){
+			return {
+					static_cast< U >(r),
+					static_cast< U >(g),
+					static_cast< U >(b),
+					static_cast< U >(a)
+				};
+		}
 
 		T r;
 		T g;
