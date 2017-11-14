@@ -12,29 +12,30 @@
 #include "size.hpp"
 
 #include <io_tools/expect.hpp>
+#include <io_tools/input_wrapper.hpp>
 
 
 namespace bmp{
 
 
-	template < typename charT, typename traits, typename WT, typename HT >
-	std::basic_ostream< charT, traits >& operator<<(
-		std::basic_ostream< charT, traits >& os,
+	template < typename CharT, typename Traits, typename WT, typename HT >
+	std::basic_ostream< CharT, Traits >& operator<<(
+		std::basic_ostream< CharT, Traits >& os,
 		size< WT, HT > const& data
 	){
 		return os << data.width() << "x" << data.height();
 	}
 
 
-	template < typename charT, typename traits, typename WT, typename HT >
-	std::basic_istream< charT, traits >& operator>>(
-		std::basic_istream< charT, traits >& is,
+	template < typename CharT, typename Traits, typename WT, typename HT >
+	std::basic_istream< CharT, Traits >& operator>>(
+		std::basic_istream< CharT, Traits >& is,
 		size< WT, HT >& data
 	){
 		size< WT, HT > tmp;
-		is >> tmp.width();
+		is >> io_tools::input_wrapper(tmp.width());
 		if(!io_tools::expect(is, 'x')) return is;
-		is >> tmp.height();
+		is >> io_tools::input_wrapper(tmp.height());
 
 		if(is){
 			data = std::move(tmp);
