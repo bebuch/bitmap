@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2017 Benjamin Buch
+// Copyright (c) 2017-2018 Benjamin Buch
 //
 // https://github.com/bebuch/bitmap
 //
@@ -131,9 +131,10 @@ namespace bmp{
 		bitmap< VT > const& image,
 		rect< long, long, std::size_t, std::size_t > const& target_contour
 	){
+		constexpr auto has_quiet_NaN =
+			std::numeric_limits< pixel::channel_type_t< TVT > >::has_quiet_NaN;
 		using pixel_type = std::conditional_t<
-			std::numeric_limits< TVT >::has_quiet_NaN,
-			TVT, pixel::basic_masked_pixel< TVT > >;
+			has_quiet_NaN, TVT, pixel::basic_masked_pixel< TVT > >;
 
 		bitmap< pixel_type > result(target_contour.size());
 
@@ -155,8 +156,10 @@ namespace bmp{
 					source_x + 1 >= image.width() ||
 					source_y + 1 >= image.height()
 				){
-					if constexpr(std::numeric_limits< TVT >::has_quiet_NaN){
-						result(x, y) = std::numeric_limits< TVT >::quiet_NaN();
+					if constexpr(has_quiet_NaN){
+						result(x, y) = pixel::fill_channels< TVT >(
+							std::numeric_limits< pixel::channel_type_t< TVT > >
+								::quiet_NaN());
 					}else{
 						result(x, y).m = false;
 					}
@@ -165,11 +168,11 @@ namespace bmp{
 					auto const ratio_y = source_point.y() - source_y;
 					auto const sx = static_cast< std::size_t >(source_x);
 					auto const sy = static_cast< std::size_t >(source_y);
-					TVT v = interpolate_2d(
+					auto v = static_cast< TVT >(interpolate_2d(
 						ratio_x, ratio_y,
 						image(sx, sy), image(sx + 1, sy),
-						image(sx, sy + 1), image(sx + 1, sy + 1));
-					if constexpr(std::numeric_limits< TVT >::has_quiet_NaN){
+						image(sx, sy + 1), image(sx + 1, sy + 1)));
+					if constexpr(has_quiet_NaN){
 						result(x, y) = v;
 					}else{
 						result(x, y).v = v;

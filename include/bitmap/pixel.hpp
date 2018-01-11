@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2016-2017 Benjamin Buch
+// Copyright (c) 2016-2018 Benjamin Buch
 //
 // https://github.com/bebuch/bitmap
 //
@@ -20,6 +20,11 @@ namespace bmp{ namespace pixel{
 		using value_type = T;
 
 		static constexpr std::size_t channel_count = 2;
+
+		template < typename U >
+		using with_channel_type = basic_ga< U >;
+
+		static basic_ga< T > fill_channels(T const& v){ return {v, v}; }
 
 		template < typename U >
 		explicit constexpr operator basic_ga< U >()
@@ -61,6 +66,11 @@ namespace bmp{ namespace pixel{
 		using value_type = T;
 
 		static constexpr std::size_t channel_count = 3;
+
+		template < typename U >
+		using with_channel_type = basic_rgb< U >;
+
+		static basic_rgb< T > fill_channels(T const& v){ return {v, v, v}; }
 
 		template < typename U >
 		explicit constexpr operator basic_rgb< U >()
@@ -110,6 +120,11 @@ namespace bmp{ namespace pixel{
 		using value_type = T;
 
 		static constexpr std::size_t channel_count = 4;
+
+		template < typename U >
+		using with_channel_type = basic_rgba< U >;
+
+		static basic_rgba< T > fill_channels(T const& v){ return {v, v, v, v}; }
 
 		template < typename U >
 		explicit constexpr operator basic_rgba< U >()
@@ -186,6 +201,20 @@ namespace bmp{ namespace pixel{
 	using channel_type_t = typename channel_type< T >::type;
 
 
+	template < typename T, typename U, bool = is_pixel_type_v< T > >
+	struct with_channel_type{
+		using type = U;
+	};
+
+	template < typename T, typename U >
+	struct with_channel_type< T, U, true >{
+		using type = typename T::template with_channel_type< U >;
+	};
+
+	template < typename T, typename U >
+	using with_channel_type_t = typename with_channel_type< T, U >::type;
+
+
 	template < typename T, bool = is_pixel_type_v< T > >
 	struct channel_count: std::integral_constant< std::size_t, 1 >{};
 
@@ -195,6 +224,23 @@ namespace bmp{ namespace pixel{
 
 	template < typename T >
 	constexpr std::size_t channel_count_v = channel_count< T >::value;
+
+
+	template < typename T, bool = is_pixel_type_v< T > >
+	struct fill_channels_type{
+		constexpr T operator()(T&& v){ return static_cast< T&& >(v); }
+		constexpr T operator()(T const& v){ return v; }
+	};
+
+	template < typename T >
+	struct fill_channels_type< T, true >{
+		constexpr auto operator()(channel_type_t< T > const& v){
+			return T::fill_channels(v);
+		}
+	};
+
+	template < typename T >
+	fill_channels_type< T > fill_channels{};
 
 
 
