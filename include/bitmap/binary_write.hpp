@@ -133,10 +133,7 @@ namespace bmp{
 		std::string const& filename,
 		boost::endian::order endianness = boost::endian::order::native
 	){
-		std::ofstream os(
-			filename.c_str(),
-			std::ios_base::out | std::ios_base::binary
-		);
+		std::ofstream os(filename.c_str(), std::ios_base::binary);
 
 		if(!os.is_open()){
 			throw binary_io_error("can't open file: " + filename);

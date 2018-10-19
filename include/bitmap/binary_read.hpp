@@ -272,10 +272,7 @@ namespace bmp{
 		std::string const& filename,
 		bool ignore_signed = true
 	){
-		std::ifstream is(
-			filename.c_str(),
-			std::ios_base::in | std::ios_base::binary
-		);
+		std::ifstream is(filename.c_str(), std::ios_base::binary);
 
 		if(!is.is_open()){
 			throw binary_io_error("can't open file: " + filename);
