@@ -10,6 +10,7 @@
 #define _bitmap__pixel__hpp_INCLUDED_
 
 #include <cstdint>
+#include <utility>
 
 
 namespace bmp{ namespace pixel{
