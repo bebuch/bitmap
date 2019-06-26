@@ -280,12 +280,12 @@ namespace bmp{
 		/// \brief Get the number of points in the bitmap with requested type
 		template < typename U >
 		U point_count_as()const{
-			auto point_count = point_count();
-			if(point_count > this->max< U >()){
+			auto count = point_count();
+			if(count > this->max< U >()){
 				throw std::runtime_error(
 					"point count is to big for requested type");
 			}
-			return static_cast< U >(point_count);
+			return static_cast< U >(count);
 		}
 
 
