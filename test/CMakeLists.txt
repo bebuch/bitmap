@@ -1,7 +1,7 @@
 # cmake_minimum_required(VERSION 3.8)
 
 include_directories("../include")
-include_directories("../../io_tools/include")
+include_directories("../3rdparty/io_tools/include")
 
 find_package(GTest REQUIRED)
 find_package(Boost REQUIRED)

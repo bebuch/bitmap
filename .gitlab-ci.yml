@@ -1,0 +1,19 @@
+# build and deploy with gcc
+gcc:
+  image: tuiqbv/gcc-boost:latest
+  stage: build
+  before_script:
+    - scripts/setup.sh
+  script:
+    - scripts/build.sh gcc debug
+    - scripts/build.sh gcc release
+
+# build and deploy with clang
+llvm:
+  image: tuiqbv/clang-boost:latest
+  stage: build
+  before_script:
+    - scripts/setup.sh
+  script:
+    - scripts/build.sh clang debug
+    - scripts/build.sh clang release

@@ -1,0 +1,3 @@
+[submodule "3rdparty/io_tools"]
+	path = 3rdparty/io_tools
+	url = https://github.com/bebuch/io_tools.git
