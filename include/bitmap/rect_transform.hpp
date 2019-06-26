@@ -104,7 +104,7 @@ namespace bmp{
 	}
 
 	template < typename T >
-	rect< long, long, std::size_t, std::size_t > image_contour(
+	rect< long, std::size_t > image_contour(
 		std::array< point< T >, 4 > const& c
 	){
 		using std::min;
@@ -129,7 +129,7 @@ namespace bmp{
 	auto transform_bitmap(
 		matrix3x3< T > const& homography,
 		bitmap< VT > const& image,
-		rect< long, long, std::size_t, std::size_t > const& target_contour
+		rect< long, std::size_t > const& target_contour
 	){
 		constexpr auto has_quiet_NaN =
 			std::numeric_limits< pixel::channel_type_t< TVT > >::has_quiet_NaN;
@@ -189,7 +189,7 @@ namespace bmp{
 	auto transform_bitmap(
 		matrix3x3< T > const& homography,
 		bitmap< VT > const& image,
-		rect< long, long, std::size_t, std::size_t > const& target_contour
+		rect< long, std::size_t > const& target_contour
 	){
 		return transform_bitmap< VT, VT, T >(homography, image, target_contour);
 	}

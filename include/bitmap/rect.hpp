@@ -21,9 +21,9 @@ namespace bmp{
 	/// \brief A class for manipulating rectangles
 	template <
 		typename XT,
-		typename YT = XT,
 		typename WT = XT,
-		typename HT = YT >
+		typename YT = XT,
+		typename HT = WT >
 	class rect{
 	public:
 		/// \brief Type of the x position
@@ -299,29 +299,29 @@ namespace bmp{
 
 
 	/// \brief true, if the rectangles are identical; false otherwise
-	template < typename XT, typename YT, typename WT, typename HT >
+	template < typename XT, typename WT, typename YT, typename HT >
 	constexpr bool operator==(
-		rect< XT, YT, WT, HT > const& l,
-		rect< XT, YT, WT, HT > const& r
+		rect< XT, WT, YT, HT > const& l,
+		rect< XT, WT, YT, HT > const& r
 	){
 		return l.top_left() == r.top_left() && l.size() == r.size();
 	}
 
 	/// \brief false, if the rectangles are identical; true otherwise
-	template < typename XT, typename YT, typename WT, typename HT >
+	template < typename XT, typename WT, typename YT, typename HT >
 	constexpr bool operator!=(
-		rect< XT, YT, WT, HT > const& l,
-		rect< XT, YT, WT, HT > const& r
+		rect< XT, WT, YT, HT > const& l,
+		rect< XT, WT, YT, HT > const& r
 	){
 		return !(l == r);
 	}
 
 
 	/// \brief Get a rect that contains both rects
-	template < typename XT, typename YT, typename WT, typename HT >
+	template < typename XT, typename WT, typename YT, typename HT >
 	constexpr auto join(
-		rect< XT, YT, WT, HT > const& l,
-		rect< XT, YT, WT, HT > const& r
+		rect< XT, WT, YT, HT > const& l,
+		rect< XT, WT, YT, HT > const& r
 	){
 		return rect< XT, YT, WT, HT >(
 			point< XT, YT >(
@@ -337,10 +337,10 @@ namespace bmp{
 
 
 	/// \brief Get true, if point is in rect
-	template < typename XT, typename YT, typename WT, typename HT,
+	template < typename XT, typename WT, typename YT, typename HT,
 		typename PXT, typename PYT >
 	constexpr bool contains(
-		rect< XT, YT, WT, HT > const& rect,
+		rect< XT, WT, YT, HT > const& rect,
 		point< PXT, PYT > const& point
 	){
 		return
@@ -351,10 +351,10 @@ namespace bmp{
 	}
 
 	/// \brief Get true, if test is in reference
-	template < typename XT, typename YT, typename WT, typename HT >
+	template < typename XT, typename WT, typename YT, typename HT >
 	constexpr bool contains(
-		rect< XT, YT, WT, HT > const& reference,
-		rect< XT, YT, WT, HT > const& test
+		rect< XT, WT, YT, HT > const& reference,
+		rect< XT, WT, YT, HT > const& test
 	){
 		return
 			test.left()   >= reference.left()  &&

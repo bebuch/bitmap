@@ -4,3 +4,4 @@ project(BEBUCH_BITMAP)
 
 add_subdirectory(include)
 add_subdirectory(test)
+add_subdirectory(example)

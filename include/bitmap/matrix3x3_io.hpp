@@ -11,7 +11,7 @@
 
 #include "matrix3x3.hpp"
 
-#include <io_tools/c_array.hpp>
+#include <io_tools/io_c_array.hpp>
 
 #include <ostream>
 
@@ -24,7 +24,7 @@ namespace bmp{
 		std::basic_ostream< charT, traits >& os,
 		matrix3x3< T > const& m
 	){
-		using ::io_tools::c_array::operator<<;
+		using ::io_tools::io_c_array::operator<<;
 		return os << m.d;
 	}
 

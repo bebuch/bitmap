@@ -13,6 +13,7 @@
 #include "size.hpp"
 
 #include <vector>
+#include <numeric>
 #include <utility>
 #include <stdexcept>
 #include <sstream>
@@ -35,7 +36,7 @@ namespace bmp{
 		/// \brief Type of bitmap size
 		using size_type = ::bmp::size< std::size_t >;
 
-		/// \brief Type of bitmap size
+		/// \brief Type of bitmap size as signed
 		using ssize_type = ::bmp::size< std::ptrdiff_t >;
 
 		/// \brief Type of a iterator for data
@@ -231,24 +232,60 @@ namespace bmp{
 		}
 
 
-		/// \brief Get the width as signed int
+		/// \brief Get the width as signed
 		std::ptrdiff_t s_width()const{
 			return static_cast< std::ptrdiff_t >(width());
 		}
 
-		/// \brief Get the height as signed int
+		/// \brief Get the height as signed
 		std::ptrdiff_t s_height()const{
 			return static_cast< std::ptrdiff_t >(height());
 		}
 
-		/// \brief Get the size as signed int
+		/// \brief Get the size as signed
 		ssize_type const ssize()const{
 			return ssize_type(s_width(), s_height());
 		}
 
-		/// \brief Get the number of points in the bitmap as signed int
+		/// \brief Get the number of points in the bitmap as signed
 		std::ptrdiff_t s_point_count()const{
-			return static_cast< std::ptrdiff_t >(area());
+			return static_cast< std::ptrdiff_t >(point_count());
+		}
+
+
+		/// \brief Get the width with requested type
+		template < typename U >
+		U width_as()const{
+			if(width() > this->max< U >()){
+				throw std::runtime_error("width is to big for requested type");
+			}
+			return static_cast< U >(width());
+		}
+
+		/// \brief Get the height with requested type
+		template < typename U >
+		U height_as()const{
+			if(height() > this->max< U >()){
+				throw std::runtime_error("height is to big for requested type");
+			}
+			return static_cast< U >(height());
+		}
+
+		/// \brief Get the size with requested type
+		template < typename U >
+		::bmp::size< U > const size_as()const{
+			return int_size_type(width_as< U >(), height_as< U >());
+		}
+
+		/// \brief Get the number of points in the bitmap with requested type
+		template < typename U >
+		U point_count_as()const{
+			auto point_count = point_count();
+			if(point_count > this->max< U >()){
+				throw std::runtime_error(
+					"point count is to big for requested type");
+			}
+			return static_cast< U >(point_count);
 		}
 
 
@@ -348,6 +385,13 @@ namespace bmp{
 					<< ", " << size.height() << "}";
 				throw std::out_of_range(os.str());
 			}
+		}
+
+
+	private:
+		template < typename U >
+		static constexpr std::size_t max()noexcept{
+			return static_cast< std::size_t >(std::numeric_limits< U >::max());
 		}
 	};
 

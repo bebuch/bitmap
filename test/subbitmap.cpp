@@ -218,44 +218,44 @@ TEST(SubBitmapTest, IntFloatThrow){
 		subbitmap(bmp, rect{0, 0.25, 3, 2}),
 		calc(3, 2, [](auto x, auto y){
 			return std::array< std::array< double, 3 >, 2 >{{
-				std::array< double, 3 >{{2.5, 3.75, 5}},
-				std::array< double, 3 >{{4.5, 6.75, 9}}
+				std::array< double, 3 >{{3.5, 5.25,  7}},
+				std::array< double, 3 >{{5.5, 8.25, 11}}
 			}}[y - 1][x - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0, 0.25, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 2.5; })
+		calc(1, 1, [](auto, auto){ return 3.5; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{1, 0.25, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 3.75; })
+		calc(1, 1, [](auto, auto){ return 5.25; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0, 1.25, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 4.5; })
+		calc(1, 1, [](auto, auto){ return 5.5; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0, 1.25, 2, 1}),
 		calc(2, 1, [](auto x, auto){
-			return std::array< double, 2 >{{4.5, 6.75}}[x - 1];
+			return std::array< double, 2 >{{5.5, 8.25}}[x - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{1, 0.25, 1, 2}),
 		calc(1, 2, [](auto, auto y){
-			return std::array< double, 2 >{{3.75, 6.75}}[y - 1];
+			return std::array< double, 2 >{{5.25, 8.25}}[y - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{2, 1.25, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 9; })
+		calc(1, 1, [](auto, auto){ return 11; })
 	);
 
 	EXPECT_THROW(
@@ -322,44 +322,44 @@ TEST(SubBitmapTest, FloatIntThrow){
 		subbitmap(bmp, rect{0.25, 0, 3, 2}),
 		calc(3, 2, [](auto x, auto y){
 			return std::array< std::array< double, 3 >, 2 >{{
-				std::array< double, 3 >{{2.25, 3.25, 4.25}},
-				std::array< double, 3 >{{4.5, 6.5, 8.5}}
+				std::array< double, 3 >{{2.75, 3.75, 4.75}},
+				std::array< double, 3 >{{5.5, 7.5, 9.5}}
 			}}[y - 1][x - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0.25, 0, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 2.25; })
+		calc(1, 1, [](auto, auto){ return 2.75; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{1.25, 0, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 3.25; })
+		calc(1, 1, [](auto, auto){ return 3.75; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0.25, 1, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 4.5; })
+		calc(1, 1, [](auto, auto){ return 5.5; })
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{0.25, 1, 2, 1}),
 		calc(2, 1, [](auto x, auto){
-			return std::array< double, 2 >{{4.5, 6.5}}[x - 1];
+			return std::array< double, 2 >{{5.5, 7.5}}[x - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{1.25, 0, 1, 2}),
 		calc(1, 2, [](auto, auto y){
-			return std::array< double, 2 >{{3.25, 6.5}}[y - 1];
+			return std::array< double, 2 >{{3.75, 7.5}}[y - 1];
 		})
 	);
 
 	EXPECT_EQ(
 		subbitmap(bmp, rect{2.25, 1, 1, 1}),
-		calc(1, 1, [](auto, auto){ return 8.5; })
+		calc(1, 1, [](auto, auto){ return 9.5; })
 	);
 
 	EXPECT_THROW(

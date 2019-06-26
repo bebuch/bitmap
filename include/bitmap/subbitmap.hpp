@@ -119,8 +119,8 @@ namespace bmp::detail{
 		return os.str();
 	}
 
-	template < typename XT, typename YT, typename WT, typename HT >
-	std::string neg_size_msg(rect< XT, YT, WT, HT > const& rect){
+	template < typename XT, typename WT, typename YT, typename HT >
+	std::string neg_size_msg(rect< XT, WT, YT, HT > const& rect){
 		std::ostringstream os;
 		os << "subbitmap: rect(point(x = " << rect.x() << ", y = "
 			<< rect.y() << "), size(width = " << rect.width()
@@ -128,8 +128,8 @@ namespace bmp::detail{
 		return os.str();
 	}
 
-	template < typename XT, typename YT, typename WT, typename HT >
-	void subbitmap_check_rect(rect< XT, YT, WT, HT > const& rect){
+	template < typename XT, typename WT, typename YT, typename HT >
+	void subbitmap_check_rect(rect< XT, WT, YT, HT > const& rect){
 		static_assert(
 			std::is_arithmetic_v< XT > && std::is_arithmetic_v< YT >,
 			"rect must have arithmetic x and y");
@@ -224,10 +224,10 @@ namespace bmp{
 
 
 	/// \brief Return the pixels in rect as new bitmap, throw if out of range
-	template < typename T, typename XT, typename YT, typename WT, typename HT >
+	template < typename T, typename XT, typename WT, typename YT, typename HT >
 	bitmap< T > subbitmap(
 		bitmap< T > const& org,
-		rect< XT, YT, WT, HT > const& rect
+		rect< XT, WT, YT, HT > const& rect
 	){
 		detail::subbitmap_check_rect(rect);
 

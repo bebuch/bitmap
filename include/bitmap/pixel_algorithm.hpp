@@ -83,6 +83,70 @@ namespace bmp{ namespace pixel{
 			::std::max(l.a, r.a)};
 	}
 
+	template < typename T, typename UnaryOperation >
+	constexpr bool any(
+		T const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool any(
+		basic_ga< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.g) || unary_op(v.a);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool any(
+		basic_rgb< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.r) || unary_op(v.g) || unary_op(v.b);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool any(
+		basic_rgba< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.r) || unary_op(v.g) || unary_op(v.b) || unary_op(v.a);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool all(
+		T const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool all(
+		basic_ga< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.g) && unary_op(v.a);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool all(
+		basic_rgb< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.r) && unary_op(v.g) && unary_op(v.b);
+	}
+
+	template < typename T, typename UnaryOperation >
+	constexpr bool all(
+		basic_rgba< T > const& v,
+		UnaryOperation const& unary_op
+	)noexcept(noexcept(unary_op(std::declval< T >()))){
+		return unary_op(v.r) && unary_op(v.g) && unary_op(v.b) && unary_op(v.a);
+	}
+
 
 } }
 
