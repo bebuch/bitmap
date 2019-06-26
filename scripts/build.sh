@@ -13,7 +13,7 @@ cmake ..
 make
 
 # unit tests
-test/test/bitmap_lib_tests
+test/bitmap_lib_tests
 
 # clean up
 cd ..
