@@ -35,6 +35,9 @@ namespace bmp{
 		/// \brief Type of bitmap size
 		using size_type = ::bmp::size< std::size_t >;
 
+		/// \brief Type of bitmap size
+		using ssize_type = ::bmp::size< std::ptrdiff_t >;
+
 		/// \brief Type of a iterator for data
 		using iterator = typename std::vector< value_type >::iterator;
 
@@ -225,6 +228,27 @@ namespace bmp{
 		/// \brief Get the number of points in the bitmap
 		std::size_t point_count()const{
 			return size_.area();
+		}
+
+
+		/// \brief Get the width as signed int
+		std::ptrdiff_t s_width()const{
+			return static_cast< std::ptrdiff_t >(width());
+		}
+
+		/// \brief Get the height as signed int
+		std::ptrdiff_t s_height()const{
+			return static_cast< std::ptrdiff_t >(height());
+		}
+
+		/// \brief Get the size as signed int
+		ssize_type const ssize()const{
+			return ssize_type(s_width(), s_height());
+		}
+
+		/// \brief Get the number of points in the bitmap as signed int
+		std::ptrdiff_t s_point_count()const{
+			return static_cast< std::ptrdiff_t >(area());
 		}
 
 
