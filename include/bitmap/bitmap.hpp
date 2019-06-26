@@ -274,7 +274,7 @@ namespace bmp{
 		/// \brief Get the size with requested type
 		template < typename U >
 		::bmp::size< U > const size_as()const{
-			return int_size_type(width_as< U >(), height_as< U >());
+			return {width_as< U >(), height_as< U >()};
 		}
 
 		/// \brief Get the number of points in the bitmap with requested type
