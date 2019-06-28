@@ -12,7 +12,7 @@ struct move_int{
 
 	move_int(move_int&& o): v(o.v) { o.v = 0; }
 
-	move_int& operator=(move_int&& o){ v = o.v; o.v = 0; }
+	move_int& operator=(move_int&& o){ v = o.v; o.v = 0; return *this; }
 };
 
 

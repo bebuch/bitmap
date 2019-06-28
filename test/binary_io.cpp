@@ -91,12 +91,12 @@ struct read_write_test: public ::testing::Test{
 
 using all_types = ::testing::Types<
 		std::int8_t
-		, std::uint8_t
 		, std::int16_t
-		, std::uint16_t
 		, std::int32_t
-		, std::uint32_t
 		, std::int64_t
+		, std::uint8_t
+		, std::uint16_t
+		, std::uint32_t
 		, std::uint64_t
 		, pixel::ga8
 		, pixel::ga16
@@ -132,7 +132,7 @@ using all_types = ::testing::Types<
 		, pixel::rgba64f
 	>;
 
-TYPED_TEST_CASE(read_write_test, all_types);
+TYPED_TEST_SUITE(read_write_test, all_types, );
 TYPED_TEST(read_write_test, RWTest){
 	using type = typename TestFixture::type;
 	auto img = make< type >(9, 9);
@@ -151,12 +151,12 @@ struct endian_read_write_test: public ::testing::Test{
 
 using int_types = ::testing::Types<
 		std::int8_t
-		, std::uint8_t
 		, std::int16_t
-		, std::uint16_t
 		, std::int32_t
-		, std::uint32_t
 		, std::int64_t
+		, std::uint8_t
+		, std::uint16_t
+		, std::uint32_t
 		, std::uint64_t
 		, pixel::ga8
 		, pixel::ga16
@@ -183,7 +183,7 @@ using int_types = ::testing::Types<
 		, pixel::rgba32u
 		, pixel::rgba64u
 	>;
-TYPED_TEST_CASE(endian_read_write_test, int_types);
+TYPED_TEST_SUITE(endian_read_write_test, int_types, );
 
 TYPED_TEST(endian_read_write_test, LittleRWTest){
 	using type = typename TestFixture::type;
@@ -220,7 +220,7 @@ using float_types = ::testing::Types<
 		, pixel::rgba32f
 		, pixel::rgba64f
 	>;
-TYPED_TEST_CASE(float_read_write_test, float_types);
+TYPED_TEST_SUITE(float_read_write_test, float_types, );
 TYPED_TEST(float_read_write_test, RWTest){
 	auto endianness = []{
 		using boost::endian::order;

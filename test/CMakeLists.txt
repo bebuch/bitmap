@@ -12,7 +12,4 @@ add_executable(bitmap_lib_tests ${SOURCES})
 
 target_link_libraries(bitmap_lib_tests GTest::GTest GTest::Main)
 
-set_target_properties(bitmap_lib_tests PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(bitmap_lib_tests PROPERTIES CXX_STANDARD 17)
-
 install(TARGETS bitmap_lib_tests DESTINATION bin)
