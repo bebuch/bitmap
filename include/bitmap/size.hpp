@@ -9,6 +9,10 @@
 #ifndef _bitmap__size__hpp_INCLUDED_
 #define _bitmap__size__hpp_INCLUDED_
 
+#include <type_traits>
+#include <utility>
+#include <cmath>
+
 
 namespace bmp{
 
@@ -39,6 +43,9 @@ namespace bmp{
 		/// \brief Type of the height
 		using h_type = HT;
 
+		/// \brief Type of the height
+		using common_type = std::common_type_t< w_type, h_type >;
+
 
 		/// \brief Constructs a size with width 0 and height 0
 		constexpr size(): width_(), height_() {}
@@ -50,8 +57,8 @@ namespace bmp{
 		constexpr size(size&&) = default;
 
 		/// \brief Constructs a size width width and height
-		constexpr size(w_type const& width, h_type const& height):
-			width_(width), height_(height) {}
+		constexpr size(w_type width, h_type height):
+			width_(std::move(width)), height_(std::move(height)) {}
 
 
 		/// \brief Copy assignment
@@ -62,43 +69,52 @@ namespace bmp{
 
 
 		/// \brief The width
-		constexpr w_type& width(){
+		[[nodiscard]] constexpr w_type& width(){
 			return width_;
 		}
 
 		/// \brief The height
-		constexpr h_type& height(){
+		[[nodiscard]] constexpr h_type& height(){
 			return height_;
 		}
 
 
 		/// \brief The width
-		constexpr w_type const width()const{
+		[[nodiscard]] constexpr w_type const& width()const{
 			return width_;
 		}
 
 		/// \brief The height
-		constexpr h_type const height()const{
+		[[nodiscard]] constexpr h_type const& height()const{
 			return height_;
 		}
 
 
 		/// \brief Set width and height
-		constexpr void set(w_type const& width, h_type const& height){
-			width_ = width;
-			height_ = height;
+		constexpr void set(w_type width, h_type height){
+			width_ = std::move(width);
+			height_ = std::move(height);
 		}
 
 
 		/// \brief Get true, if width and height are positiv
-		constexpr bool is_positive()const{
+		[[nodiscard]] constexpr bool is_positive()const{
 			return width() >= w_type() && height() >= h_type();
 		}
 
 
 		/// \brief Get width * height
-		constexpr auto area()const{
-			return width() * height();
+		[[nodiscard]] constexpr common_type area()const{
+			auto abs = [](auto const& v){
+				using type = std::remove_reference_t< decltype(v) >;
+				if constexpr(std::is_signed_v< type >){
+					using std::abs;
+					return static_cast< common_type >(abs(v));
+				}else{
+					return static_cast< common_type >(v);
+				}
+			};
+			return abs(width()) * abs(height());
 		}
 
 	private:
@@ -108,7 +124,7 @@ namespace bmp{
 
 
 	template < typename WT, typename HT >
-	constexpr bool operator==(
+	[[nodiscard]] constexpr bool operator==(
 		size< WT, HT > const& a,
 		size< WT, HT > const& b
 	){
@@ -116,7 +132,7 @@ namespace bmp{
 	}
 
 	template < typename WT, typename HT >
-	constexpr bool operator!=(
+	[[nodiscard]] constexpr bool operator!=(
 		size< WT, HT > const& a,
 		size< WT, HT > const& b
 	){
@@ -128,12 +144,12 @@ namespace bmp{
 	class point;
 
 	template < typename WT, typename HT >
-	point< WT, HT > to_point(size< WT, HT > const& s){
+	[[nodiscard]] point< WT, HT > to_point(size< WT, HT > const& s){
 		return {s.width(), s.height()};
 	}
 
 	template < typename XT, typename YT = XT, typename WT, typename HT >
-	point< XT, YT > to_point(size< WT, HT > const& s){
+	[[nodiscard]] point< XT, YT > to_point(size< WT, HT > const& s){
 		return {static_cast< XT >(s.width()), static_cast< YT >(s.height())};
 	}
 
