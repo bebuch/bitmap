@@ -105,7 +105,7 @@ namespace bmp{
 
 		/// \brief Get width * height
 		[[nodiscard]] constexpr common_type area()const{
-			auto abs = [](auto const& v){
+			auto convert = [](auto const& v){
 				using type = std::remove_reference_t< decltype(v) >;
 				if constexpr(std::is_signed_v< type >){
 					using std::abs;
@@ -114,7 +114,7 @@ namespace bmp{
 					return static_cast< common_type >(v);
 				}
 			};
-			return abs(width()) * abs(height());
+			return convert(width()) * convert(height());
 		}
 
 	private:
