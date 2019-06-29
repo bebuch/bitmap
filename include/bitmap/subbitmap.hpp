@@ -97,11 +97,11 @@ namespace bmp::detail{
 
 
 
-	template < typename XT, typename YT >
+	template < typename XT, typename YT, typename WT, typename HT >
 	std::string out_of_range_msg(
 		size< std::size_t > const& bmp_size,
 		point< XT, YT > const& tl,
-		size< std::size_t > const& rect_size
+		size< WT, HT > const& rect_size
 	){
 		std::ostringstream os;
 		os << "subbitmap: rect(point(x = " << tl.x();
@@ -153,6 +153,14 @@ namespace bmp::detail{
 		}
 	}
 
+	template < typename T >
+	constexpr bool is_integral(T v)noexcept{
+		if constexpr(std::is_integral_v< T >){
+			return true;
+		}else{
+			return v == std::floor(v);
+		}
+	}
 
 	template < typename T, typename XT, typename YT >
 	bitmap< T > subbitmap(
@@ -231,6 +239,11 @@ namespace bmp{
 	){
 		detail::subbitmap_check_rect(rect);
 
+		if(rect.x() < 0 || rect.y() < 0){
+			throw std::out_of_range(detail::out_of_range_msg(
+				org.size(), rect.top_left(), rect.size()));
+		}
+
 		auto const int_rect = ::bmp::rect(point(
 				detail::to_size_t(rect.x()),
 				detail::to_size_t(rect.y())
@@ -239,13 +252,8 @@ namespace bmp{
 				detail::to_size_t(rect.height())
 			));
 
-		if(rect.x() < 0 || rect.y() < 0){
-			throw std::out_of_range(detail::out_of_range_msg(
-				org.size(), rect.top_left(), int_rect.size()));
-		}
-
-		auto const is_x_int = rect.x() == int_rect.x();
-		auto const is_y_int = rect.y() == int_rect.y();
+		auto const is_x_int = detail::is_integral(rect.x());
+		auto const is_y_int = detail::is_integral(rect.y());
 		if(is_x_int && is_y_int){
 			return detail::subbitmap(org, int_rect.top_left(), int_rect);
 		}else if(is_x_int){
