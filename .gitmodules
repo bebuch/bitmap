@@ -1,3 +1,6 @@
 [submodule "3rdparty/io_tools"]
 	path = 3rdparty/io_tools
-	url = https://github.com/bebuch/io_tools.git
+	url = https://gitlab.tu-ilmenau.de/FakMB/QBV/topics/cpp/io_tools.git
+[submodule "3rdparty/colormap"]
+	path = 3rdparty/colormap
+	url = https://gitlab.tu-ilmenau.de/FakMB/QBV/topics/cpp/colormap.git

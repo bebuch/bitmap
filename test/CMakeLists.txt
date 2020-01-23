@@ -1,15 +1,14 @@
-# cmake_minimum_required(VERSION 3.8)
+project(tests)
 
-include_directories("../include")
-include_directories("../3rdparty/io_tools/include")
-
+find_package(io_tools REQUIRED)
 find_package(GTest REQUIRED)
 find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
 
-file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp")
-add_executable(bitmap_lib_tests ${SOURCES})
+file(GLOB SOURCE_FILES "*.cpp")
+add_executable(tests ${SOURCE_FILES})
 
-target_link_libraries(bitmap_lib_tests GTest::GTest GTest::Main)
+target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(tests PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(tests PUBLIC ${io_tools_INCLUDE_DIRS})
 
-install(TARGETS bitmap_lib_tests DESTINATION bin)
+target_link_libraries(tests GTest::GTest GTest::Main)
