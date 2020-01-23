@@ -9,6 +9,6 @@ add_executable(tests ${SOURCE_FILES})
 
 target_include_directories(tests PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(tests PUBLIC ${Boost_INCLUDE_DIRS})
-target_include_directories(tests PUBLIC ${io_tools_INCLUDE_DIRS})
+target_include_directories(tests PUBLIC ${io_tools_INCLUDE_DIR})
 
 target_link_libraries(tests GTest::GTest GTest::Main)

@@ -55,7 +55,6 @@ option(BITMAP_BUILD_EXAMPLES "build examples" OFF)
 
 if(${BITMAP_BUILD_TESTS})
     enable_testing()
-    find_package(GTest REQUIRED)
     add_subdirectory(test)
     add_test(NAME tests COMMAND tests)
 endif()
