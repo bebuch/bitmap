@@ -46,5 +46,5 @@ if(${BITMAP_BUILD_TESTS})
 endif()
 
 if(${BITMAP_BUILD_EXAMPLES})
-    add_subdirectory(examples)
+    add_subdirectory(example)
 endif()
