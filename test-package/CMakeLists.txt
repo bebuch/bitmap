@@ -9,5 +9,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME} test.cpp)
 
-target_include_directories(${PROJECT_NAME}
-    PRIVATE ${bitmap_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${bitmap_INCLUDE_DIR})

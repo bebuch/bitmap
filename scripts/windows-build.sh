@@ -5,19 +5,20 @@ set -e
 set -o xtrace
 
 PROJECT_DIR=$(pwd)
+BUILD_DIR=$PROJECT_DIR/../tmp/build
 INSTALL_PATH=$PROJECT_DIR/../tmp/usr
 mkdir -p $INSTALL_PATH
 
 # Configure Project
-mkdir -p $PROJECT_DIR/build
-cd $PROJECT_DIR/build
-cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON ..
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
 
 # Build test
 make -j 32
 
 # Run tests
-test/tests
+wine test/tests
 
 # Install
 make install
@@ -31,4 +32,4 @@ mkdir -p $PROJECT_DIR/build-package-test
 cd $PROJECT_DIR/build-package-test
 cmake -DCMAKE_PREFIX_PATH=$INSTALL_PATH ../test-package
 make -j 32
-./test_bitmap_package
+wine ./test_bitmap_package

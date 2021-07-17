@@ -2,22 +2,12 @@ markdown-links-verificator:
   image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/tools/markdown-links-verificator:2021-03-15
   script: markdown-links-verificator
 
-# build and deploy with gcc
-gcc:
-  image: tuiqbv/gcc-boost:latest
-  stage: build
-  before_script:
-    - scripts/setup.sh
-  script:
-    - scripts/build.sh gcc debug
-    - scripts/build.sh gcc release
+# build x86_64 Windows
+build-windows:
+  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/mingw/qbv:2021-04-19
+  script: script/build-windows.sh
 
-# build and deploy with clang
-llvm:
-  image: tuiqbv/clang-boost:latest
-  stage: build
-  before_script:
-    - scripts/setup.sh
-  script:
-    - scripts/build.sh clang debug
-    - scripts/build.sh clang release
+# build x86_64 Linux
+build-linux:
+  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/gcc/qbv:2021-04-20
+  script: script/build-linux.sh
