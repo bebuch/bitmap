@@ -12,7 +12,7 @@ mkdir -p $INSTALL_PATH
 # Configure Project
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
-cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
+cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
 
 # Build test
 make -j 32
@@ -30,6 +30,6 @@ test -f $INSTALL_PATH/lib/cmake/bitmap/bitmap-config.cmake
 # Check install by example project
 mkdir -p $PROJECT_DIR/build-package-test
 cd $PROJECT_DIR/build-package-test
-cmake -DCMAKE_PREFIX_PATH=$INSTALL_PATH ../test-package
+cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=$INSTALL_PATH ../test-package
 make -j 32
 ./test_bitmap_package
