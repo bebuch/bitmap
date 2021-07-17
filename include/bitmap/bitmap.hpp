@@ -340,6 +340,11 @@ namespace bmp{
 			return point.y() * width() + point.x();
 		}
 
+		/// \brief true if image is empty, false otherwise
+		bool empty()const{
+			return data_.empty();
+		}
+
 
 	protected:
 		/// \brief The rectangle for global position and size
