@@ -124,14 +124,12 @@ namespace bmp::pixel{
     };
 
     template <typename T>
-    constexpr bool operator==(basic_rgba<T> const& l, basic_rgba<T> const& r)
-    noexcept(std::declval<T>() == std::declval<T>()){
+    constexpr bool operator==(basic_rgba<T> const& l, basic_rgba<T> const& r){
         return l.r == r.r && l.g == r.g && l.b == r.b && l.a == r.a;
     }
 
     template <typename T>
-    constexpr bool operator!=(basic_rgba<T> const& l, basic_rgba<T> const& r)
-    noexcept(std::declval<basic_rgba<T>>() == std::declval<basic_rgba<T>>()){
+    constexpr bool operator!=(basic_rgba<T> const& l, basic_rgba<T> const& r){
         return !(l == r);
     }
 
