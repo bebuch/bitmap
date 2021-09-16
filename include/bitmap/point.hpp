@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 
 namespace bmp {
 
@@ -32,6 +34,9 @@ namespace bmp {
         /// \brief Type of the y positions
         using y_type = YT;
 
+        /// \brief Type of the height
+        using common_type = std::common_type_t<x_type, y_type>;
+
 
         /// \brief Constructs a point by (0, 0)
         constexpr point()
@@ -45,9 +50,9 @@ namespace bmp {
         constexpr point(point&&) = default;
 
         /// \brief Constructs a point by (x, y)
-        constexpr point(x_type const& x, y_type const& y)
-            : x_(x)
-            , y_(y) {}
+        constexpr point(x_type x, y_type y)
+            : x_(std::move(x))
+            , y_(std::move(y)) {}
 
 
         /// \brief Copy assignment
@@ -80,9 +85,9 @@ namespace bmp {
 
 
         /// \brief Set x and y
-        constexpr void set(x_type const& x, y_type const& y) {
-            x_ = x;
-            y_ = y;
+        constexpr void set(x_type x, y_type y) {
+            x_ = std::move(x);
+            y_ = std::move(y);
         }
 
 

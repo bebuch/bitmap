@@ -9,9 +9,25 @@
 namespace bmp {
 
 
+    namespace detail {
+
+
+        template <typename XT, typename WT = XT, typename YT = XT, typename HT = WT>
+        struct rect_base {};
+
+        template <typename T>
+        struct rect_base<T, T, T, T> {
+            /// \brief Type of the positions
+            using value_type = T;
+        };
+
+
+    }
+
+
     /// \brief A class for manipulating rectangles
     template <typename XT, typename WT = XT, typename YT = XT, typename HT = WT>
-    class rect {
+    class rect: public detail::rect_base<XT, WT, YT, HT> {
     public:
         /// \brief Type of the x position
         using x_type = XT;
@@ -30,6 +46,10 @@ namespace bmp {
 
         /// \brief Type of the rect size
         using size_type = ::bmp::size<width_type, height_type>;
+
+        /// \brief Type of the height
+        using common_type =
+            std::common_type_t<typename pos_type::common_type, typename size_type::common_type>;
 
 
         /// \brief Constructs a blank rect

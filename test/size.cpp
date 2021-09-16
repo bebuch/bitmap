@@ -119,19 +119,29 @@ TEST(SizeTest, SetMoveOnly) {
 }
 
 TEST(SizeTest, IsPositive) {
-    EXPECT_TRUE((bmp::size<unsigned>(4, 5).is_positive()));
-    EXPECT_TRUE((bmp::size<int>(4, 5).is_positive()));
-    EXPECT_FALSE((bmp::size<int>(-4, 5).is_positive()));
-    EXPECT_FALSE((bmp::size<int>(4, -5).is_positive()));
-    EXPECT_FALSE((bmp::size<int>(-4, -5).is_positive()));
+    EXPECT_TRUE( bmp::size( 4u,  5u).is_positive());
+    EXPECT_TRUE( bmp::size( 4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::size(-4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::size( 4 , -5 ).is_positive());
+    EXPECT_FALSE(bmp::size(-4 , -5 ).is_positive());
 }
 
 TEST(SizeTest, Area) {
-    EXPECT_EQ((bmp::size<unsigned>(4, 5).area()), 20);
-    EXPECT_EQ((bmp::size<int>(4, 5).area()), 20);
-    EXPECT_EQ((bmp::size<int>(-4, 5).area()), 20);
-    EXPECT_EQ((bmp::size<int>(4, -5).area()), 20);
-    EXPECT_EQ((bmp::size<int>(-4, -5).area()), 20);
-    EXPECT_EQ((bmp::size<int, unsigned>(-4, 5).area()), 20);
-    EXPECT_EQ((bmp::size<unsigned, int>(4, -5).area()), 20);
+    EXPECT_EQ(bmp::size( 4u,  5u).area(), 20u);
+    EXPECT_EQ(bmp::size( 4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::size(-4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::size( 4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::size(-4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::size(-4,   5u).area(), 20u);
+    EXPECT_EQ(bmp::size( 4u, -5 ).area(), 20u);
+}
+
+TEST(SizeTest, Compare){
+    EXPECT_EQ(bmp::size(4, 5), bmp::size(4, 5));
+    EXPECT_NE(bmp::size(4, 5), bmp::size(2, 5));
+    EXPECT_NE(bmp::size(4, 5), bmp::size(4, 3));
+
+    EXPECT_EQ(bmp::size(4, 5.2f), bmp::size(4, 5.2f));
+    EXPECT_NE(bmp::size(4, 5.2f), bmp::size(2, 5.2f));
+    EXPECT_NE(bmp::size(4, 5.2f), bmp::size(4, 3.2f));
 }
