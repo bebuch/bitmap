@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 #include <bitmap/bitmap.hpp>
 
-int main(){
+int main() {
     bmp::bitmap<float> x;
     (void)x;
 }

@@ -6,29 +6,26 @@
 #include <io_tools/input_wrapper.hpp>
 
 
-namespace bmp{
+namespace bmp {
 
 
-    template < typename CharT, typename Traits, typename XT, typename YT >
-    std::basic_ostream< CharT, Traits >& operator<<(
-        std::basic_ostream< CharT, Traits >& os,
-        point< XT, YT > const& data
-    ){
+    template <typename CharT, typename Traits, typename XT, typename YT>
+    std::basic_ostream<CharT, Traits>&
+        operator<<(std::basic_ostream<CharT, Traits>& os, point<XT, YT> const& data) {
         return os << data.x() << "x" << data.y();
     }
 
 
-    template < typename CharT, typename Traits, typename XT, typename YT >
-    std::basic_istream< CharT, Traits >& operator>>(
-        std::basic_istream< CharT, Traits >& is,
-        point< XT, YT >& data
-    ){
-        point< XT, YT > tmp;
+    template <typename CharT, typename Traits, typename XT, typename YT>
+    std::basic_istream<CharT, Traits>&
+        operator>>(std::basic_istream<CharT, Traits>& is, point<XT, YT>& data) {
+        point<XT, YT> tmp;
         is >> io_tools::input_wrapper(tmp.x());
-        if(!io_tools::expect(is, 'x')) return is;
+        if(!io_tools::expect(is, 'x'))
+            return is;
         is >> io_tools::input_wrapper(tmp.y());
 
-        if(is){
+        if(is) {
             data = std::move(tmp);
         }
 

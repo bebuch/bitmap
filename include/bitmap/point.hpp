@@ -1,17 +1,17 @@
 #pragma once
 
 
-namespace bmp{
+namespace bmp {
 
 
-    namespace detail{
+    namespace detail {
 
 
-        template < typename XT, typename YT >
-        struct point_base{};
+        template <typename XT, typename YT>
+        struct point_base {};
 
-        template < typename T >
-        struct point_base< T, T >{
+        template <typename T>
+        struct point_base<T, T> {
             /// \brief Type of the positions
             using value_type = T;
         };
@@ -23,8 +23,8 @@ namespace bmp{
     /// \brief A class for representing points
     /// \tparam XT Type of the x position data
     /// \tparam YT Type of the y position data
-    template < typename XT, typename YT = XT >
-    class point: public detail::point_base< XT, YT >{
+    template <typename XT, typename YT = XT>
+    class point: public detail::point_base<XT, YT> {
     public:
         /// \brief Type of the x positions
         using x_type = XT;
@@ -34,7 +34,9 @@ namespace bmp{
 
 
         /// \brief Constructs a point by (0, 0)
-        constexpr point(): x_(), y_() {}
+        constexpr point()
+            : x_()
+            , y_() {}
 
         /// \brief Copy constructor
         constexpr point(point const&) = default;
@@ -43,9 +45,9 @@ namespace bmp{
         constexpr point(point&&) = default;
 
         /// \brief Constructs a point by (x, y)
-        constexpr point(x_type const& x, y_type const& y):
-            x_(x), y_(y)
-            {}
+        constexpr point(x_type const& x, y_type const& y)
+            : x_(x)
+            , y_(y) {}
 
 
         /// \brief Copy assignment
@@ -56,28 +58,36 @@ namespace bmp{
 
 
         /// \brief The x
-        constexpr x_type& x(){ return x_; }
+        constexpr x_type& x() {
+            return x_;
+        }
 
         /// \brief The y
-        constexpr y_type& y(){ return y_; }
+        constexpr y_type& y() {
+            return y_;
+        }
 
 
         /// \brief The x
-        constexpr x_type const x()const{ return x_; }
+        constexpr x_type const x() const {
+            return x_;
+        }
 
         /// \brief The y
-        constexpr y_type const y()const{ return y_; }
+        constexpr y_type const y() const {
+            return y_;
+        }
 
 
         /// \brief Set x and y
-        constexpr void set(x_type const& x, y_type const& y){
+        constexpr void set(x_type const& x, y_type const& y) {
             x_ = x;
             y_ = y;
         }
 
 
         /// \brief Get true, if x and y are positiv
-        constexpr bool is_positive()const{
+        constexpr bool is_positive() const {
             return x() >= x_type() && y() >= y_type();
         }
 
@@ -88,111 +98,75 @@ namespace bmp{
     };
 
 
-    template < typename XT, typename YT >
-    constexpr bool operator==(
-        point< XT, YT > const& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr bool operator==(point<XT, YT> const& a, point<XT, YT> const& b) {
         return a.x() == b.x() && a.y() == b.y();
     }
 
-    template < typename XT, typename YT >
-    constexpr bool operator!=(
-        point< XT, YT > const& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr bool operator!=(point<XT, YT> const& a, point<XT, YT> const& b) {
         return !(a == b);
     }
 
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT >& operator+=(
-        point< XT, YT >& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT>& operator+=(point<XT, YT>& a, point<XT, YT> const& b) {
         a.x() += b.x();
         a.y() += b.y();
         return a;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT >& operator-=(
-        point< XT, YT >& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT>& operator-=(point<XT, YT>& a, point<XT, YT> const& b) {
         a.x() -= b.x();
         a.y() -= b.y();
         return a;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT >& operator*=(
-        point< XT, YT >& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT>& operator*=(point<XT, YT>& a, point<XT, YT> const& b) {
         a.x() *= b.x();
         a.y() *= b.y();
         return a;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT >& operator/=(
-        point< XT, YT >& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT>& operator/=(point<XT, YT>& a, point<XT, YT> const& b) {
         a.x() /= b.x();
         a.y() /= b.y();
         return a;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT >& operator%=(
-        point< XT, YT >& a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT>& operator%=(point<XT, YT>& a, point<XT, YT> const& b) {
         a.x() %= b.x();
         a.y() %= b.y();
         return a;
     }
 
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT > operator+(
-        point< XT, YT > a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT> operator+(point<XT, YT> a, point<XT, YT> const& b) {
         return a += b;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT > operator-(
-        point< XT, YT > a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT> operator-(point<XT, YT> a, point<XT, YT> const& b) {
         return a -= b;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT > operator*(
-        point< XT, YT > a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT> operator*(point<XT, YT> a, point<XT, YT> const& b) {
         return a *= b;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT > operator/(
-        point< XT, YT > a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT> operator/(point<XT, YT> a, point<XT, YT> const& b) {
         return a /= b;
     }
 
-    template < typename XT, typename YT >
-    constexpr point< XT, YT > operator%(
-        point< XT, YT > a,
-        point< XT, YT > const& b
-    ){
+    template <typename XT, typename YT>
+    constexpr point<XT, YT> operator%(point<XT, YT> a, point<XT, YT> const& b) {
         return a %= b;
     }
 
