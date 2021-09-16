@@ -28,6 +28,6 @@ test -f /mnt/install/lib/cmake/bitmap/bitmap-config.cmake
 # Check install by example project
 mkdir -p /mnt/build-package-test
 cd /mnt/build-package-test
-cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install ../test-package
+cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install $PROJECT_DIR/test-package
 make -j 32
 ./test_bitmap_package
