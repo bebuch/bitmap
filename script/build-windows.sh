@@ -5,14 +5,12 @@ set -e
 set -o xtrace
 
 PROJECT_DIR=$(pwd)
-BUILD_DIR=$PROJECT_DIR/../tmp/build
-INSTALL_PATH=$PROJECT_DIR/../tmp/usr
-mkdir -p $INSTALL_PATH
+mkdir -p /mnt/install
 
 # Configure Project
-mkdir -p $BUILD_DIR
-cd $BUILD_DIR
-cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
+mkdir -p /mnt/build
+cd /mnt/build
+cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=/mnt/install -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
 
 # Build test
 make -j 32
@@ -24,12 +22,12 @@ wine test/tests
 make install
 
 # Check install
-git diff --no-index $INSTALL_PATH/include/bitmap $PROJECT_DIR/include/bitmap
-test -f $INSTALL_PATH/lib/cmake/bitmap/bitmap-config.cmake
+git diff --no-index /mnt/install/include/bitmap $PROJECT_DIR/include/bitmap
+test -f /mnt/install/lib/cmake/bitmap/bitmap-config.cmake
 
 # Check install by example project
-mkdir -p $PROJECT_DIR/build-package-test
-cd $PROJECT_DIR/build-package-test
-cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=$INSTALL_PATH ../test-package
+mkdir -p /mnt/build-package-test
+cd /mnt/build-package-test
+cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install ../test-package
 make -j 32
 wine ./test_bitmap_package
