@@ -22,8 +22,8 @@ namespace bmp {
         uint8_t channel_count;
         uint8_t flags;
 
-        size_t width;
-        size_t height;
+        size_t w;
+        size_t h;
     };
 
     /// \brief Read binary bitmap format header from std::istream
@@ -50,20 +50,20 @@ namespace bmp {
         big_uint8_t channel_size;
         big_uint8_t channel_count;
         big_uint8_t flags;
-        big_uint64_t width;
-        big_uint64_t height;
+        big_uint64_t w;
+        big_uint64_t h;
 
         is.read(reinterpret_cast<char*>(&channel_size), 1);
         is.read(reinterpret_cast<char*>(&channel_count), 1);
         is.read(reinterpret_cast<char*>(&flags), 1);
-        is.read(reinterpret_cast<char*>(&width), 8);
-        is.read(reinterpret_cast<char*>(&height), 8);
+        is.read(reinterpret_cast<char*>(&w), 8);
+        is.read(reinterpret_cast<char*>(&h), 8);
 
         if(!is.good()) {
             throw binary_io_error("can't read binary bitmap format header");
         }
 
-        return {version, channel_size, channel_count, flags, width, height};
+        return {version, channel_size, channel_count, flags, w, h};
     }
 
     /// \brief Read binary bitmap format data from std::istream
@@ -173,7 +173,7 @@ namespace bmp {
         }
 
 
-        bitmap.resize(header.width, header.height);
+        bitmap.resize(header.w, header.h);
         auto pixel_count = bitmap.point_count();
         if constexpr(std::is_same_v<T, bool>) {
             std::vector<big_uint8_t> buffer((pixel_count + 7) / 8);

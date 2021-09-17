@@ -17,13 +17,13 @@ namespace bmp::detail {
         bitmap<T> const& ref,
         rect<std::size_t> const& rect,
         point<std::size_t> const& target_start = {}) {
-        for(std::size_t y = 0; y < rect.height(); ++y) {
-            auto const ref_from = ref.begin() + (rect.y() + y) * ref.width() + rect.x();
+        for(std::size_t y = 0; y < rect.h(); ++y) {
+            auto const ref_from = ref.begin() + (rect.y() + y) * ref.w() + rect.x();
 
             auto const target_from
-                = target.begin() + (target_start.y() + y) * target.width() + target_start.x();
+                = target.begin() + (target_start.y() + y) * target.w() + target_start.x();
 
-            std::copy(ref_from, ref_from + rect.width(), target_from);
+            std::copy(ref_from, ref_from + rect.w(), target_from);
         }
     }
 
@@ -35,8 +35,8 @@ namespace bmp::detail {
         rect<std::size_t> const& rect,
         point<FXT, FYT> const& ratio,
         point<std::size_t> const& target_start = {}) {
-        for(std::size_t y = 0; y < rect.height(); ++y) {
-            for(std::size_t x = 0; x < rect.width(); ++x) {
+        for(std::size_t y = 0; y < rect.h(); ++y) {
+            for(std::size_t x = 0; x < rect.w(); ++x) {
                 auto const ax = rect.x() + x;
                 auto const ay = rect.y() + y;
                 target(target_start.x() + x, target_start.y() + y)
@@ -59,8 +59,8 @@ namespace bmp::detail {
         rect<std::size_t> const& rect,
         FT xratio,
         point<std::size_t> const& target_start = {}) {
-        for(std::size_t y = 0; y < rect.height(); ++y) {
-            for(std::size_t x = 0; x < rect.width(); ++x) {
+        for(std::size_t y = 0; y < rect.h(); ++y) {
+            for(std::size_t x = 0; x < rect.w(); ++x) {
                 auto const ax = rect.x() + x;
                 auto const ay = rect.y() + y;
                 target(target_start.x() + x, target_start.y() + y)
@@ -76,8 +76,8 @@ namespace bmp::detail {
         rect<std::size_t> const& rect,
         FT y_ratio,
         point<std::size_t> const& target_start = {}) {
-        for(std::size_t y = 0; y < rect.height(); ++y) {
-            for(std::size_t x = 0; x < rect.width(); ++x) {
+        for(std::size_t y = 0; y < rect.h(); ++y) {
+            for(std::size_t x = 0; x < rect.w(); ++x) {
                 auto const ax = rect.x() + x;
                 auto const ay = rect.y() + y;
                 target(target_start.x() + x, target_start.y() + y)
@@ -101,9 +101,9 @@ namespace bmp::detail {
         if(std::is_floating_point_v<YT>) {
             os << "[float -> max(y) = " << std::floor(tl.y()) << " + 1]";
         }
-        os << "), size(width = " << rect_size.width() << ", height = " << rect_size.height()
-           << ")) is outside the original bitmap(width = " << bmp_size.width()
-           << ", height = " << bmp_size.height() << ")";
+        os << "), size(w = " << rect_size.w() << ", h = " << rect_size.h()
+           << ")) is outside the original bitmap(w = " << bmp_size.w()
+           << ", h = " << bmp_size.h() << ")";
         return os.str();
     }
 
@@ -111,7 +111,7 @@ namespace bmp::detail {
     std::string neg_size_msg(rect<XT, WT, YT, HT> const& rect) {
         std::ostringstream os;
         os << "subbitmap: rect(point(x = " << rect.x() << ", y = " << rect.y()
-           << "), size(width = " << rect.width() << ", height = " << rect.height()
+           << "), size(w = " << rect.w() << ", h = " << rect.h()
            << ")) has negetive size";
         return os.str();
     }
@@ -124,9 +124,9 @@ namespace bmp::detail {
 
         static_assert(
             std::is_integral_v<WT> && std::is_integral_v<HT>,
-            "rect must have integral width and height");
+            "rect must have integral w and h");
 
-        if(rect.width() < 0 || rect.height() < 0) {
+        if(rect.w() < 0 || rect.h() < 0) {
             throw std::logic_error(detail::neg_size_msg(rect));
         }
     }
@@ -156,8 +156,8 @@ namespace bmp::detail {
         point<XT, YT> const& top_left,
         rect<std::size_t> const& int_rect) {
         if constexpr(std::is_integral_v<XT> && std::is_integral_v<YT>) {
-            if(int_rect.x() + int_rect.width() > org.width()
-               || int_rect.y() + int_rect.height() > org.height()) {
+            if(int_rect.x() + int_rect.w() > org.w()
+               || int_rect.y() + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -165,8 +165,8 @@ namespace bmp::detail {
             copy(result, org, int_rect);
             return result;
         } else if constexpr(std::is_integral_v<XT>) {
-            if(int_rect.x() + int_rect.width() > org.width()
-               || int_rect.y() + 1 + int_rect.height() > org.height()) {
+            if(int_rect.x() + int_rect.w() > org.w()
+               || int_rect.y() + 1 + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -175,8 +175,8 @@ namespace bmp::detail {
             y_interpolate(result, org, int_rect, y_ratio);
             return result;
         } else if constexpr(std::is_integral_v<YT>) {
-            if(int_rect.x() + 1 + int_rect.width() > org.width()
-               || int_rect.y() + int_rect.height() > org.height()) {
+            if(int_rect.x() + 1 + int_rect.w() > org.w()
+               || int_rect.y() + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -185,8 +185,8 @@ namespace bmp::detail {
             x_interpolate(result, org, int_rect, x_ratio);
             return result;
         } else {
-            if(int_rect.x() + 1 + int_rect.width() > org.width()
-               || int_rect.y() + 1 + int_rect.height() > org.height()) {
+            if(int_rect.x() + 1 + int_rect.w() > org.w()
+               || int_rect.y() + 1 + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -218,7 +218,7 @@ namespace bmp {
 
         auto const int_rect = ::bmp::rect(
             point(detail::to_size_t(rect.x()), detail::to_size_t(rect.y())),
-            size(detail::to_size_t(rect.width()), detail::to_size_t(rect.height())));
+            size(detail::to_size_t(rect.w()), detail::to_size_t(rect.h())));
 
         auto const is_x_int = detail::is_integral(rect.x());
         auto const is_y_int = detail::is_integral(rect.y());

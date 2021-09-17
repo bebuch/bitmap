@@ -20,8 +20,8 @@ int main() {
 
     bmp::bitmap<bmp::pixel::rgb8u> colorbar(std::pow(2, bits), 10);
 
-    for(std::size_t x = 0; x < colorbar.width(); ++x) {
-        for(std::size_t y = 0; y < colorbar.height(); ++y) {
+    for(std::size_t x = 0; x < colorbar.w(); ++x) {
+        for(std::size_t y = 0; y < colorbar.h(); ++y) {
             colorbar(x, y) = colormap[x];
         }
     }

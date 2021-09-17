@@ -12,7 +12,7 @@ TEST(PointTest, DefaultConstruction) {
     EXPECT_EQ(s.y(), 0);
 }
 
-TEST(PointTest, WidthHeightConstruction) {
+TEST(PointTest, XYConstruction) {
     bmp::point s(4, 5);
 
     EXPECT_EQ(s.x(), 4);
@@ -41,7 +41,7 @@ TEST(PointTest, MoveConstruction) {
 
 TEST(PointTest, MoveConstructionMoveOnly) {
     bmp::point s1(4_mov0, 5_mov1);
-    bmp::point<move_only_value<0>, move_only_value<1>> s2(std::move(s1));
+    bmp::point s2(std::move(s1));
 
     EXPECT_EQ(s1.x(), 0_mov0);
     EXPECT_EQ(s1.y(), 0_mov1);
@@ -93,6 +93,24 @@ TEST(PointTest, Set) {
 TEST(PointTest, SetMoveOnly) {
     bmp::point<move_only_value<0>, move_only_value<1>> s;
     s.set(4_mov0, 5_mov1);
+
+    EXPECT_EQ(s.x(), 4_mov0);
+    EXPECT_EQ(s.y(), 5_mov1);
+}
+
+TEST(PointTest, SetXY) {
+    bmp::point<int> s;
+    s.set_x(4);
+    s.set_y(5);
+
+    EXPECT_EQ(s.x(), 4);
+    EXPECT_EQ(s.y(), 5);
+}
+
+TEST(PointTest, SetXYMoveOnly) {
+    bmp::point<move_only_value<0>, move_only_value<1>> s;
+    s.set_x(4_mov0);
+    s.set_y(5_mov1);
 
     EXPECT_EQ(s.x(), 4_mov0);
     EXPECT_EQ(s.y(), 5_mov1);

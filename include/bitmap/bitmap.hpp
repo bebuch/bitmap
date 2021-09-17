@@ -58,39 +58,32 @@ namespace bmp {
         /// \brief Constructs a bitmap by moving the data of another one
         bitmap(bitmap&&) = default;
 
-        /// \brief Constructs a bitmap on position (0, 0), with size size.width
-        ///        and size.height, initialiese all values with value
+        /// \brief Constructs a bitmap with size, initialize all values with value
         /// \throw std::out_of_range
         bitmap(size_type const& size, value_type const& value = value_type())
             : size_(size)
-            , data_(point_count(), value) {
-            throw_if_size_is_negative(size_);
-        }
+            , data_(point_count(), value) {}
 
-        /// \brief Constructs a bitmap on position (0, 0), with size size.width
-        ///        and size.height, initialiese all values with value
+        /// \brief Constructs a bitmap with size, initialize values in column order by range
         /// \throw std::out_of_range
         template <typename InputIterator>
         bitmap(size_type const& size, InputIterator first, InputIterator last)
             : size_(size)
-            , data_(first, last) {
-            throw_if_size_is_negative(size_);
+            , data_(first, last)
+        {
             if(data_.size() != point_count()) {
                 throw std::logic_error(
-                    "bitmap constructor size (" + std::to_string(size_.width()) + "x"
-                    + std::to_string(size_.height()) + ") and iterator range ("
+                    "bitmap constructor size (" + std::to_string(size_.w()) + "x"
+                    + std::to_string(size_.h()) + ") and iterator range ("
                     + std::to_string(data_.size()) + ") are incompatible");
             }
         }
 
-        /// \brief Constructs a bitmap on position (0, 0), with size width and
-        ///        height, initialiese all values with value
+        /// \brief Constructs a bitmap with size w and h, initialize all values with value
         /// \throw std::out_of_range
-        bitmap(std::size_t width, std::size_t height, value_type const& value = value_type())
-            : size_(width, height)
-            , data_(point_count(), value) {
-            throw_if_size_is_negative(size_);
-        }
+        bitmap(std::size_t w, std::size_t h, value_type const& value = value_type())
+            : size_(w, h)
+            , data_(point_count(), value) {}
 
 
         /// \brief Standard destructor
@@ -111,7 +104,7 @@ namespace bmp {
 
         /// \brief Get a const_iterator on begin of the data
         const_iterator begin() const {
-            return data_.begin();
+            return cbegin();
         }
 
         /// \brief Get a const_iterator on begin of the data
@@ -126,7 +119,7 @@ namespace bmp {
 
         /// \brief Get a const_iterator behind the data
         const_iterator end() const {
-            return data_.end();
+            return cend();
         }
 
         /// \brief Get a const_iterator behind the data
@@ -142,7 +135,7 @@ namespace bmp {
 
         /// \brief Get a const_reverse_iterator on end of the data
         const_reverse_iterator rbegin() const {
-            return data_.rbegin();
+            return crbegin();
         }
 
         /// \brief Get a const_reverse_iterator on end of the data
@@ -157,7 +150,7 @@ namespace bmp {
 
         /// \brief Get a const_reverse_iterator before the data
         const_reverse_iterator rend() const {
-            return data_.rend();
+            return crend();
         }
 
         /// \brief Get a const_reverse_iterator before the data
@@ -168,27 +161,26 @@ namespace bmp {
 
         /// \brief Resize the data field
         /// \attention All pointers and iterators to the data become invalid
-        void resize(std::size_t width, std::size_t height, value_type const& value = value_type()) {
-            resize(size_type(width, height), value);
+        void resize(std::size_t w, std::size_t h, value_type const& value = value_type()) {
+            resize(size_type(w, h), value);
         }
 
         /// \brief Resize the data field
         /// \attention All pointers and iterators to the data become invalid
         void resize(size_type const& size, value_type const& value = value_type()) {
-            throw_if_size_is_negative(size);
             data_.resize(size.area(), value);
             size_ = size;
         }
 
 
         /// \brief Get the width
-        std::size_t width() const {
-            return size_.width();
+        std::size_t w() const {
+            return size_.w();
         }
 
         /// \brief Get the height
-        std::size_t height() const {
-            return size_.height();
+        std::size_t h() const {
+            return size_.h();
         }
 
         /// \brief Get the size
@@ -203,55 +195,55 @@ namespace bmp {
 
 
         /// \brief Get the width as signed
-        std::ptrdiff_t s_width() const {
-            return static_cast<std::ptrdiff_t>(width());
+        std::ptrdiff_t sw() const {
+            return static_cast<std::ptrdiff_t>(w());
         }
 
         /// \brief Get the height as signed
-        std::ptrdiff_t s_height() const {
-            return static_cast<std::ptrdiff_t>(height());
+        std::ptrdiff_t sh() const {
+            return static_cast<std::ptrdiff_t>(h());
         }
 
         /// \brief Get the size as signed
         ssize_type const ssize() const {
-            return ssize_type(s_width(), s_height());
+            return ssize_type(sw(), sh());
         }
 
         /// \brief Get the number of points in the bitmap as signed
-        std::ptrdiff_t s_point_count() const {
+        std::ptrdiff_t spoint_count() const {
             return static_cast<std::ptrdiff_t>(point_count());
         }
 
 
         /// \brief Get the width with requested type
         template <typename U>
-        U width_as() const {
-            if(width() > this->max<U>()) {
-                throw std::runtime_error("width is to big for requested type");
+        U w_as() const {
+            if(w() > std::numeric_limits<U>::max()) {
+                throw std::runtime_error("w is to big for requested type");
             }
-            return static_cast<U>(width());
+            return static_cast<U>(w());
         }
 
         /// \brief Get the height with requested type
         template <typename U>
-        U height_as() const {
-            if(height() > this->max<U>()) {
-                throw std::runtime_error("height is to big for requested type");
+        U h_as() const {
+            if(h() > std::numeric_limits<U>::max()) {
+                throw std::runtime_error("h is to big for requested type");
             }
-            return static_cast<U>(height());
+            return static_cast<U>(h());
         }
 
         /// \brief Get the size with requested type
         template <typename U>
         ::bmp::size<U> const size_as() const {
-            return {width_as<U>(), height_as<U>()};
+            return {w_as<U>(), h_as<U>()};
         }
 
         /// \brief Get the number of points in the bitmap with requested type
         template <typename U>
         U point_count_as() const {
-            auto count = point_count();
-            if(count > this->max<U>()) {
+            auto const count = point_count();
+            if(count > std::numeric_limits<U>::max()) {
                 throw std::runtime_error("point count is to big for requested type");
             }
             return static_cast<U>(count);
@@ -305,13 +297,15 @@ namespace bmp {
         /// \brief Converts a lokal point in a index for direct data access
         /// \attention This function performs no range protection
         std::size_t data_pos(point_type const& point) const {
-            return point.y() * width() + point.x();
+            return point.y() * w() + point.x();
         }
 
         /// \brief true if image is empty, false otherwise
         bool empty() const {
             return data_.empty();
         }
+
+        [[nodiscard]] bool operator==(bitmap const&) const = default;
 
 
     protected:
@@ -333,62 +327,27 @@ namespace bmp {
         }
 
         /// \brief Throws an exception, if the point is out of range
-        void throw_if_out_of_range(point_type const&
-#ifdef DEBUG
-                                       point
-#endif
-        ) const {
+        void throw_if_out_of_range(point_type const& point) const {
 #ifdef DEBUG
             if(!is_point_in_bitmap(*this, point)) {
                 std::ostringstream os;
                 os << "bitmap: point(x = " << point.x() << ", y = " << point.y()
-                   << ") is outside the bitmap (width = " << width() << ", height = " << height()
-                   << ")";
+                   << ") is outside the bitmap (w = " << w() << ", h = " << h() << ")";
                 throw std::out_of_range(os.str());
             }
+#else
+            (void)point;
 #endif
-        }
-
-        /// \brief Throws an exception if size is negative
-        /// \throw std::out_of_range in debug build
-        static void throw_if_size_is_negative(size_type const& size) {
-            if(!size.is_positive()) {
-                std::ostringstream os;
-                os << "bitmap: bitmap obtain negative size{" << size.width() << ", "
-                   << size.height() << "}";
-                throw std::out_of_range(os.str());
-            }
-        }
-
-
-    private:
-        template <typename U>
-        static constexpr std::size_t max() noexcept {
-            return static_cast<std::size_t>(std::numeric_limits<U>::max());
         }
     };
 
 
     template <typename T>
     bool is_point_in_bitmap(bitmap<T> const& image, typename bitmap<T>::point_type const& point) {
-        if(point.x() < 0 || point.x() >= image.width() || point.y() < 0
-           || point.y() >= image.height()) {
+        if(point.x() < 0 || point.x() >= image.w() || point.y() < 0 || point.y() >= image.h()) {
             return false;
         }
         return true;
-    }
-
-
-    /// \brief true, if size and contents are equal, otherwise false
-    template <typename T>
-    bool operator==(bitmap<T> const& l, bitmap<T> const& r) {
-        return l.size() == r.size() && std::equal(l.begin(), l.end(), r.begin());
-    }
-
-    /// \brief true, if size and contents are not equal, otherwise false
-    template <typename T>
-    bool operator!=(bitmap<T> const& l, bitmap<T> const& r) {
-        return !(l == r);
     }
 
 

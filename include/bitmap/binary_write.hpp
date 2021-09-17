@@ -63,8 +63,8 @@ namespace bmp {
             return (detail::binary_io_flags_v<value_type> & 0x0F) | std::uint8_t(endian_flag);
         }();
 
-        big_uint64_t const width = bitmap.width();
-        big_uint64_t const height = bitmap.height();
+        big_uint64_t const w = bitmap.w();
+        big_uint64_t const h = bitmap.h();
 
         // write the file header
         os.write(reinterpret_cast<char const*>(&magic), 4);
@@ -72,8 +72,8 @@ namespace bmp {
         os.write(reinterpret_cast<char const*>(&size_in_byte), 1);
         os.write(reinterpret_cast<char const*>(&channel_count), 1);
         os.write(reinterpret_cast<char const*>(&flags), 1);
-        os.write(reinterpret_cast<char const*>(&width), 8);
-        os.write(reinterpret_cast<char const*>(&height), 8);
+        os.write(reinterpret_cast<char const*>(&w), 8);
+        os.write(reinterpret_cast<char const*>(&h), 8);
 
         if(!os.good()) {
             throw binary_io_error("can't write binary bitmap format header");
@@ -95,7 +95,7 @@ namespace bmp {
                 os.write(reinterpret_cast<char const*>(&data), 1);
             }
         } else if(endianness == boost::endian::order::native) {
-            os.write(reinterpret_cast<char const*>(bitmap.data()), width * height * sizeof(T));
+            os.write(reinterpret_cast<char const*>(bitmap.data()), w * h * sizeof(T));
         } else if constexpr(!std::is_floating_point_v<value_type>) {
             for(auto v: bitmap) {
                 for(std::size_t i = 0; i < channel_count_v<T>; ++i) {

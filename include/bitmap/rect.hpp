@@ -29,10 +29,10 @@ namespace bmp::detail {
         using y_type = YT;
 
         /// \brief Type of the width
-        using width_type = WT;
+        using w_type = WT;
 
         /// \brief Type of the height
-        using height_type = HT;
+        using h_type = HT;
 
         /// \brief Type of the rect top left position
         using pos_type = ::bmp::point<XT, YT>;
@@ -50,27 +50,23 @@ namespace bmp::detail {
         /// \brief Move constuctor
         constexpr rect_base(rect_base&&) = default;
 
-        /// \brief Constructs a rect on position (top_left.x, top_left.y), with
-        ///        size size.width and size.height
+        /// \brief Constructs on position (top_left.x, top_left.y), with size (size.w, size.h)
         constexpr rect_base(pos_type top_left, size_type size)
             : top_left_(std::move(top_left))
             , size_(std::move(size)) {}
 
-        /// \brief Constructs a rect on position (0, 0), with size size.width
-        ///        and size.height
+        /// \brief Constructs on position (0, 0), with size (size.w, size.h)
         constexpr rect_base(size_type size)
             : size_(std::move(size)) {}
 
-        /// \brief Constructs a rect on position (0, 0), with size width and
-        ///        height
-        constexpr rect_base(width_type width, height_type height)
-            : size_(std::move(width), std::move(height)) {}
+        /// \brief Constructs on position (0, 0), with size (w, h)
+        constexpr rect_base(w_type w, h_type h)
+            : size_(std::move(w), std::move(h)) {}
 
-        /// \brief Constructs a rect on position (x, y), with size width and
-        ///        height
-        constexpr rect_base(x_type x, y_type y, width_type width, height_type height)
+        /// \brief Constructs on position (x, y), with size (w, h)
+        constexpr rect_base(x_type x, w_type w, y_type y, h_type h)
             : top_left_(std::move(x), std::move(y))
-            , size_(std::move(width), std::move(height)) {}
+            , size_(std::move(w), std::move(h)) {}
 
 
         /// \brief Copy assignment
@@ -82,7 +78,7 @@ namespace bmp::detail {
 
         /// \brief Get true, if width or height is zero
         [[nodiscard]] constexpr bool is_empty() const {
-            return width() == width_type() && height() == height_type();
+            return w() == w_type() && h() == h_type();
         }
 
         /// \brief Get true, if width and height are positv
@@ -112,18 +108,25 @@ namespace bmp::detail {
         }
 
         /// \brief Get the width
-        [[nodiscard]] constexpr width_type const& width() const {
-            return size_.width();
+        [[nodiscard]] constexpr w_type const& w() const {
+            return size_.w();
         }
 
         /// \brief Get the height
-        [[nodiscard]] constexpr height_type const& height() const {
-            return size_.height();
+        [[nodiscard]] constexpr h_type const& h() const {
+            return size_.h();
         }
 
-        /// \brief Get width() * height()
+
+        /// \brief Get abs(w) * abs(h)
         [[nodiscard]] constexpr auto area() const {
             return size_.area();
+        }
+
+        /// \brief Get abs(w) * abs(h)
+        template <typename CommonType>
+        [[nodiscard]] constexpr CommonType area_as() const {
+            return size_.template area_as<CommonType>();
         }
 
 
@@ -134,9 +137,9 @@ namespace bmp::detail {
         }
 
         /// \brief Set x, y, width and height
-        constexpr void set(x_type x, y_type y, width_type width, height_type height) {
-            set_pos({std::move(x), std::move(y)});
-            set_size({std::move(width), std::move(height)});
+        constexpr void set(x_type x, w_type w, y_type y, h_type h) {
+            set_pos(std::move(x), std::move(y));
+            set_size(std::move(w), std::move(h));
         }
 
         /// \brief Set x and y
@@ -155,46 +158,53 @@ namespace bmp::detail {
         }
 
         /// \brief Set width and height
-        constexpr void set_size(width_type width, height_type height) {
-            set_size({std::move(width), std::move(height)});
+        constexpr void set_size(w_type w, h_type h) {
+            set_size({std::move(w), std::move(h)});
         }
 
         /// \brief Set the x position
         constexpr void set_x(x_type x) {
-            top_left_.x() = std::move(x);
+            top_left_.set_x(std::move(x));
         }
 
         /// \brief Set the y position
         constexpr void set_y(y_type y) {
-            top_left_.y() = std::move(y);
+            top_left_.set_y(std::move(y));
         }
 
         /// \brief Set the width
-        constexpr void set_width(width_type width) {
-            size_.width() = std::move(width);
+        constexpr void set_w(w_type w) {
+            size_.set_w(std::move(w));
         }
 
         /// \brief Set the height
-        constexpr void set_height(height_type height) {
-            size_.height() = std::move(height);
+        constexpr void set_h(h_type h) {
+            size_.set_h(std::move(h));
         }
 
 
         /// \brief Moves the rect in horizontal direction
+        constexpr void move(x_type const& x_translation, y_type const& y_translation) {
+            top_left_ += pos_type(x_translation, y_translation);
+        }
+
+        /// \brief Moves the rect in horizontal direction
         constexpr void move(pos_type const& translation) {
-            move_horizontally(translation.x);
-            move_vertically(translation.y);
+            top_left_ += pos_type(translation, translation);
         }
 
         /// \brief Moves the rect in horizontal direction
         constexpr void move_horizontally(x_type const& translation) {
-            top_left_.x() += translation;
+            top_left_ += pos_type(translation, y_type());
         }
 
         /// \brief Moves the rect in vertical direction
         constexpr void move_vertically(y_type const& translation) {
-            top_left_.y() += translation;
+            top_left_ += pos_type(x_type(), translation);
         }
+
+
+        [[nodiscard]] constexpr bool operator==(rect_base const&) const = default;
 
 
     private:
@@ -237,7 +247,7 @@ namespace bmp{
 
 
     template <typename XT, typename WT, typename YT, typename HT>
-    rect(XT, YT, WT, HT) -> rect<XT, WT, YT, HT>;
+    rect(XT, WT, YT, HT) -> rect<XT, WT, YT, HT>;
 
     template <typename XT, typename WT, typename YT, typename HT>
     rect(point<XT, YT>, size<WT, HT>) -> rect<XT, WT, YT, HT>;
@@ -274,18 +284,6 @@ namespace bmp{
     }
 
 
-    /// \brief Get a rect that contains both rects
-    template <typename XT, typename WT, typename YT, typename HT>
-    [[nodiscard]] constexpr auto join(
-        rect<XT, WT, YT, HT> const& l,
-        rect<XT, WT, YT, HT> const& r
-    ) {
-        return rect<XT, YT, WT, HT>(
-            point<XT, YT>(std::min(l.left(), r.left()), std::min(l.top(), r.top())),
-            point<XT, YT>(std::max(l.right(), r.right()), std::max(l.bottom(), r.bottom())));
-    }
-
-
     /// \brief Get true, if point is in rect
     template <typename XT, typename WT, typename YT, typename HT, typename PXT, typename PYT>
     [[nodiscard]] constexpr bool contains(
@@ -304,6 +302,18 @@ namespace bmp{
     ) {
         return test.left() >= ref.left() && test.top() >= ref.top()
             && test.right() <= ref.right() && test.bottom() <= ref.bottom();
+    }
+
+
+    /// \brief Get a rect that contains both rects
+    template <typename XT, typename YT>
+    [[nodiscard]] constexpr auto join(
+        rect<XT, XT, YT, YT> const& l,
+        rect<XT, XT, YT, YT> const& r
+    ) {
+        return rect<XT, XT, YT, YT>(
+            point<XT, YT>(std::min(l.left(), r.left()), std::min(l.top(), r.top())),
+            point<XT, YT>(std::max(l.right(), r.right()), std::max(l.bottom(), r.bottom())));
     }
 
 
@@ -329,110 +339,122 @@ namespace bmp::detail {
 
 
         /// \brief Constructs a rect on position (0, 0), with size
-        ///        bottom_right.x + 1 as width and bottom_right.y + 1 as height
-        constexpr rect_hv_base(pos_type const& bottom_right)
-            : rect_base<XT, XT, YT, YT>(to_size(bottom_right + pos_type(1, 1))) {}
+        ///        bottom_right.x + 1 as width and rb.y + 1 as height
+        constexpr rect_hv_base(pos_type const& rb)
+            : rect_base<XT, XT, YT, YT>(to_size(
+                pos_type(horizontal_type(1), vertical_type(1)) + rb)) {}
 
         /// \brief Constructs a rect on position (top_left.x, top_left.y), with
         ///        size bottom_right.x + 1 - top_left.x as width and
         ///        bottom_right.y + 1 - top_left.x as height
-        constexpr rect_hv_base(pos_type const& top_left, pos_type const& bottom_right)
-            : rect_base<XT, XT, YT, YT>(top_left, to_size(bottom_right + pos_type(1, 1) - top_left))
+        constexpr rect_hv_base(pos_type const& lt, pos_type const& rb)
+            : rect_base<XT, XT, YT, YT>(lt, to_size(
+                pos_type(horizontal_type(1), vertical_type(1)) + rb - lt))
             {}
 
 
         using rect_base<XT, XT, YT, YT>::x;
         using rect_base<XT, XT, YT, YT>::y;
-        using rect_base<XT, XT, YT, YT>::width;
-        using rect_base<XT, XT, YT, YT>::height;
+        using rect_base<XT, XT, YT, YT>::w;
+        using rect_base<XT, XT, YT, YT>::h;
         using rect_base<XT, XT, YT, YT>::pos;
         using rect_base<XT, XT, YT, YT>::size;
 
+        using rect_base<XT, XT, YT, YT>::set_x;
+        using rect_base<XT, XT, YT, YT>::set_y;
+        using rect_base<XT, XT, YT, YT>::set_w;
+        using rect_base<XT, XT, YT, YT>::set_h;
+        using rect_base<XT, XT, YT, YT>::set_pos;
+        using rect_base<XT, XT, YT, YT>::set_size;
+
 
         /// \brief Get the top point
-        [[nodiscard]] constexpr horizontal_type const top() const {
+        [[nodiscard]] constexpr vertical_type t() const {
             return y();
         }
 
         /// \brief Get the bottom point
-        [[nodiscard]] constexpr horizontal_type const bottom() const {
-            return height() + y() - 1;
+        [[nodiscard]] constexpr vertical_type b() const {
+            return h() + y() - vertical_type(1);
         }
 
         /// \brief Get the left point
-        [[nodiscard]] constexpr vertical_type const left() const {
+        [[nodiscard]] constexpr horizontal_type l() const {
             return x();
         }
 
         /// \brief Get the right point
-        [[nodiscard]] constexpr vertical_type const right() const {
-            return width() + x() - 1;
+        [[nodiscard]] constexpr horizontal_type r() const {
+            return w() + x() - horizontal_type(1);
         }
 
 
         /// \brief Get the top left corner
-        [[nodiscard]] constexpr pos_type const top_left() const {
+        [[nodiscard]] constexpr pos_type lt() const {
             return pos();
         }
 
         /// \brief Get the top right corner
-        [[nodiscard]] constexpr pos_type const top_right() const {
-            return {right(), top()};
+        [[nodiscard]] constexpr pos_type rt() const {
+            return {r(), t()};
         }
 
         /// \brief Get the bottom left corner
-        [[nodiscard]] constexpr pos_type const bottom_left() const {
-            return {left(), bottom()};
+        [[nodiscard]] constexpr pos_type lb() const {
+            return {l(), b()};
         }
 
         /// \brief Get the bottom right corner
-        [[nodiscard]] constexpr pos_type const bottom_right() const {
-            return {right(), bottom()};
+        [[nodiscard]] constexpr pos_type rb() const {
+            return {r(), b()};
         }
 
 
         /// \brief Set the top point
-        constexpr void set_top(horizontal_type const& top) {
-            set_y(top);
+        constexpr void set_t(vertical_type const& t) {
+            set_h(h() + y() - t);
+            set_y(t);
         }
 
         /// \brief Set the bottom point
-        constexpr void set_bottom(horizontal_type const& bottom) {
-            set_height(bottom + 1 - y());
+        constexpr void set_b(vertical_type const& b) {
+            set_h(vertical_type(1) + b - y());
         }
 
         /// \brief Set the left point
-        constexpr void set_left(vertical_type const& left) {
-            set_x(left);
+        constexpr void set_l(horizontal_type const& l) {
+            set_w(w() + x() - l);
+            set_x(l);
         }
 
         /// \brief Set the right point
-        constexpr void set_right(vertical_type const& right) {
-            set_width(right + 1 - x());
+        constexpr void set_r(horizontal_type const& r) {
+            set_w(horizontal_type(1) + r - x());
         }
 
 
         /// \brief Set the top left corner
-        constexpr void set_top_left(pos_type const& top_left) {
-            set_pos(top_left);
+        constexpr void set_lt(pos_type const& lt) {
+            set_l(lt.x());
+            set_t(lt.y());
         }
 
         /// \brief Set the top right corner
-        constexpr void set_top_right(pos_type const& top_right) {
-            set_right(top_right.x());
-            set_top(top_right.y());
+        constexpr void set_rt(pos_type const& rt) {
+            set_r(rt.x());
+            set_t(rt.y());
         }
 
         /// \brief Set the bottom left corner
-        constexpr void set_bottom_left(pos_type const& bottom_left) {
-            set_left(bottom_left.x());
-            set_bottom(bottom_left.y());
+        constexpr void set_lb(pos_type const& lb) {
+            set_l(lb.x());
+            set_b(lb.y());
         }
 
         /// \brief Set the bottom right corner
-        constexpr void set_bottom_right(pos_type const& bottom_right) {
-            set_right(bottom_right.x());
-            set_bottom(bottom_right.y());
+        constexpr void set_rb(pos_type const& rb) {
+            set_r(rb.x());
+            set_b(rb.y());
         }
     };
 

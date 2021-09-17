@@ -6,23 +6,23 @@
 #include <utility>
 
 
+namespace bmp::detail {
+
+
+    template <typename WT, typename HT>
+    struct size_base {};
+
+    template <typename T>
+    struct size_base<T, T> {
+        /// \brief Type of width and height
+        using value_type = T;
+    };
+
+
+}
+
+
 namespace bmp {
-
-
-    namespace detail {
-
-
-        template <typename WT, typename HT>
-        struct size_base {};
-
-        template <typename T>
-        struct size_base<T, T> {
-            /// \brief Type of width and height
-            using value_type = T;
-        };
-
-
-    }
 
 
     /// \brief A class for manipulating sizes
@@ -38,25 +38,25 @@ namespace bmp {
 
         /// \brief Constructs a size with width 0 and height 0
         constexpr size()
-            : width_()
-            , height_() {}
+            : w_()
+            , h_() {}
 
-        /// \brief Constructs a copy
+        /// \brief Copy constructor
         constexpr size(size const&) = default;
 
-        /// \brief Constructs a copy
+        /// \brief Move constructor
         constexpr size(size&&) = default;
 
-        /// \brief Constructs a size width width and height
-        constexpr size(w_type width, h_type height)
-            : width_(std::move(width))
-            , height_(std::move(height)) {}
+        /// \brief Constructs a size with width and height
+        constexpr size(w_type w, h_type h)
+            : w_(std::move(w))
+            , h_(std::move(h)) {}
 
 
         /// \brief Enable static casts
         template <typename W2T, typename H2T>
         explicit constexpr operator size<W2T, H2T>() const {
-            return {static_cast<W2T>(width_), static_cast<H2T>(height_)};
+            return {static_cast<W2T>(w_), static_cast<H2T>(h_)};
         }
 
 
@@ -67,85 +67,91 @@ namespace bmp {
         constexpr size& operator=(size&&) = default;
 
 
-        /// \brief The width
-        [[nodiscard]] constexpr w_type& width() {
-            return width_;
+        /// \brief Set width
+        constexpr void set_w(w_type w) {
+            w_ = std::move(w);
         }
 
-        /// \brief The height
-        [[nodiscard]] constexpr h_type& height() {
-            return height_;
+        /// \brief Set height
+        constexpr void set_h(h_type h) {
+            h_ = std::move(h);
         }
 
 
-        /// \brief The width
-        [[nodiscard]] constexpr w_type const& width() const {
-            return width_;
+        /// \brief Get width
+        [[nodiscard]] constexpr w_type const& w() const& {
+            return w_;
         }
 
-        /// \brief The height
-        [[nodiscard]] constexpr h_type const& height() const {
-            return height_;
+        /// \brief Get height
+        [[nodiscard]] constexpr h_type const& h() const& {
+            return h_;
+        }
+
+        /// \brief Get width
+        [[nodiscard]] constexpr w_type const& w() && {
+            return std::move(w_);
+        }
+
+        /// \brief Get height
+        [[nodiscard]] constexpr h_type const& h() && {
+            return std::move(h_);
         }
 
 
         /// \brief Set width and height
-        constexpr void set(w_type width, h_type height) {
-            width_ = std::move(width);
-            height_ = std::move(height);
+        constexpr void set(w_type w, h_type h) {
+            w_ = std::move(w);
+            h_ = std::move(h);
         }
 
 
         /// \brief Get true, if width and height are positiv
         [[nodiscard]] constexpr bool is_positive() const {
-            return width() >= w_type() && height() >= h_type();
+            return w() >= w_type() && h() >= h_type();
         }
 
 
-        /// \brief Get width * height
+        /// \brief Get abs(w) * abs(h)
         [[nodiscard]] constexpr auto area() const {
-            using common_type = std::common_type_t<w_type, h_type>;
+            return area_as<std::common_type_t<w_type, h_type>>();
+        }
 
+        /// \brief Get abs(w) * abs(h)
+        template <typename CommonType>
+        [[nodiscard]] constexpr CommonType area_as() const {
             auto convert = [](auto const& v) {
                 using type = std::remove_reference_t<decltype(v)>;
                 if constexpr(std::is_signed_v<type>) {
                     using std::abs;
-                    return static_cast<common_type>(abs(v));
+                    return static_cast<CommonType>(abs(v));
                 } else {
-                    return static_cast<common_type>(v);
+                    return static_cast<CommonType>(v);
                 }
             };
-            return convert(width()) * convert(height());
+            return convert(w()) * convert(h());
         }
 
+        [[nodiscard]] constexpr bool operator==(size const&) const = default;
+
+
     private:
-        w_type width_;
-        h_type height_;
+        w_type w_;
+        h_type h_;
     };
-
-
-    template <typename WT, typename HT>
-    [[nodiscard]] constexpr bool operator==(size<WT, HT> const& a, size<WT, HT> const& b) {
-        return a.width() == b.width() && a.height() == b.height();
-    }
-
-    template <typename WT, typename HT>
-    [[nodiscard]] constexpr bool operator!=(size<WT, HT> const& a, size<WT, HT> const& b) {
-        return !(a == b);
-    }
 
 
     template <typename XT, typename YT>
     class point;
 
     template <typename WT, typename HT>
-    [[nodiscard]] point<WT, HT> to_point(size<WT, HT> const& s) {
-        return {s.width(), s.height()};
+    [[nodiscard]] point<WT, HT> to_point(size<WT, HT> s) {
+        return {std::move(s).w(), std::move(s).h()};
     }
 
     template <typename XT, typename YT = XT, typename WT, typename HT>
-    [[nodiscard]] point<XT, YT> to_point(size<WT, HT> const& s) {
-        return {static_cast<XT>(s.width()), static_cast<YT>(s.height())};
+    [[nodiscard]] point<XT, YT> to_point(size<WT, HT> s) {
+        return {static_cast<XT>(std::move(s).w()), static_cast<YT>(std::move(s).h())};
     }
 
 

@@ -37,22 +37,22 @@ namespace bmp {
 
 
         bitmap<result_type> result(
-            rotation ? size_type(image.height(), image.width()) : image.size());
+            rotation ? size_type(image.h(), image.w()) : image.size());
 
-        for(std::size_t y = 0; y < result.height(); ++y) {
-            for(std::size_t x = 0; x < result.width(); ++x) {
+        for(std::size_t y = 0; y < result.h(); ++y) {
+            for(std::size_t x = 0; x < result.w(); ++x) {
                 typename bitmap<result_type>::point_type target(x, y);
 
                 if(rotation) {
-                    target.set(target.y(), image.height() - target.x() - 1);
+                    target.set(target.y(), image.h() - target.x() - 1);
                 }
 
                 if(rotation ? mirror_v : mirror_h) {
-                    target.x() = image.width() - target.x() - 1;
+                    target.x() = image.w() - target.x() - 1;
                 }
 
                 if(rotation ? mirror_h : mirror_v) {
-                    target.y() = image.height() - target.y() - 1;
+                    target.y() = image.h() - target.y() - 1;
                 }
 
                 result(x, y) = converter(image(target));

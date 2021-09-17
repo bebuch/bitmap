@@ -10,7 +10,7 @@ public:
     explicit constexpr move_only_value(int v)
         : v(v) {}
 
-    explicit constexpr move_only_value(move_only_value&& o)
+    constexpr move_only_value(move_only_value&& o)
         : v(o.v)
     {
         o.v = 0;
@@ -23,6 +23,7 @@ public:
     }
 
     [[nodiscard]] auto operator<=>(const move_only_value<N>&) const = default;
+
 
 private:
     int v;

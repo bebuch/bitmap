@@ -76,8 +76,8 @@ namespace bmp {
         size<std::size_t> const& image_size) {
         return {
             transform_point(homography, point<T>{0, 0}),
-            transform_point(homography, point<T>{static_cast<T>(image_size.width()), 0}),
-            transform_point(homography, point<T>{0, static_cast<T>(image_size.height())}),
+            transform_point(homography, point<T>{static_cast<T>(image_size.w()), 0}),
+            transform_point(homography, point<T>{0, static_cast<T>(image_size.h())}),
             transform_point(homography, to_point<T>(image_size))};
     }
 
@@ -106,8 +106,8 @@ namespace bmp {
 
         bitmap<pixel_type> result(target_contour.size());
 
-        for(std::size_t y = 0; y < result.height(); ++y) {
-            for(std::size_t x = 0; x < result.width(); ++x) {
+        for(std::size_t y = 0; y < result.h(); ++y) {
+            for(std::size_t x = 0; x < result.w(); ++x) {
                 auto const source_point = transform_point(
                     homography,
                     point<T>{
@@ -117,8 +117,8 @@ namespace bmp {
                 auto const source_x = std::floor(source_point.x());
                 auto const source_y = std::floor(source_point.y());
 
-                if(source_x < 0 || source_y < 0 || source_x + 1 >= image.width()
-                   || source_y + 1 >= image.height()) {
+                if(source_x < 0 || source_y < 0 || source_x + 1 >= image.w()
+                   || source_y + 1 >= image.h()) {
                     if constexpr(has_quiet_NaN) {
                         result(x, y) = pixel::fill_channels<TVT>(
                             std::numeric_limits<pixel::channel_type_t<TVT>>::quiet_NaN());

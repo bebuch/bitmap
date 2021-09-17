@@ -14,7 +14,7 @@ namespace bmp {
     size<std::size_t> get_size(std::vector<Bitmap> const& vec, GetSizeFunction&& f) {
         if(vec.empty())
             throw std::logic_error("bitmap vector is empty");
-        return std::accumulate(
+        return std::reduce(
             vec.cbegin() + 1,
             vec.cend(),
             f(*vec.cbegin()),

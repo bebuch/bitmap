@@ -3,23 +3,24 @@
 #include <utility>
 
 
+namespace bmp::detail {
+
+
+    template <typename XT, typename YT>
+    struct point_base {};
+
+    template <typename T>
+    struct point_base<T, T> {
+        /// \brief Type of the positions
+        using value_type = T;
+    };
+
+
+}
+
+
 namespace bmp {
 
-
-    namespace detail {
-
-
-        template <typename XT, typename YT>
-        struct point_base {};
-
-        template <typename T>
-        struct point_base<T, T> {
-            /// \brief Type of the positions
-            using value_type = T;
-        };
-
-
-    }
 
 
     /// \brief A class for representing points
@@ -66,25 +67,35 @@ namespace bmp {
         constexpr point& operator=(point&&) = default;
 
 
-        /// \brief The x
-        [[nodiscard]] constexpr x_type& x() {
+        /// \brief Set x
+        constexpr void set_x(x_type x) {
+            x_ = std::move(x);
+        }
+
+        /// \brief Set y
+        constexpr void set_y(y_type y) {
+            y_ = std::move(y);
+        }
+
+
+        /// \brief Get x
+        [[nodiscard]] constexpr x_type const& x() const& {
             return x_;
         }
 
-        /// \brief The y
-        [[nodiscard]] constexpr y_type& y() {
+        /// \brief Get y
+        [[nodiscard]] constexpr y_type const& y() const& {
             return y_;
         }
 
-
-        /// \brief The x
-        [[nodiscard]] constexpr x_type const& x() const {
-            return x_;
+        /// \brief Get x
+        [[nodiscard]] constexpr x_type const& x() && {
+            return std::move(x_);
         }
 
-        /// \brief The y
-        [[nodiscard]] constexpr y_type const& y() const {
-            return y_;
+        /// \brief Get y
+        [[nodiscard]] constexpr y_type const& y() && {
+            return std::move(y_);
         }
 
 
@@ -101,6 +112,39 @@ namespace bmp {
         }
 
 
+        [[nodiscard]] constexpr bool operator==(point const&) const = default;
+
+
+        constexpr point<XT, YT>& operator+=(point<XT, YT> const& v) {
+            x_ += v.x();
+            y_ += v.y();
+            return *this;
+        }
+
+        constexpr point<XT, YT>& operator-=(point<XT, YT> const& v) {
+            x_ -= v.x();
+            y_ -= v.y();
+            return *this;
+        }
+
+        constexpr point<XT, YT>& operator*=(point<XT, YT> const& v) {
+            x_ *= v.x();
+            y_ *= v.y();
+            return *this;
+        }
+
+        constexpr point<XT, YT>& operator/=(point<XT, YT> const& v) {
+            x_ /= v.x();
+            y_ /= v.y();
+            return *this;
+        }
+
+        constexpr point<XT, YT>& operator%=(point<XT, YT> const& v) {
+            x_ %= v.x();
+            y_ %= v.y();
+            return *this;
+        }
+
     private:
         x_type x_;
         y_type y_;
@@ -108,75 +152,28 @@ namespace bmp {
 
 
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr bool operator==(point<XT, YT> const& a, point<XT, YT> const& b) {
-        return a.x() == b.x() && a.y() == b.y();
-    }
-
-    template <typename XT, typename YT>
-    [[nodiscard]] constexpr bool operator!=(point<XT, YT> const& a, point<XT, YT> const& b) {
-        return !(a == b);
-    }
-
-
-    template <typename XT, typename YT>
-    constexpr point<XT, YT>& operator+=(point<XT, YT>& a, point<XT, YT> const& b) {
-        a.x() += b.x();
-        a.y() += b.y();
-        return a;
-    }
-
-    template <typename XT, typename YT>
-    constexpr point<XT, YT>& operator-=(point<XT, YT>& a, point<XT, YT> const& b) {
-        a.x() -= b.x();
-        a.y() -= b.y();
-        return a;
-    }
-
-    template <typename XT, typename YT>
-    constexpr point<XT, YT>& operator*=(point<XT, YT>& a, point<XT, YT> const& b) {
-        a.x() *= b.x();
-        a.y() *= b.y();
-        return a;
-    }
-
-    template <typename XT, typename YT>
-    constexpr point<XT, YT>& operator/=(point<XT, YT>& a, point<XT, YT> const& b) {
-        a.x() /= b.x();
-        a.y() /= b.y();
-        return a;
-    }
-
-    template <typename XT, typename YT>
-    constexpr point<XT, YT>& operator%=(point<XT, YT>& a, point<XT, YT> const& b) {
-        a.x() %= b.x();
-        a.y() %= b.y();
-        return a;
-    }
-
-
-    template <typename XT, typename YT>
     [[nodiscard]] constexpr point<XT, YT> operator+(point<XT, YT> a, point<XT, YT> const& b) {
-        return a += b;
+        return std::move(a) += b;
     }
 
     template <typename XT, typename YT>
     [[nodiscard]] constexpr point<XT, YT> operator-(point<XT, YT> a, point<XT, YT> const& b) {
-        return a -= b;
+        return std::move(a) -= b;
     }
 
     template <typename XT, typename YT>
     [[nodiscard]] constexpr point<XT, YT> operator*(point<XT, YT> a, point<XT, YT> const& b) {
-        return a *= b;
+        return std::move(a) *= b;
     }
 
     template <typename XT, typename YT>
     [[nodiscard]] constexpr point<XT, YT> operator/(point<XT, YT> a, point<XT, YT> const& b) {
-        return a /= b;
+        return std::move(a) /= b;
     }
 
     template <typename XT, typename YT>
     [[nodiscard]] constexpr point<XT, YT> operator%(point<XT, YT> a, point<XT, YT> const& b) {
-        return a %= b;
+        return std::move(a) %= b;
     }
 
 
@@ -184,13 +181,13 @@ namespace bmp {
     class size;
 
     template <typename XT, typename YT>
-    [[nodiscard]] size<XT, YT> to_size(point<XT, YT> const& p) {
-        return {p.x(), p.y()};
+    [[nodiscard]] size<XT, YT> to_size(point<XT, YT> p) {
+        return {std::move(p).x(), std::move(p).y()};
     }
 
     template <typename WT, typename HT = WT, typename XT, typename YT>
-    [[nodiscard]] size<WT, HT> to_size(point<XT, YT> const& p) {
-        return {static_cast<WT>(p.x()), static_cast<HT>(p.y())};
+    [[nodiscard]] size<WT, HT> to_size(point<XT, YT> p) {
+        return {static_cast<WT>(std::move(p).x()), static_cast<HT>(std::move(p).y())};
     }
 
 
