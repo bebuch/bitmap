@@ -56,6 +56,13 @@ namespace bmp {
             , height_(std::move(height)) {}
 
 
+        /// \brief Enable static casts
+        template <typename W2T, typename H2T>
+        explicit constexpr operator size<W2T, H2T>() const {
+            return {static_cast<W2T>(width_), static_cast<H2T>(height_)};
+        }
+
+
         /// \brief Copy assignment
         constexpr size& operator=(size const&) = default;
 
@@ -129,7 +136,7 @@ namespace bmp {
     }
 
 
-    template <typename WT, typename HT>
+    template <typename XT, typename YT>
     class point;
 
     template <typename WT, typename HT>

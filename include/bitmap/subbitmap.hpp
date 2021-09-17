@@ -213,7 +213,7 @@ namespace bmp {
 
         if(rect.x() < 0 || rect.y() < 0) {
             throw std::out_of_range(
-                detail::out_of_range_msg(org.size(), rect.top_left(), rect.size()));
+                detail::out_of_range_msg(org.size(), rect.pos(), rect.size()));
         }
 
         auto const int_rect = ::bmp::rect(
@@ -223,13 +223,13 @@ namespace bmp {
         auto const is_x_int = detail::is_integral(rect.x());
         auto const is_y_int = detail::is_integral(rect.y());
         if(is_x_int && is_y_int) {
-            return detail::subbitmap(org, int_rect.top_left(), int_rect);
+            return detail::subbitmap(org, int_rect.pos(), int_rect);
         } else if(is_x_int) {
             return detail::subbitmap(org, point(int_rect.x(), rect.y()), int_rect);
         } else if(is_y_int) {
             return detail::subbitmap(org, point(rect.x(), int_rect.y()), int_rect);
         } else {
-            return detail::subbitmap(org, rect.top_left(), int_rect);
+            return detail::subbitmap(org, rect.pos(), int_rect);
         }
     }
 

@@ -85,19 +85,14 @@ namespace bmp {
     rect<long, std::size_t> image_contour(std::array<point<T>, 4> const& c) {
         using std::max;
         using std::min;
-        return {
-            point<long>{
-                static_cast<long>(
-                    std::floor(min(min(c[0].x(), c[1].x()), min(c[2].x(), c[3].x())))),
-                static_cast<long>(
-                    std::floor(min(min(c[0].y(), c[1].y()), min(c[2].y(), c[3].y())))),
-            },
-            point<long>{
-                static_cast<long>(
-                    std::floor(max(max(c[0].x(), c[1].x()), max(c[2].x(), c[3].x())))),
-                static_cast<long>(
-                    std::floor(max(max(c[0].y(), c[1].y()), max(c[2].y(), c[3].y())))),
-            }};
+
+        auto const top_left = point{
+            static_cast<long>(std::floor(min(min(c[0].x(), c[1].x()), min(c[2].x(), c[3].x())))),
+            static_cast<long>(std::floor(min(min(c[0].y(), c[1].y()), min(c[2].y(), c[3].y()))))};
+        auto const bottom_right = point{
+            static_cast<long>(std::floor(max(max(c[0].x(), c[1].x()), max(c[2].x(), c[3].x())))),
+            static_cast<long>(std::floor(max(max(c[0].y(), c[1].y()), max(c[2].y(), c[3].y()))))};
+        return static_cast<rect<long, std::size_t>>(rect{top_left, bottom_right});
     }
 
     template <typename TVT, typename VT, typename T>

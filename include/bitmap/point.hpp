@@ -55,6 +55,13 @@ namespace bmp {
             , y_(std::move(y)) {}
 
 
+        /// \brief Enable static casts
+        template <typename X2T, typename Y2T>
+        [[nodiscard]] explicit constexpr operator point<X2T, Y2T>() const {
+            return {static_cast<X2T>(x_), static_cast<Y2T>(y_)};
+        }
+
+
         /// \brief Copy assignment
         constexpr point& operator=(point const&) = default;
 
@@ -63,23 +70,23 @@ namespace bmp {
 
 
         /// \brief The x
-        constexpr x_type& x() {
+        [[nodiscard]] constexpr x_type& x() {
             return x_;
         }
 
         /// \brief The y
-        constexpr y_type& y() {
+        [[nodiscard]] constexpr y_type& y() {
             return y_;
         }
 
 
         /// \brief The x
-        constexpr x_type const x() const {
+        [[nodiscard]] constexpr x_type const& x() const {
             return x_;
         }
 
         /// \brief The y
-        constexpr y_type const y() const {
+        [[nodiscard]] constexpr y_type const& y() const {
             return y_;
         }
 
@@ -92,7 +99,7 @@ namespace bmp {
 
 
         /// \brief Get true, if x and y are positiv
-        constexpr bool is_positive() const {
+        [[nodiscard]] constexpr bool is_positive() const {
             return x() >= x_type() && y() >= y_type();
         }
 
@@ -104,12 +111,12 @@ namespace bmp {
 
 
     template <typename XT, typename YT>
-    constexpr bool operator==(point<XT, YT> const& a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr bool operator==(point<XT, YT> const& a, point<XT, YT> const& b) {
         return a.x() == b.x() && a.y() == b.y();
     }
 
     template <typename XT, typename YT>
-    constexpr bool operator!=(point<XT, YT> const& a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr bool operator!=(point<XT, YT> const& a, point<XT, YT> const& b) {
         return !(a == b);
     }
 
@@ -151,28 +158,42 @@ namespace bmp {
 
 
     template <typename XT, typename YT>
-    constexpr point<XT, YT> operator+(point<XT, YT> a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr point<XT, YT> operator+(point<XT, YT> a, point<XT, YT> const& b) {
         return a += b;
     }
 
     template <typename XT, typename YT>
-    constexpr point<XT, YT> operator-(point<XT, YT> a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr point<XT, YT> operator-(point<XT, YT> a, point<XT, YT> const& b) {
         return a -= b;
     }
 
     template <typename XT, typename YT>
-    constexpr point<XT, YT> operator*(point<XT, YT> a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr point<XT, YT> operator*(point<XT, YT> a, point<XT, YT> const& b) {
         return a *= b;
     }
 
     template <typename XT, typename YT>
-    constexpr point<XT, YT> operator/(point<XT, YT> a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr point<XT, YT> operator/(point<XT, YT> a, point<XT, YT> const& b) {
         return a /= b;
     }
 
     template <typename XT, typename YT>
-    constexpr point<XT, YT> operator%(point<XT, YT> a, point<XT, YT> const& b) {
+    [[nodiscard]] constexpr point<XT, YT> operator%(point<XT, YT> a, point<XT, YT> const& b) {
         return a %= b;
+    }
+
+
+    template <typename WT, typename HT>
+    class size;
+
+    template <typename XT, typename YT>
+    [[nodiscard]] size<XT, YT> to_size(point<XT, YT> const& p) {
+        return {p.x(), p.y()};
+    }
+
+    template <typename WT, typename HT = WT, typename XT, typename YT>
+    [[nodiscard]] size<WT, HT> to_size(point<XT, YT> const& p) {
+        return {static_cast<WT>(p.x()), static_cast<HT>(p.y())};
     }
 
 
