@@ -34,9 +34,6 @@ namespace bmp {
         /// \brief Type of the y positions
         using y_type = YT;
 
-        /// \brief Type of the height
-        using common_type = std::common_type_t<x_type, y_type>;
-
 
         /// \brief Constructs a point by (0, 0)
         constexpr point()

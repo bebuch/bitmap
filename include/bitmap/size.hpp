@@ -35,9 +35,6 @@ namespace bmp {
         /// \brief Type of the height
         using h_type = HT;
 
-        /// \brief Type of the height
-        using common_type = std::common_type_t<w_type, h_type>;
-
 
         /// \brief Constructs a size with width 0 and height 0
         constexpr size()
@@ -106,7 +103,9 @@ namespace bmp {
 
 
         /// \brief Get width * height
-        [[nodiscard]] constexpr common_type area() const {
+        [[nodiscard]] constexpr auto area() const {
+            using common_type = std::common_type_t<w_type, h_type>;
+
             auto convert = [](auto const& v) {
                 using type = std::remove_reference_t<decltype(v)>;
                 if constexpr(std::is_signed_v<type>) {

@@ -40,10 +40,6 @@ namespace bmp::detail {
         /// \brief Type of the rect size
         using size_type = ::bmp::size<WT, HT>;
 
-        /// \brief Type of x, y, width and height
-        using common_type =
-            std::common_type_t<typename pos_type::common_type, typename size_type::common_type>;
-
 
         /// \brief Constructs a blank rect
         constexpr rect_base() = default;

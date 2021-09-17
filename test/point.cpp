@@ -2,27 +2,7 @@
 
 #include <gtest/gtest.h>
 
-
-struct move_int {
-    int v;
-
-    move_int()
-        : v(0) {}
-
-    move_int(int v)
-        : v(v) {}
-
-    move_int(move_int&& o)
-        : v(o.v) {
-        o.v = 0;
-    }
-
-    move_int& operator=(move_int&& o) {
-        v = o.v;
-        o.v = 0;
-        return *this;
-    }
-};
+#include "move_only_value.hpp"
 
 
 TEST(PointTest, DefaultConstruction) {
@@ -33,15 +13,15 @@ TEST(PointTest, DefaultConstruction) {
 }
 
 TEST(PointTest, WidthHeightConstruction) {
-    bmp::point<int> s(4, 5);
+    bmp::point s(4, 5);
 
     EXPECT_EQ(s.x(), 4);
     EXPECT_EQ(s.y(), 5);
 }
 
 TEST(PointTest, CopyConstruction) {
-    bmp::point<int> s1(4, 5);
-    bmp::point<int> s2(s1);
+    bmp::point s1(4, 5);
+    bmp::point s2(s1);
 
     EXPECT_EQ(s1.x(), 4);
     EXPECT_EQ(s1.y(), 5);
@@ -50,8 +30,8 @@ TEST(PointTest, CopyConstruction) {
 }
 
 TEST(PointTest, MoveConstruction) {
-    bmp::point<int> s1(4, 5);
-    bmp::point<int> s2(std::move(s1));
+    bmp::point s1(4, 5);
+    bmp::point s2(std::move(s1));
 
     EXPECT_EQ(s1.x(), 4);
     EXPECT_EQ(s1.y(), 5);
@@ -60,17 +40,17 @@ TEST(PointTest, MoveConstruction) {
 }
 
 TEST(PointTest, MoveConstructionMoveOnly) {
-    bmp::point<move_int> s1(4, 5);
-    bmp::point<move_int> s2(std::move(s1));
+    bmp::point s1(4_mov0, 5_mov1);
+    bmp::point<move_only_value<0>, move_only_value<1>> s2(std::move(s1));
 
-    EXPECT_EQ(s1.x().v, 0);
-    EXPECT_EQ(s1.y().v, 0);
-    EXPECT_EQ(s2.x().v, 4);
-    EXPECT_EQ(s2.y().v, 5);
+    EXPECT_EQ(s1.x(), 0_mov0);
+    EXPECT_EQ(s1.y(), 0_mov1);
+    EXPECT_EQ(s2.x(), 4_mov0);
+    EXPECT_EQ(s2.y(), 5_mov1);
 }
 
 TEST(PointTest, CopyAssign) {
-    bmp::point<int> s1(4, 5);
+    bmp::point s1(4, 5);
     bmp::point<int> s2;
     s2 = s1;
 
@@ -81,7 +61,7 @@ TEST(PointTest, CopyAssign) {
 }
 
 TEST(PointTest, MoveAssign) {
-    bmp::point<int> s1(4, 5);
+    bmp::point s1(4, 5);
     bmp::point<int> s2;
     s2 = std::move(s1);
 
@@ -92,14 +72,14 @@ TEST(PointTest, MoveAssign) {
 }
 
 TEST(PointTest, MoveAssignMoveOnly) {
-    bmp::point<move_int> s1(4, 5);
-    bmp::point<move_int> s2;
+    bmp::point s1(4_mov0, 5_mov1);
+    bmp::point<move_only_value<0>, move_only_value<1>> s2;
     s2 = std::move(s1);
 
-    EXPECT_EQ(s1.x().v, 0);
-    EXPECT_EQ(s1.y().v, 0);
-    EXPECT_EQ(s2.x().v, 4);
-    EXPECT_EQ(s2.y().v, 5);
+    EXPECT_EQ(s1.x(), 0_mov0);
+    EXPECT_EQ(s1.y(), 0_mov1);
+    EXPECT_EQ(s2.x(), 4_mov0);
+    EXPECT_EQ(s2.y(), 5_mov1);
 }
 
 TEST(PointTest, Set) {
@@ -111,11 +91,11 @@ TEST(PointTest, Set) {
 }
 
 TEST(PointTest, SetMoveOnly) {
-    bmp::point<move_int> s;
-    s.set(4, 5);
+    bmp::point<move_only_value<0>, move_only_value<1>> s;
+    s.set(4_mov0, 5_mov1);
 
-    EXPECT_EQ(s.x().v, 4);
-    EXPECT_EQ(s.y().v, 5);
+    EXPECT_EQ(s.x(), 4_mov0);
+    EXPECT_EQ(s.y(), 5_mov1);
 }
 
 TEST(PointTest, IsPositive) {
