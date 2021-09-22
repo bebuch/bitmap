@@ -51,22 +51,22 @@ namespace bmp::detail {
         constexpr rect_base(rect_base&&) = default;
 
         /// \brief Constructs on position (top_left.x, top_left.y), with size (size.w, size.h)
-        constexpr rect_base(pos_type top_left, size_type size)
-            : top_left_(std::move(top_left))
-            , size_(std::move(size)) {}
+        constexpr rect_base(pos_type const& top_left, size_type const& size)
+            : top_left_(top_left)
+            , size_(size) {}
 
         /// \brief Constructs on position (0, 0), with size (size.w, size.h)
-        constexpr rect_base(size_type size)
-            : size_(std::move(size)) {}
+        constexpr rect_base(size_type const& size)
+            : size_(size) {}
 
         /// \brief Constructs on position (0, 0), with size (w, h)
-        constexpr rect_base(w_type w, h_type h)
-            : size_(std::move(w), std::move(h)) {}
+        constexpr rect_base(w_type const& w, h_type const& h)
+            : size_(w, h) {}
 
         /// \brief Constructs on position (x, y), with size (w, h)
-        constexpr rect_base(x_type x, w_type w, y_type y, h_type h)
-            : top_left_(std::move(x), std::move(y))
-            , size_(std::move(w), std::move(h)) {}
+        constexpr rect_base(x_type const& x, w_type const& w, y_type const& y, h_type const& h)
+            : top_left_(x, y)
+            , size_(w, h) {}
 
 
         /// \brief Copy assignment
@@ -88,32 +88,32 @@ namespace bmp::detail {
 
 
         /// \brief Get the top left point
-        [[nodiscard]] constexpr pos_type const& pos() const {
+        [[nodiscard]] constexpr pos_type pos() const {
             return top_left_;
         }
 
         /// \brief Get the size
-        [[nodiscard]] constexpr size_type const& size() const {
+        [[nodiscard]] constexpr size_type size() const {
             return size_;
         }
 
         /// \brief Get the x position
-        [[nodiscard]] constexpr x_type const& x() const {
+        [[nodiscard]] constexpr x_type x() const {
             return top_left_.x();
         }
 
         /// \brief Get the y position
-        [[nodiscard]] constexpr y_type const& y() const {
+        [[nodiscard]] constexpr y_type y() const {
             return top_left_.y();
         }
 
         /// \brief Get the width
-        [[nodiscard]] constexpr w_type const& w() const {
+        [[nodiscard]] constexpr w_type w() const {
             return size_.w();
         }
 
         /// \brief Get the height
-        [[nodiscard]] constexpr h_type const& h() const {
+        [[nodiscard]] constexpr h_type h() const {
             return size_.h();
         }
 
@@ -131,55 +131,55 @@ namespace bmp::detail {
 
 
         /// \brief Set x, y, width and height
-        constexpr void set(pos_type pos, size_type size) {
-            set_pos(std::move(pos));
-            set_size(std::move(size));
+        constexpr void set(pos_type const& pos, size_type const& size) {
+            set_pos(pos);
+            set_size(size);
         }
 
         /// \brief Set x, y, width and height
-        constexpr void set(x_type x, w_type w, y_type y, h_type h) {
-            set_pos(std::move(x), std::move(y));
-            set_size(std::move(w), std::move(h));
+        constexpr void set(x_type const& x, w_type const& w, y_type const& y, h_type const& h) {
+            set_pos(x, y);
+            set_size(w, h);
         }
 
         /// \brief Set x and y
-        constexpr void set_pos(pos_type pos) {
-            top_left_ = std::move(pos);
+        constexpr void set_pos(pos_type const& pos) {
+            top_left_ = pos;
         }
 
         /// \brief Set x and y
-        constexpr void set_pos(x_type x, y_type y) {
-            set_pos({std::move(x), std::move(y)});
+        constexpr void set_pos(x_type const& x, y_type const& y) {
+            set_pos({x, y});
         }
 
         /// \brief Set width and height
-        constexpr void set_size(size_type size) {
-            size_ = std::move(size);
+        constexpr void set_size(size_type const& size) {
+            size_ = size;
         }
 
         /// \brief Set width and height
-        constexpr void set_size(w_type w, h_type h) {
-            set_size({std::move(w), std::move(h)});
+        constexpr void set_size(w_type const& w, h_type const& h) {
+            set_size({w, h});
         }
 
         /// \brief Set the x position
-        constexpr void set_x(x_type x) {
-            top_left_.set_x(std::move(x));
+        constexpr void set_x(x_type const& x) {
+            top_left_.set_x(x);
         }
 
         /// \brief Set the y position
-        constexpr void set_y(y_type y) {
-            top_left_.set_y(std::move(y));
+        constexpr void set_y(y_type const& y) {
+            top_left_.set_y(y);
         }
 
         /// \brief Set the width
-        constexpr void set_w(w_type w) {
-            size_.set_w(std::move(w));
+        constexpr void set_w(w_type const& w) {
+            size_.set_w(w);
         }
 
         /// \brief Set the height
-        constexpr void set_h(h_type h) {
-            size_.set_h(std::move(h));
+        constexpr void set_h(h_type const& h) {
+            size_.set_h(h);
         }
 
 
@@ -263,25 +263,6 @@ namespace bmp{
 
     template <typename XT, typename YT>
     rect(point<XT, YT>, point<XT, YT>) -> rect<XT, XT, YT, YT>;
-
-
-    /// \brief true, if the rectangles are identical; false otherwise
-    template <typename XT, typename WT, typename YT, typename HT>
-    [[nodiscard]] constexpr bool operator==(
-        rect<XT, WT, YT, HT> const& l,
-        rect<XT, WT, YT, HT> const& r
-    ) {
-        return l.pos() == r.pos() && l.size() == r.size();
-    }
-
-    /// \brief false, if the rectangles are identical; true otherwise
-    template <typename XT, typename WT, typename YT, typename HT>
-    [[nodiscard]] constexpr bool operator!=(
-        rect<XT, WT, YT, HT> const& l,
-        rect<XT, WT, YT, HT> const& r
-    ) {
-        return !(l == r);
-    }
 
 
     /// \brief Get true, if point is in rect

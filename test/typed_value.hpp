@@ -26,6 +26,21 @@ public:
         return *this;
     }
 
+    constexpr typed_value& operator*=(typed_value const& a){
+        v *= a.v;
+        return *this;
+    }
+
+    constexpr typed_value& operator/=(typed_value const& a){
+        v /= a.v;
+        return *this;
+    }
+
+    constexpr typed_value& operator%=(typed_value const& a){
+        v %= a.v;
+        return *this;
+    }
+
 
 private:
     int v;
@@ -40,6 +55,21 @@ template <std::size_t N>
 template <std::size_t N>
 [[nodiscard]] constexpr typed_value<N> operator-(typed_value<N> a, typed_value<N> const& b){
     return a -= b;
+}
+
+template <std::size_t N>
+[[nodiscard]] constexpr typed_value<N> operator*(typed_value<N> a, typed_value<N> const& b){
+    return a *= b;
+}
+
+template <std::size_t N>
+[[nodiscard]] constexpr typed_value<N> operator/(typed_value<N> a, typed_value<N> const& b){
+    return a /= b;
+}
+
+template <std::size_t N>
+[[nodiscard]] constexpr typed_value<N> operator%(typed_value<N> a, typed_value<N> const& b){
+    return a %= b;
 }
 
 constexpr auto operator ""_tv0(unsigned long long v){

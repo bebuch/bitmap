@@ -48,9 +48,9 @@ namespace bmp {
         constexpr size(size&&) = default;
 
         /// \brief Constructs a size with width and height
-        constexpr size(w_type w, h_type h)
-            : w_(std::move(w))
-            , h_(std::move(h)) {}
+        constexpr size(w_type const& w, h_type const& h)
+            : w_(w)
+            , h_(h) {}
 
 
         /// \brief Enable static casts
@@ -68,41 +68,31 @@ namespace bmp {
 
 
         /// \brief Set width
-        constexpr void set_w(w_type w) {
-            w_ = std::move(w);
+        constexpr void set_w(w_type const& w) {
+            w_ = w;
         }
 
         /// \brief Set height
-        constexpr void set_h(h_type h) {
-            h_ = std::move(h);
+        constexpr void set_h(h_type const& h) {
+            h_ = h;
         }
 
 
         /// \brief Get width
-        [[nodiscard]] constexpr w_type const& w() const& {
+        [[nodiscard]] constexpr w_type w() const {
             return w_;
         }
 
         /// \brief Get height
-        [[nodiscard]] constexpr h_type const& h() const& {
+        [[nodiscard]] constexpr h_type h() const {
             return h_;
-        }
-
-        /// \brief Get width
-        [[nodiscard]] constexpr w_type const& w() && {
-            return std::move(w_);
-        }
-
-        /// \brief Get height
-        [[nodiscard]] constexpr h_type const& h() && {
-            return std::move(h_);
         }
 
 
         /// \brief Set width and height
-        constexpr void set(w_type w, h_type h) {
-            w_ = std::move(w);
-            h_ = std::move(h);
+        constexpr void set(w_type const& w, h_type const& h) {
+            w_ = w;
+            h_ = h;
         }
 
 
@@ -145,13 +135,13 @@ namespace bmp {
     class point;
 
     template <typename WT, typename HT>
-    [[nodiscard]] point<WT, HT> to_point(size<WT, HT> s) {
-        return {std::move(s).w(), std::move(s).h()};
+    [[nodiscard]] point<WT, HT> to_point(size<WT, HT> const& s) {
+        return {s.w(), s.h()};
     }
 
     template <typename XT, typename YT = XT, typename WT, typename HT>
-    [[nodiscard]] point<XT, YT> to_point(size<WT, HT> s) {
-        return {static_cast<XT>(std::move(s).w()), static_cast<YT>(std::move(s).h())};
+    [[nodiscard]] point<XT, YT> to_point(size<WT, HT> const& s) {
+        return {static_cast<XT>(s.w()), static_cast<YT>(s.h())};
     }
 
 

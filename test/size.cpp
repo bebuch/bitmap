@@ -2,100 +2,60 @@
 
 #include <gtest/gtest.h>
 
-#include "move_only_value.hpp"
+#include "typed_value.hpp"
 
 
-TEST(SizeTest, DefaultConstruction) {
+TEST(SizeTest, DefaultConstructionInt) {
     bmp::size<int> s;
 
     EXPECT_EQ(s.w(), 0);
     EXPECT_EQ(s.h(), 0);
 }
 
-TEST(SizeTest, WHConstruction) {
-    bmp::size s(4, 5);
+TEST(SizeTest, DefaultConstruction) {
+    bmp::size<typed_value<0>, typed_value<1>> s;
 
-    EXPECT_EQ(s.w(), 4);
-    EXPECT_EQ(s.h(), 5);
+    EXPECT_EQ(s.w(), 0_tv0);
+    EXPECT_EQ(s.h(), 0_tv1);
 }
+
+TEST(SizeTest, WHConstruction) {
+    bmp::size s(4_tv0, 5_tv1);
+
+    EXPECT_EQ(s.w(), 4_tv0);
+    EXPECT_EQ(s.h(), 5_tv1);
+}
+
 
 TEST(SizeTest, CopyConstruction) {
-    bmp::size s1(4, 5);
-    bmp::size s2(s1);
+    bmp::size s1(4_tv0, 5_tv1);
+    bmp::size s2 = s1;
 
-    EXPECT_EQ(s1.w(), 4);
-    EXPECT_EQ(s1.h(), 5);
-    EXPECT_EQ(s2.w(), 4);
-    EXPECT_EQ(s2.h(), 5);
+    EXPECT_EQ(s1.w(), 4_tv0);
+    EXPECT_EQ(s1.h(), 5_tv1);
+    EXPECT_EQ(s2.w(), 4_tv0);
+    EXPECT_EQ(s2.h(), 5_tv1);
 }
 
-TEST(SizeTest, MoveConstruction) {
-    bmp::size s1(4, 5);
-    bmp::size s2(std::move(s1));
-
-    EXPECT_EQ(s1.w(), 4);
-    EXPECT_EQ(s1.h(), 5);
-    EXPECT_EQ(s2.w(), 4);
-    EXPECT_EQ(s2.h(), 5);
-}
-
-TEST(SizeTest, MoveConstructionMoveOnly) {
-    bmp::size s1(4_mov0, 5_mov1);
-    bmp::size s2(std::move(s1));
-
-    EXPECT_EQ(s1.w(), 0_mov0);
-    EXPECT_EQ(s1.h(), 0_mov1);
-    EXPECT_EQ(s2.w(), 4_mov0);
-    EXPECT_EQ(s2.h(), 5_mov1);
-}
 
 TEST(SizeTest, CopyAssign) {
-    bmp::size s1(4, 5);
-    bmp::size<int> s2;
+    bmp::size s1(4_tv0, 5_tv1);
+    bmp::size<typed_value<0>, typed_value<1>> s2;
     s2 = s1;
 
-    EXPECT_EQ(s1.w(), 4);
-    EXPECT_EQ(s1.h(), 5);
-    EXPECT_EQ(s2.w(), 4);
-    EXPECT_EQ(s2.h(), 5);
+    EXPECT_EQ(s1.w(), 4_tv0);
+    EXPECT_EQ(s1.h(), 5_tv1);
+    EXPECT_EQ(s2.w(), 4_tv0);
+    EXPECT_EQ(s2.h(), 5_tv1);
 }
 
-TEST(SizeTest, MoveAssign) {
-    bmp::size s1(4_mov0, 5_mov1);
-    bmp::size<move_only_value<0>, move_only_value<1>> s2;
-    s2 = std::move(s1);
 
-    EXPECT_EQ(s1.w(), 0_mov0);
-    EXPECT_EQ(s1.h(), 0_mov1);
-    EXPECT_EQ(s2.w(), 4_mov0);
-    EXPECT_EQ(s2.h(), 5_mov1);
-}
+TEST(SizeTest, SetMove) {
+    bmp::size<typed_value<0>, typed_value<1>> s;
+    s.set(4_tv0, 5_tv1);
 
-TEST(SizeTest, MoveAssignMoveOnly) {
-    bmp::size s1(4_mov0, 5_mov1);
-    bmp::size<move_only_value<0>, move_only_value<1>> s2;
-    s2 = std::move(s1);
-
-    EXPECT_EQ(s1.w(), 0_mov0);
-    EXPECT_EQ(s1.h(), 0_mov1);
-    EXPECT_EQ(s2.w(), 4_mov0);
-    EXPECT_EQ(s2.h(), 5_mov1);
-}
-
-TEST(SizeTest, Set) {
-    bmp::size<int> s;
-    s.set(4, 5);
-
-    EXPECT_EQ(s.w(), 4);
-    EXPECT_EQ(s.h(), 5);
-}
-
-TEST(SizeTest, SetMoveOnly) {
-    bmp::size<move_only_value<0>, move_only_value<1>> s;
-    s.set(4_mov0, 5_mov1);
-
-    EXPECT_EQ(s.w(), 4_mov0);
-    EXPECT_EQ(s.h(), 5_mov1);
+    EXPECT_EQ(s.w(), 4_tv0);
+    EXPECT_EQ(s.h(), 5_tv1);
 }
 
 TEST(SizeTest, IsPositive) {
@@ -121,7 +81,7 @@ TEST(SizeTest, Compare){
     EXPECT_NE(bmp::size(4, 5), bmp::size(2, 5));
     EXPECT_NE(bmp::size(4, 5), bmp::size(4, 3));
 
-    EXPECT_EQ(bmp::size(4, 5.2f), bmp::size(4, 5.2f));
-    EXPECT_NE(bmp::size(4, 5.2f), bmp::size(2, 5.2f));
-    EXPECT_NE(bmp::size(4, 5.2f), bmp::size(4, 3.2f));
+    EXPECT_EQ(bmp::size(4_tv0, 5_tv1), bmp::size(4_tv0, 5_tv1));
+    EXPECT_NE(bmp::size(4_tv0, 5_tv1), bmp::size(2_tv0, 5_tv1));
+    EXPECT_NE(bmp::size(4_tv0, 5_tv1), bmp::size(4_tv0, 3_tv1));
 }
