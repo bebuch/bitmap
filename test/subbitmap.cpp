@@ -21,7 +21,7 @@ using bmp::rect;
 
 // TODO: Use all possible integer types
 TEST(SubBitmapTest, IntIntThrow) {
-    auto bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto const bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
 
     EXPECT_EQ(subbitmap(bmp, rect{0, 3, 0, 2}), calc(3, 2, [](auto x, auto y) {
                   return (1 + x) * y;
@@ -68,7 +68,7 @@ TEST(SubBitmapTest, IntIntThrow) {
 
 // TODO: Use all possible integer types
 TEST(SubBitmapTest, FloatIFloatIThrow) {
-    auto bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto const bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
 
     EXPECT_EQ(subbitmap(bmp, rect{0., 3, 0., 2}), calc(3, 2, [](auto x, auto y) {
                   return (1 + x) * y;
@@ -116,7 +116,7 @@ TEST(SubBitmapTest, FloatIFloatIThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, IntFloatThrow) {
-    auto bmp = calc(3, 3, [](auto x, auto y) { return (1 + x) * y; });
+    auto const bmp = calc(3, 3, [](auto x, auto y) { return (1 + x) * y; });
 
     EXPECT_EQ(subbitmap(bmp, rect{0, 3, 0.25, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{
@@ -142,7 +142,7 @@ TEST(SubBitmapTest, IntFloatThrow) {
 
     EXPECT_THROW(subbitmap(bmp, rect{0, -1, 0.25, 1}), std::logic_error);
 
-    EXPECT_THROW(subbitmap(bmp, rect{0, 1,0.25,  -1}), std::logic_error);
+    EXPECT_THROW(subbitmap(bmp, rect{0, 1, 0.25, -1}), std::logic_error);
 
     EXPECT_THROW(subbitmap(bmp, rect{0, -1, 0.25, -1}), std::logic_error);
 
@@ -165,7 +165,7 @@ TEST(SubBitmapTest, IntFloatThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, FloatIntThrow) {
-    auto bmp = calc(4, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto const bmp = calc(4, 2, [](auto x, auto y) { return (1 + x) * y; });
 
     EXPECT_EQ(subbitmap(bmp, rect{0.25, 3, 0, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{
@@ -214,7 +214,7 @@ TEST(SubBitmapTest, FloatIntThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, FloatFloatThrow) {
-    auto bmp = calc(4, 3, [](auto x, auto y) { return (1 + x) * y; });
+    auto const bmp = calc(4, 3, [](auto x, auto y) { return (1 + x) * y; });
 
     EXPECT_EQ(subbitmap(bmp, rect{0.25, 3, 0.25, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{
@@ -252,11 +252,11 @@ TEST(SubBitmapTest, FloatFloatThrow) {
 
     EXPECT_THROW(subbitmap(bmp, rect{0.25, -1, 0.25, -1}), std::logic_error);
 
-    EXPECT_THROW(subbitmap(bmp, rect{-0.75, 1,0.25,  1}), std::out_of_range);
+    EXPECT_THROW(subbitmap(bmp, rect{-0.75, 1, 0.25, 1}), std::out_of_range);
 
     EXPECT_THROW(subbitmap(bmp, rect{0.25, 1, -0.75, 1}), std::out_of_range);
 
-    EXPECT_THROW(subbitmap(bmp, rect{-0.75, 1,-0.75,  1}), std::out_of_range);
+    EXPECT_THROW(subbitmap(bmp, rect{-0.75, 1, -0.75, 1}), std::out_of_range);
 
     EXPECT_THROW(subbitmap(bmp, rect{3.25, 1, 1.25, 1}), std::out_of_range);
 
