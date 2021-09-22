@@ -78,7 +78,7 @@ namespace bmp {
             transform_point(homography, point<T>{0, 0}),
             transform_point(homography, point<T>{static_cast<T>(image_size.w()), 0}),
             transform_point(homography, point<T>{0, static_cast<T>(image_size.h())}),
-            transform_point(homography, to_point<T>(image_size))};
+            transform_point(homography, static_cast<point<T>>(to_point(image_size)))};
     }
 
     template <typename T>

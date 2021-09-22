@@ -139,10 +139,5 @@ namespace bmp {
         return {s.w(), s.h()};
     }
 
-    template <typename XT, typename YT = XT, typename WT, typename HT>
-    [[nodiscard]] point<XT, YT> to_point(size<WT, HT> const& s) {
-        return {static_cast<XT>(s.w()), static_cast<YT>(s.h())};
-    }
-
 
 }

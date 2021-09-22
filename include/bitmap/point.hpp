@@ -175,10 +175,5 @@ namespace bmp {
         return {p.x(), p.y()};
     }
 
-    template <typename WT, typename HT = WT, typename XT, typename YT>
-    [[nodiscard]] size<WT, HT> to_size(point<XT, YT> const& p) {
-        return {static_cast<WT>(p.x()), static_cast<HT>(p.y())};
-    }
-
 
 }

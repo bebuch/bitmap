@@ -183,27 +183,6 @@ namespace bmp::detail {
         }
 
 
-        /// \brief Moves the rect in horizontal direction
-        constexpr void move(x_type const& x_translation, y_type const& y_translation) {
-            top_left_ += pos_type(x_translation, y_translation);
-        }
-
-        /// \brief Moves the rect in horizontal direction
-        constexpr void move(pos_type const& translation) {
-            top_left_ += pos_type(translation, translation);
-        }
-
-        /// \brief Moves the rect in horizontal direction
-        constexpr void move_horizontally(x_type const& translation) {
-            top_left_ += pos_type(translation, y_type());
-        }
-
-        /// \brief Moves the rect in vertical direction
-        constexpr void move_vertically(y_type const& translation) {
-            top_left_ += pos_type(x_type(), translation);
-        }
-
-
         [[nodiscard]] constexpr bool operator==(rect_base const&) const = default;
 
 
@@ -237,7 +216,7 @@ namespace bmp{
         using detail::rect_hv_base<XT, WT, YT, HT>::size;
 
         /// \brief Enable static casts
-        template <typename X2T, typename W2T, typename Y2T, typename H2T>
+        template <typename X2T, typename W2T = X2T, typename Y2T = X2T, typename H2T = W2T>
         [[nodiscard]] explicit constexpr operator rect<X2T, W2T, Y2T, H2T>() const {
             return {
                 static_cast<::bmp::point<X2T, Y2T>>(pos()),
@@ -266,35 +245,37 @@ namespace bmp{
 
 
     /// \brief Get true, if point is in rect
-    template <typename XT, typename WT, typename YT, typename HT, typename PXT, typename PYT>
+    template <typename XT, typename YT>
     [[nodiscard]] constexpr bool contains(
-        rect<XT, WT, YT, HT> const& rect,
-        point<PXT, PYT> const& point
+        rect<XT, XT, YT, YT> const& rect,
+        point<XT, YT> const& point
     ) {
-        return point.x() >= rect.left() && point.y() >= rect.top() && point.x() < rect.right()
-            && point.y() < rect.bottom();
+        return point.x() >= rect.l() && point.x() <= rect.r()
+            && point.y() >= rect.t() && point.y() <= rect.b();
     }
 
     /// \brief Get true, if test is in ref
-    template <typename XT, typename WT, typename YT, typename HT>
+    template <typename XT, typename YT>
     [[nodiscard]] constexpr bool contains(
-        rect<XT, WT, YT, HT> const& ref,
-        rect<XT, WT, YT, HT> const& test
+        rect<XT, XT, YT, YT> const& ref,
+        rect<XT, XT, YT, YT> const& test
     ) {
-        return test.left() >= ref.left() && test.top() >= ref.top()
-            && test.right() <= ref.right() && test.bottom() <= ref.bottom();
+        return test.l() >= ref.l() && test.r() <= ref.r()
+            && test.t() >= ref.t() && test.b() <= ref.b();
     }
 
 
     /// \brief Get a rect that contains both rects
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr auto join(
+    [[nodiscard]] constexpr rect<XT, XT, YT, YT> join(
         rect<XT, XT, YT, YT> const& l,
         rect<XT, XT, YT, YT> const& r
     ) {
-        return rect<XT, XT, YT, YT>(
-            point<XT, YT>(std::min(l.left(), r.left()), std::min(l.top(), r.top())),
-            point<XT, YT>(std::max(l.right(), r.right()), std::max(l.bottom(), r.bottom())));
+        using std::min;
+        using std::max;
+        return {
+            ::bmp::point(min(l.l(), r.l()), min(l.t(), r.t())),
+            ::bmp::point(max(l.r(), r.r()), max(l.b(), r.b()))};
     }
 
 

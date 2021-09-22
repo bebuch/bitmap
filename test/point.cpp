@@ -119,3 +119,16 @@ TEST(PointTest, Modulo){
 
     EXPECT_EQ(bmp::point(14, 15) % bmp::point(4, 6), bmp::point(2, 3));
 }
+
+
+TEST(PointTest, TypeCast) {
+    EXPECT_EQ(static_cast<bmp::point<int>>(bmp::point(3.3, 4.4)), bmp::point(3, 4));
+    EXPECT_EQ((static_cast<bmp::point<int, unsigned>>(bmp::point(3.3, 4.4))), bmp::point(3, 4u));
+}
+
+
+#include <bitmap/size.hpp>
+
+TEST(PointTest, ToSizeConvert) {
+    EXPECT_EQ(bmp::to_size(bmp::point(4_tv0, 5_tv1)), bmp::size(4_tv0, 5_tv1));
+}
