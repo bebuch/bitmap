@@ -85,3 +85,20 @@ TEST(SizeTest, Compare){
     EXPECT_NE(bmp::size(4_tv0, 5_tv1), bmp::size(2_tv0, 5_tv1));
     EXPECT_NE(bmp::size(4_tv0, 5_tv1), bmp::size(4_tv0, 3_tv1));
 }
+
+#include <bitmap/point.hpp>
+
+TEST(SizeTest, ToPointTyped) {
+    bmp::size s(4_tv0, 5_tv1);
+
+    EXPECT_EQ(bmp::to_point(s), bmp::point(4_tv0, 5_tv1));
+}
+
+TEST(SizeTest, ToPointConvert) {
+    bmp::size s(4.4, 5.6);
+
+    EXPECT_EQ(bmp::to_point<double>(s), bmp::point(4.4, 5.6));
+    EXPECT_EQ(bmp::to_point<int>(s), bmp::point(4, 5));
+    EXPECT_EQ((bmp::to_point<int, double>(s)), bmp::point(4, 5.6));
+    EXPECT_EQ((bmp::to_point<double, int>(s)), bmp::point(4.4, 5));
+}
