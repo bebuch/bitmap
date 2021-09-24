@@ -252,12 +252,12 @@ namespace bmp {
 
         /// \brief Get a pointer to data for direct manipulation
         value_type* data() {
-            return const_cast<value_type*>(static_cast<const bitmap<value_type>&>(*this).data());
+            return data_.data();
         }
 
         /// \brief Get a pointer to constant data for direct read
         value_type const* data() const {
-            return data_.empty() ? 0 : &data_[0];
+            return data_.data();
         }
 
 
@@ -271,7 +271,7 @@ namespace bmp {
         /// \throw std::out_of_range in debug build
         reference operator()(point_type const& point) {
             throw_if_out_of_range(point);
-            return do_point(point);
+            return data_[data_pos(point)];
         }
 
         /// \brief Get the value by local coordinates
@@ -284,7 +284,7 @@ namespace bmp {
         /// \throw std::out_of_range in debug build
         const_reference operator()(point_type const& point) const {
             throw_if_out_of_range(point);
-            return do_point(point);
+            return data_[data_pos(point)];
         }
 
 
@@ -315,16 +315,6 @@ namespace bmp {
         /// \brief The data field
         std::vector<value_type> data_;
 
-
-        /// \brief Get a point without range protection
-        reference do_point(point_type const& point) {
-            return data_[data_pos(point)];
-        }
-
-        /// \brief Get a point without range protection
-        const_reference do_point(point_type const& point) const {
-            return data_[data_pos(point)];
-        }
 
         /// \brief Throws an exception, if the point is out of range
         void throw_if_out_of_range(point_type const& point) const {

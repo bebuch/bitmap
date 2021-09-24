@@ -4,6 +4,7 @@
 #include "size.hpp"
 
 #include <algorithm>
+#include <type_traits>
 
 
 namespace bmp::detail {
@@ -212,15 +213,12 @@ namespace bmp{
     struct rect: detail::rect_hv_base<XT, WT, YT, HT>{
         using detail::rect_hv_base<XT, WT, YT, HT>::rect_hv_base;
 
-        using detail::rect_hv_base<XT, WT, YT, HT>::pos;
-        using detail::rect_hv_base<XT, WT, YT, HT>::size;
-
         /// \brief Enable static casts
         template <typename X2T, typename W2T = X2T, typename Y2T = X2T, typename H2T = W2T>
         [[nodiscard]] explicit constexpr operator rect<X2T, W2T, Y2T, H2T>() const {
             return {
-                static_cast<::bmp::point<X2T, Y2T>>(pos()),
-                static_cast<::bmp::size<W2T, H2T>>(size())};
+                static_cast<point<X2T, Y2T>>(detail::rect_hv_base<XT, WT, YT, HT>::pos()),
+                static_cast<size<W2T, H2T>>(detail::rect_hv_base<XT, WT, YT, HT>::size())};
         }
     };
 
@@ -296,6 +294,12 @@ namespace bmp::detail {
         /// \brief Type of the y and height
         using vertical_type = YT;
 
+        /// \brief true if x dimensions are integer types, false otherwise
+        static constexpr bool is_x_half_open = std::numeric_limits<horizontal_type>::is_integer;
+
+        /// \brief true if y dimensions are integer types, false otherwise
+        static constexpr bool is_y_half_open = std::numeric_limits<vertical_type>::is_integer;
+
 
         using rect_base<XT, XT, YT, YT>::rect_base;
 
@@ -303,15 +307,17 @@ namespace bmp::detail {
         /// \brief Constructs a rect on position (0, 0), with size
         ///        bottom_right.x + 1 as width and rb.y + 1 as height
         constexpr rect_hv_base(pos_type const& rb)
-            : rect_base<XT, XT, YT, YT>(to_size(
-                pos_type(horizontal_type(1), vertical_type(1)) + rb)) {}
+            : rect_base<XT, XT, YT, YT>(to_size(pos_type(
+                static_cast<horizontal_type>(is_x_half_open),
+                static_cast<vertical_type>(is_y_half_open)) + rb)) {}
 
         /// \brief Constructs a rect on position (top_left.x, top_left.y), with
         ///        size bottom_right.x + 1 - top_left.x as width and
         ///        bottom_right.y + 1 - top_left.x as height
         constexpr rect_hv_base(pos_type const& lt, pos_type const& rb)
-            : rect_base<XT, XT, YT, YT>(lt, to_size(
-                pos_type(horizontal_type(1), vertical_type(1)) + rb - lt))
+            : rect_base<XT, XT, YT, YT>(lt, to_size(pos_type(
+                static_cast<horizontal_type>(is_x_half_open),
+                static_cast<vertical_type>(is_y_half_open)) + rb - lt))
             {}
 
 
@@ -337,7 +343,7 @@ namespace bmp::detail {
 
         /// \brief Get the bottom point
         [[nodiscard]] constexpr vertical_type b() const {
-            return h() + y() - vertical_type(1);
+            return h() + y() - static_cast<vertical_type>(is_y_half_open);
         }
 
         /// \brief Get the left point
@@ -347,7 +353,7 @@ namespace bmp::detail {
 
         /// \brief Get the right point
         [[nodiscard]] constexpr horizontal_type r() const {
-            return w() + x() - horizontal_type(1);
+            return w() + x() - static_cast<horizontal_type>(is_x_half_open);
         }
 
 
@@ -380,7 +386,7 @@ namespace bmp::detail {
 
         /// \brief Set the bottom point
         constexpr void set_b(vertical_type const& b) {
-            set_h(vertical_type(1) + b - y());
+            set_h(static_cast<vertical_type>(is_y_half_open) + b - y());
         }
 
         /// \brief Set the left point
@@ -391,7 +397,7 @@ namespace bmp::detail {
 
         /// \brief Set the right point
         constexpr void set_r(horizontal_type const& r) {
-            set_w(horizontal_type(1) + r - x());
+            set_w(static_cast<horizontal_type>(is_x_half_open) + r - x());
         }
 
 

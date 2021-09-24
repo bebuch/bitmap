@@ -139,5 +139,11 @@ namespace bmp {
         return {s.w(), s.h()};
     }
 
+    /// \brief Get true, if point values are both smaller then size values
+    template <typename XT, typename YT>
+    [[nodiscard]] constexpr bool contains(size<XT, YT> const& size, point<XT, YT> const& point) {
+        return point.x() < size.w() && point.y() < size.h();
+    }
+
 
 }

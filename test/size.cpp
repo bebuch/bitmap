@@ -96,5 +96,15 @@ TEST(SizeTest, TypeCast) {
 #include <bitmap/point.hpp>
 
 TEST(SizeTest, ToPointConvert) {
-    EXPECT_EQ(bmp::to_point(bmp::size(4_tv0, 5_tv1)), bmp::point(4_tv0, 5_tv1));
+    EXPECT_EQ(to_point(bmp::size(4_tv0, 5_tv1)), bmp::point(4_tv0, 5_tv1));
+}
+
+TEST(SizeTest, Contains) {
+    EXPECT_TRUE(contains(bmp::size(4_tv0, 5_tv1), bmp::point(3_tv0, 4_tv1)));
+    EXPECT_FALSE(contains(bmp::size(4_tv0, 5_tv1), bmp::point(3_tv0, 5_tv1)));
+    EXPECT_FALSE(contains(bmp::size(4_tv0, 5_tv1), bmp::point(4_tv0, 4_tv1)));
+
+    EXPECT_TRUE(contains(bmp::size(-4_tv0, -5_tv1), bmp::point(-5_tv0, -6_tv1)));
+    EXPECT_FALSE(contains(bmp::size(-4_tv0, -5_tv1), bmp::point(-5_tv0, -5_tv1)));
+    EXPECT_FALSE(contains(bmp::size(-4_tv0, -5_tv1), bmp::point(-4_tv0, -6_tv1)));
 }

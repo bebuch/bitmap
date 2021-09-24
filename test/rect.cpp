@@ -5,6 +5,15 @@
 #include "typed_value.hpp"
 
 
+static_assert(bmp::rect<int>::is_x_half_open);
+static_assert(bmp::rect<int>::is_y_half_open);
+static_assert(!bmp::rect<double>::is_x_half_open);
+static_assert(!bmp::rect<double>::is_y_half_open);
+static_assert(bmp::rect<int, int, double, double>::is_x_half_open);
+static_assert(!bmp::rect<int, int, double, double>::is_y_half_open);
+static_assert(!bmp::rect<double, double, int, int>::is_x_half_open);
+static_assert(bmp::rect<double, double, int, int>::is_y_half_open);
+
 TEST(RectTest, DefaultConstructionTyped1) {
     bmp::rect<typed_value<0>> r;
 
@@ -310,6 +319,171 @@ TEST(RectTest, SetLTRBPoints) {
     EXPECT_EQ(r.r(), 32_tv0);
     EXPECT_EQ(r.b(), 43_tv1);
 }
+
+TEST(RectTest, SetLTRBFloat) {
+    bmp::rect r(12., 21., 16., 28.);
+
+    EXPECT_EQ(r.x(), 12.);
+    EXPECT_EQ(r.y(), 16.);
+    EXPECT_EQ(r.w(), 21.);
+    EXPECT_EQ(r.h(), 28.);
+
+    EXPECT_EQ(r.pos(),  bmp::point(12., 16.));
+    EXPECT_EQ(r.size(), bmp::size(21., 28.));
+
+    EXPECT_EQ(r.l(), 12.);
+    EXPECT_EQ(r.t(), 16.);
+    EXPECT_EQ(r.r(), 33.);
+    EXPECT_EQ(r.b(), 44.);
+
+    EXPECT_EQ(r.lt(), bmp::point(12., 16.));
+    EXPECT_EQ(r.rt(), bmp::point(33., 16.));
+    EXPECT_EQ(r.lb(), bmp::point(12., 44.));
+    EXPECT_EQ(r.rb(), bmp::point(33., 44.));
+
+    r.set_l(10.);
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 16.);
+    EXPECT_EQ(r.w(), 23.);
+    EXPECT_EQ(r.h(), 28.);
+
+    EXPECT_EQ(r.pos(),  bmp::point(10., 16.));
+    EXPECT_EQ(r.size(), bmp::size(23., 28.));
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 16.);
+    EXPECT_EQ(r.r(), 33.);
+    EXPECT_EQ(r.b(), 44.);
+
+    EXPECT_EQ(r.lt(), bmp::point(10., 16.));
+    EXPECT_EQ(r.rt(), bmp::point(33., 16.));
+    EXPECT_EQ(r.lb(), bmp::point(10., 44.));
+    EXPECT_EQ(r.rb(), bmp::point(33., 44.));
+
+    r.set_t(20.);
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 20.);
+    EXPECT_EQ(r.w(), 23.);
+    EXPECT_EQ(r.h(), 24.);
+
+    EXPECT_EQ(r.pos(),  bmp::point(10., 20.));
+    EXPECT_EQ(r.size(), bmp::size(23., 24.));
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 20.);
+    EXPECT_EQ(r.r(), 33.);
+    EXPECT_EQ(r.b(), 44.);
+
+    EXPECT_EQ(r.lt(), bmp::point(10., 20.));
+    EXPECT_EQ(r.rt(), bmp::point(33., 20.));
+    EXPECT_EQ(r.lb(), bmp::point(10., 44.));
+    EXPECT_EQ(r.rb(), bmp::point(33., 44.));
+
+    r.set_r(35.);
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 20.);
+    EXPECT_EQ(r.w(), 25.);
+    EXPECT_EQ(r.h(), 24.);
+
+    EXPECT_EQ(r.pos(),  bmp::point(10., 20.));
+    EXPECT_EQ(r.size(), bmp::size(25., 24.));
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 20.);
+    EXPECT_EQ(r.r(), 35.);
+    EXPECT_EQ(r.b(), 44.);
+
+    EXPECT_EQ(r.lt(), bmp::point(10., 20.));
+    EXPECT_EQ(r.rt(), bmp::point(35., 20.));
+    EXPECT_EQ(r.lb(), bmp::point(10., 44.));
+    EXPECT_EQ(r.rb(), bmp::point(35., 44.));
+
+    r.set_b(57.);
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 20.);
+    EXPECT_EQ(r.w(), 25.);
+    EXPECT_EQ(r.h(), 37.);
+
+    EXPECT_EQ(r.pos(),  bmp::point(10., 20.));
+    EXPECT_EQ(r.size(), bmp::size(25., 37.));
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 20.);
+    EXPECT_EQ(r.r(), 35.);
+    EXPECT_EQ(r.b(), 57.);
+
+    EXPECT_EQ(r.lt(), bmp::point(10., 20.));
+    EXPECT_EQ(r.rt(), bmp::point(35., 20.));
+    EXPECT_EQ(r.lb(), bmp::point(10., 57.));
+    EXPECT_EQ(r.rb(), bmp::point(35., 57.));
+}
+
+TEST(RectTest, SetLTRBPointsFloat) {
+    bmp::rect r(12., 21., 16., 28.);
+
+    EXPECT_EQ(r.x(), 12.);
+    EXPECT_EQ(r.y(), 16.);
+    EXPECT_EQ(r.w(), 21.);
+    EXPECT_EQ(r.h(), 28.);
+
+    EXPECT_EQ(r.l(), 12.);
+    EXPECT_EQ(r.t(), 16.);
+    EXPECT_EQ(r.r(), 33.);
+    EXPECT_EQ(r.b(), 44.);
+
+    r.set_lt(bmp::point(10., 20.));
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 20.);
+    EXPECT_EQ(r.w(), 23.);
+    EXPECT_EQ(r.h(), 24.);
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 20.);
+    EXPECT_EQ(r.r(), 33.);
+    EXPECT_EQ(r.b(), 44.);
+
+    r.set_rb(bmp::point(35., 57.));
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 20.);
+    EXPECT_EQ(r.w(), 25.);
+    EXPECT_EQ(r.h(), 37.);
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 20.);
+    EXPECT_EQ(r.r(), 35.);
+    EXPECT_EQ(r.b(), 57.);
+
+    r.set_rt(bmp::point(32., 16.));
+
+    EXPECT_EQ(r.x(), 10.);
+    EXPECT_EQ(r.y(), 16.);
+    EXPECT_EQ(r.w(), 22.);
+    EXPECT_EQ(r.h(), 41.);
+
+    EXPECT_EQ(r.l(), 10.);
+    EXPECT_EQ(r.t(), 16.);
+    EXPECT_EQ(r.r(), 32.);
+    EXPECT_EQ(r.b(), 57.);
+
+    r.set_lb(bmp::point(12., 43.));
+
+    EXPECT_EQ(r.x(), 12.);
+    EXPECT_EQ(r.y(), 16.);
+    EXPECT_EQ(r.w(), 20.);
+    EXPECT_EQ(r.h(), 27.);
+
+    EXPECT_EQ(r.l(), 12.);
+    EXPECT_EQ(r.t(), 16.);
+    EXPECT_EQ(r.r(), 32.);
+    EXPECT_EQ(r.b(), 43.);
+}
+
 
 TEST(RectTest, IsPositive) {
     EXPECT_TRUE( bmp::rect(2,  4u, 3,  5u).is_positive());
