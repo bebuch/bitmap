@@ -10,7 +10,7 @@
 namespace bmp::detail {
 
 
-    template <typename XT, typename WT, typename YT, typename HT>
+    template <typename XT, typename YT, typename WT, typename HT>
     struct rect_common_base {};
 
     template <typename T>
@@ -20,8 +20,8 @@ namespace bmp::detail {
     };
 
 
-    template <typename XT, typename WT, typename YT, typename HT>
-    struct rect_base: rect_common_base<XT, WT, YT, HT> {
+    template <typename XT, typename YT, typename WT, typename HT>
+    struct rect_base: rect_common_base<XT, YT, WT, HT> {
     public:
         /// \brief Type of the x position
         using x_type = XT;
@@ -65,7 +65,7 @@ namespace bmp::detail {
             : size_(w, h) {}
 
         /// \brief Constructs on position (x, y), with size (w, h)
-        constexpr rect_base(x_type const& x, w_type const& w, y_type const& y, h_type const& h)
+        constexpr rect_base(x_type const& x, y_type const& y, w_type const& w, h_type const& h)
             : top_left_(x, y)
             , size_(w, h) {}
 
@@ -138,7 +138,7 @@ namespace bmp::detail {
         }
 
         /// \brief Set x, y, width and height
-        constexpr void set(x_type const& x, w_type const& w, y_type const& y, h_type const& h) {
+        constexpr void set(x_type const& x, y_type const& y, w_type const& w, h_type const& h) {
             set_pos(x, y);
             set_size(w, h);
         }
@@ -196,9 +196,9 @@ namespace bmp::detail {
     };
 
 
-    template <typename XT, typename WT, typename YT, typename HT>
-    struct rect_hv_base: rect_base<XT, WT, YT, HT> {
-        using rect_base<XT, WT, YT, HT>::rect_base;
+    template <typename XT, typename YT, typename WT, typename HT>
+    struct rect_hv_base: rect_base<XT, YT, WT, HT> {
+        using rect_base<XT, YT, WT, HT>::rect_base;
     };
 
 
@@ -209,43 +209,43 @@ namespace bmp{
 
 
     /// \brief A class for manipulating rectangles
-    template <typename XT, typename WT = XT, typename YT = XT, typename HT = WT>
-    struct rect: detail::rect_hv_base<XT, WT, YT, HT>{
-        using detail::rect_hv_base<XT, WT, YT, HT>::rect_hv_base;
+    template <typename XT, typename YT = XT, typename WT = XT, typename HT = YT>
+    struct rect: detail::rect_hv_base<XT, YT, WT, HT>{
+        using detail::rect_hv_base<XT, YT, WT, HT>::rect_hv_base;
 
         /// \brief Enable static casts
-        template <typename X2T, typename W2T = X2T, typename Y2T = X2T, typename H2T = W2T>
-        [[nodiscard]] explicit constexpr operator rect<X2T, W2T, Y2T, H2T>() const {
+        template <typename X2T, typename Y2T = X2T, typename W2T = X2T, typename H2T = Y2T>
+        [[nodiscard]] explicit constexpr operator rect<X2T, Y2T, W2T, H2T>() const {
             return {
-                static_cast<point<X2T, Y2T>>(detail::rect_hv_base<XT, WT, YT, HT>::pos()),
-                static_cast<size<W2T, H2T>>(detail::rect_hv_base<XT, WT, YT, HT>::size())};
+                static_cast<point<X2T, Y2T>>(detail::rect_hv_base<XT, YT, WT, HT>::pos()),
+                static_cast<size<W2T, H2T>>(detail::rect_hv_base<XT, YT, WT, HT>::size())};
         }
     };
 
 
-    template <typename XT, typename WT, typename YT, typename HT>
-    rect(XT, WT, YT, HT) -> rect<XT, WT, YT, HT>;
+    template <typename XT, typename YT, typename WT, typename HT>
+    rect(XT, YT, WT, HT) -> rect<XT, YT, WT, HT>;
 
-    template <typename XT, typename WT, typename YT, typename HT>
-    rect(point<XT, YT>, size<WT, HT>) -> rect<XT, WT, YT, HT>;
-
-    template <typename WT, typename HT>
-    rect(WT, HT) -> rect<WT, WT, HT, HT>;
+    template <typename XT, typename YT, typename WT, typename HT>
+    rect(point<XT, YT>, size<WT, HT>) -> rect<XT, YT, WT, HT>;
 
     template <typename WT, typename HT>
-    rect(size<WT, HT>) -> rect<WT, WT, HT, HT>;
+    rect(WT, HT) -> rect<WT, HT, WT, HT>;
+
+    template <typename WT, typename HT>
+    rect(size<WT, HT>) -> rect<WT, HT, WT, HT>;
 
     template <typename XT, typename YT>
-    rect(point<XT, YT>) -> rect<XT, XT, YT, YT>;
+    rect(point<XT, YT>) -> rect<XT, YT, XT, YT>;
 
     template <typename XT, typename YT>
-    rect(point<XT, YT>, point<XT, YT>) -> rect<XT, XT, YT, YT>;
+    rect(point<XT, YT>, point<XT, YT>) -> rect<XT, YT, XT, YT>;
 
 
     /// \brief Get true, if point is in rect
     template <typename XT, typename YT>
     [[nodiscard]] constexpr bool contains(
-        rect<XT, XT, YT, YT> const& rect,
+        rect<XT, YT, XT, YT> const& rect,
         point<XT, YT> const& point
     ) {
         return point.x() >= rect.l() && point.x() <= rect.r()
@@ -255,8 +255,8 @@ namespace bmp{
     /// \brief Get true, if test is in ref
     template <typename XT, typename YT>
     [[nodiscard]] constexpr bool contains(
-        rect<XT, XT, YT, YT> const& ref,
-        rect<XT, XT, YT, YT> const& test
+        rect<XT, YT, XT, YT> const& ref,
+        rect<XT, YT, XT, YT> const& test
     ) {
         return test.l() >= ref.l() && test.r() <= ref.r()
             && test.t() >= ref.t() && test.b() <= ref.b();
@@ -265,9 +265,9 @@ namespace bmp{
 
     /// \brief Get a rect that contains both rects
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr rect<XT, XT, YT, YT> join(
-        rect<XT, XT, YT, YT> const& l,
-        rect<XT, XT, YT, YT> const& r
+    [[nodiscard]] constexpr rect<XT, YT, XT, YT> join(
+        rect<XT, YT, XT, YT> const& l,
+        rect<XT, YT, XT, YT> const& r
     ) {
         using std::min;
         using std::max;
@@ -284,9 +284,9 @@ namespace bmp::detail {
 
 
     template <typename XT, typename YT>
-    struct rect_hv_base<XT, XT, YT, YT>: rect_base<XT, XT, YT, YT> {
-        using typename rect_base<XT, XT, YT, YT>::pos_type;
-        using typename rect_base<XT, XT, YT, YT>::size_type;
+    struct rect_hv_base<XT, YT, XT, YT>: rect_base<XT, YT, XT, YT> {
+        using typename rect_base<XT, YT, XT, YT>::pos_type;
+        using typename rect_base<XT, YT, XT, YT>::size_type;
 
         /// \brief Type of the x and width
         using horizontal_type = XT;
@@ -301,13 +301,13 @@ namespace bmp::detail {
         static constexpr bool is_y_half_open = std::numeric_limits<vertical_type>::is_integer;
 
 
-        using rect_base<XT, XT, YT, YT>::rect_base;
+        using rect_base<XT, YT, XT, YT>::rect_base;
 
 
         /// \brief Constructs a rect on position (0, 0), with size
         ///        bottom_right.x + 1 as width and rb.y + 1 as height
         constexpr rect_hv_base(pos_type const& rb)
-            : rect_base<XT, XT, YT, YT>(to_size(pos_type(
+            : rect_base<XT, YT, XT, YT>(to_size(pos_type(
                 static_cast<horizontal_type>(is_x_half_open),
                 static_cast<vertical_type>(is_y_half_open)) + rb)) {}
 
@@ -315,25 +315,25 @@ namespace bmp::detail {
         ///        size bottom_right.x + 1 - top_left.x as width and
         ///        bottom_right.y + 1 - top_left.x as height
         constexpr rect_hv_base(pos_type const& lt, pos_type const& rb)
-            : rect_base<XT, XT, YT, YT>(lt, to_size(pos_type(
+            : rect_base<XT, YT, XT, YT>(lt, to_size(pos_type(
                 static_cast<horizontal_type>(is_x_half_open),
                 static_cast<vertical_type>(is_y_half_open)) + rb - lt))
             {}
 
 
-        using rect_base<XT, XT, YT, YT>::x;
-        using rect_base<XT, XT, YT, YT>::y;
-        using rect_base<XT, XT, YT, YT>::w;
-        using rect_base<XT, XT, YT, YT>::h;
-        using rect_base<XT, XT, YT, YT>::pos;
-        using rect_base<XT, XT, YT, YT>::size;
+        using rect_base<XT, YT, XT, YT>::x;
+        using rect_base<XT, YT, XT, YT>::y;
+        using rect_base<XT, YT, XT, YT>::w;
+        using rect_base<XT, YT, XT, YT>::h;
+        using rect_base<XT, YT, XT, YT>::pos;
+        using rect_base<XT, YT, XT, YT>::size;
 
-        using rect_base<XT, XT, YT, YT>::set_x;
-        using rect_base<XT, XT, YT, YT>::set_y;
-        using rect_base<XT, XT, YT, YT>::set_w;
-        using rect_base<XT, XT, YT, YT>::set_h;
-        using rect_base<XT, XT, YT, YT>::set_pos;
-        using rect_base<XT, XT, YT, YT>::set_size;
+        using rect_base<XT, YT, XT, YT>::set_x;
+        using rect_base<XT, YT, XT, YT>::set_y;
+        using rect_base<XT, YT, XT, YT>::set_w;
+        using rect_base<XT, YT, XT, YT>::set_h;
+        using rect_base<XT, YT, XT, YT>::set_pos;
+        using rect_base<XT, YT, XT, YT>::set_size;
 
 
         /// \brief Get the top point

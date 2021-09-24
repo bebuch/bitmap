@@ -47,7 +47,7 @@ TEST(RectTransformTest, ImageContour) {
     EXPECT_TRUE(nearly_eq(contour, ref_contour));
 
     auto ic = bmp::image_contour(contour);
-    EXPECT_EQ(ic, (bmp::rect<long, std::size_t>(-1, 62, -3, 47)));
+    EXPECT_EQ(ic, (bmp::rect<long, long, std::size_t, std::size_t>(-1, -3, 62, 47)));
 
     bmp::bitmap<std::uint8_t> source(image_size);
 

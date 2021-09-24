@@ -9,10 +9,10 @@ static_assert(bmp::rect<int>::is_x_half_open);
 static_assert(bmp::rect<int>::is_y_half_open);
 static_assert(!bmp::rect<double>::is_x_half_open);
 static_assert(!bmp::rect<double>::is_y_half_open);
-static_assert(bmp::rect<int, int, double, double>::is_x_half_open);
-static_assert(!bmp::rect<int, int, double, double>::is_y_half_open);
-static_assert(!bmp::rect<double, double, int, int>::is_x_half_open);
-static_assert(bmp::rect<double, double, int, int>::is_y_half_open);
+static_assert(bmp::rect<int, double, int, double>::is_x_half_open);
+static_assert(!bmp::rect<int, double, int, double>::is_y_half_open);
+static_assert(!bmp::rect<double, int, double, int>::is_x_half_open);
+static_assert(bmp::rect<double, int, double, int>::is_y_half_open);
 
 TEST(RectTest, DefaultConstructionTyped1) {
     bmp::rect<typed_value<0>> r;
@@ -27,8 +27,8 @@ TEST(RectTest, DefaultConstructionTyped2) {
     bmp::rect<typed_value<0>, typed_value<1>> r;
 
     EXPECT_EQ(r.x(), 0_tv0);
-    EXPECT_EQ(r.y(), 0_tv0);
-    EXPECT_EQ(r.w(), 0_tv1);
+    EXPECT_EQ(r.y(), 0_tv1);
+    EXPECT_EQ(r.w(), 0_tv0);
     EXPECT_EQ(r.h(), 0_tv1);
 }
 
@@ -36,13 +36,13 @@ TEST(RectTest, DefaultConstructionTyped3) {
     bmp::rect<typed_value<0>, typed_value<1>, typed_value<2>> r;
 
     EXPECT_EQ(r.x(), 0_tv0);
-    EXPECT_EQ(r.y(), 0_tv2);
-    EXPECT_EQ(r.w(), 0_tv1);
+    EXPECT_EQ(r.y(), 0_tv1);
+    EXPECT_EQ(r.w(), 0_tv2);
     EXPECT_EQ(r.h(), 0_tv1);
 }
 
 TEST(RectTest, DefaultConstructionTyped4) {
-    bmp::rect<typed_value<0>, typed_value<2>, typed_value<1>, typed_value<3>> r;
+    bmp::rect<typed_value<0>, typed_value<1>, typed_value<2>, typed_value<3>> r;
 
     EXPECT_EQ(r.x(), 0_tv0);
     EXPECT_EQ(r.y(), 0_tv1);
@@ -51,7 +51,7 @@ TEST(RectTest, DefaultConstructionTyped4) {
 }
 
 TEST(RectTest, XYWHConstruction) {
-    bmp::rect r(2_tv0, 4_tv2, 3_tv1, 5_tv3);
+    bmp::rect r(2_tv0, 3_tv1, 4_tv2, 5_tv3);
 
     EXPECT_EQ(r.x(), 2_tv0);
     EXPECT_EQ(r.y(), 3_tv1);
@@ -105,7 +105,7 @@ TEST(RectTest, PPConstruction) {
 }
 
 TEST(RectTest, CopyConstruction) {
-    bmp::rect r1(2_tv0, 4_tv2, 3_tv1, 5_tv3);
+    bmp::rect r1(2_tv0, 3_tv1, 4_tv2, 5_tv3);
     bmp::rect r2 = r1;
 
     EXPECT_EQ(r1.x(), 2_tv0);
@@ -119,8 +119,8 @@ TEST(RectTest, CopyConstruction) {
 }
 
 TEST(RectTest, CopyAssign) {
-    bmp::rect r1(2_tv0, 4_tv2, 3_tv1, 5_tv3);
-    bmp::rect<typed_value<0>, typed_value<2>, typed_value<1>, typed_value<3>> r2;
+    bmp::rect r1(2_tv0, 3_tv1, 4_tv2, 5_tv3);
+    bmp::rect<typed_value<0>, typed_value<1>, typed_value<2>, typed_value<3>> r2;
     r2 = r1;
 
     EXPECT_EQ(r1.x(), 2_tv0);
@@ -134,8 +134,8 @@ TEST(RectTest, CopyAssign) {
 }
 
 TEST(RectTest, Set) {
-    bmp::rect<typed_value<0>, typed_value<2>, typed_value<1>, typed_value<3>> r;
-    r.set(2_tv0, 4_tv2, 3_tv1, 5_tv3);
+    bmp::rect<typed_value<0>, typed_value<1>, typed_value<2>, typed_value<3>> r;
+    r.set(2_tv0, 3_tv1, 4_tv2, 5_tv3);
 
     EXPECT_EQ(r.x(), 2_tv0);
     EXPECT_EQ(r.y(), 3_tv1);
@@ -144,7 +144,7 @@ TEST(RectTest, Set) {
 }
 
 TEST(RectTest, SetXYWH) {
-    bmp::rect<typed_value<0>, typed_value<2>, typed_value<1>, typed_value<3>> r;
+    bmp::rect<typed_value<0>, typed_value<1>, typed_value<2>, typed_value<3>> r;
     r.set_x(2_tv0);
     r.set_y(3_tv1);
     r.set_w(4_tv2);
@@ -157,7 +157,7 @@ TEST(RectTest, SetXYWH) {
 }
 
 TEST(RectTest, SetLTRB) {
-    bmp::rect r(12_tv0, 21_tv0, 16_tv1, 28_tv1);
+    bmp::rect r(12_tv0, 16_tv1, 21_tv0, 28_tv1);
 
     EXPECT_EQ(r.x(), 12_tv0);
     EXPECT_EQ(r.y(), 16_tv1);
@@ -259,7 +259,7 @@ TEST(RectTest, SetLTRB) {
 }
 
 TEST(RectTest, SetLTRBPoints) {
-    bmp::rect r(12_tv0, 21_tv0, 16_tv1, 28_tv1);
+    bmp::rect r(12_tv0, 16_tv1, 21_tv0, 28_tv1);
 
     EXPECT_EQ(r.x(), 12_tv0);
     EXPECT_EQ(r.y(), 16_tv1);
@@ -321,7 +321,7 @@ TEST(RectTest, SetLTRBPoints) {
 }
 
 TEST(RectTest, SetLTRBFloat) {
-    bmp::rect r(12., 21., 16., 28.);
+    bmp::rect r(12., 16., 21., 28.);
 
     EXPECT_EQ(r.x(), 12.);
     EXPECT_EQ(r.y(), 16.);
@@ -423,7 +423,7 @@ TEST(RectTest, SetLTRBFloat) {
 }
 
 TEST(RectTest, SetLTRBPointsFloat) {
-    bmp::rect r(12., 21., 16., 28.);
+    bmp::rect r(12., 16., 21., 28.);
 
     EXPECT_EQ(r.x(), 12.);
     EXPECT_EQ(r.y(), 16.);
@@ -486,63 +486,63 @@ TEST(RectTest, SetLTRBPointsFloat) {
 
 
 TEST(RectTest, IsPositive) {
-    EXPECT_TRUE( bmp::rect(2,  4u, 3,  5u).is_positive());
-    EXPECT_TRUE( bmp::rect(2,  4 , 3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2, -4 , 3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2,  4 , 3, -5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2, -4 , 3, -5 ).is_positive());
+    EXPECT_TRUE( bmp::rect(2, 3,  4u,  5u).is_positive());
+    EXPECT_TRUE( bmp::rect(2, 3,  4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, 3, -4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, 3,  4 , -5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, 3, -4 , -5 ).is_positive());
 
-    EXPECT_TRUE( bmp::rect(2,  4u, -3,  5u).is_positive());
-    EXPECT_TRUE( bmp::rect(2,  4 , -3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2, -4 , -3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2,  4 , -3, -5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(2, -4 , -3, -5 ).is_positive());
+    EXPECT_TRUE( bmp::rect(2, -3,  4u,  5u).is_positive());
+    EXPECT_TRUE( bmp::rect(2, -3,  4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, -3, -4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, -3,  4 , -5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(2, -3, -4 , -5 ).is_positive());
 
-    EXPECT_TRUE( bmp::rect(-2,  4u, 3,  5u).is_positive());
-    EXPECT_TRUE( bmp::rect(-2,  4 , 3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2, -4 , 3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2,  4 , 3, -5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2, -4 , 3, -5 ).is_positive());
+    EXPECT_TRUE( bmp::rect(-2, 3,  4u,  5u).is_positive());
+    EXPECT_TRUE( bmp::rect(-2, 3,  4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, 3, -4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, 3,  4 , -5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, 3, -4 , -5 ).is_positive());
 
-    EXPECT_TRUE( bmp::rect(-2,  4u, -3,  5u).is_positive());
-    EXPECT_TRUE( bmp::rect(-2,  4 , -3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2, -4 , -3,  5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2,  4 , -3, -5 ).is_positive());
-    EXPECT_FALSE(bmp::rect(-2, -4 , -3, -5 ).is_positive());
+    EXPECT_TRUE( bmp::rect(-2, -3,  4u,  5u).is_positive());
+    EXPECT_TRUE( bmp::rect(-2, -3,  4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, -3, -4 ,  5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, -3,  4 , -5 ).is_positive());
+    EXPECT_FALSE(bmp::rect(-2, -3, -4 , -5 ).is_positive());
 }
 
 TEST(RectTest, Area) {
-    EXPECT_EQ(bmp::rect(2,  4u, 3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4,  3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4,  3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4u, 3, -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3,  4u,  5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3,  4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3, -4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3,  4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3, -4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3, -4,   5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, 3,  4u, -5 ).area(), 20u);
 
-    EXPECT_EQ(bmp::rect(-2,  4u, 3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4,  3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4,  3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4u, 3, -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3,  4u,  5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3,  4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3, -4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3,  4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3, -4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3, -4,   5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, 3,  4u, -5 ).area(), 20u);
 
-    EXPECT_EQ(bmp::rect(2,  4u, -3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4,  -3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  -3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4,  -3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  -3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(2, -4,  -3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(2,  4u, -3, -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3,  4u,  5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3,  4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3, -4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3,  4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3, -4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3, -4,   5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(2, -3,  4u, -5 ).area(), 20u);
 
-    EXPECT_EQ(bmp::rect(-2,  4u, -3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4,  -3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  -3,  5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4,  -3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  -3, -5 ).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2, -4,  -3,  5u).area(), 20u);
-    EXPECT_EQ(bmp::rect(-2,  4u, -3, -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3,  4u,  5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3,  4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3, -4,   5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3,  4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3, -4,  -5 ).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3, -4,   5u).area(), 20u);
+    EXPECT_EQ(bmp::rect(-2, -3,  4u, -5 ).area(), 20u);
 }
 
 TEST(RectTest, Compare){
@@ -558,8 +558,6 @@ TEST(RectTest, TypeCast) {
     EXPECT_EQ(static_cast<bmp::rect<int>>(bmp::rect(3.3, 4.4, 5.5, 6.6)), bmp::rect(3, 4, 5, 6));
     EXPECT_EQ((static_cast<bmp::rect<int, unsigned>>(bmp::rect(3.3, 4.4, 5.5, 6.6))),
         bmp::rect(3, 4u, 5, 6u));
-    EXPECT_EQ((static_cast<bmp::rect<int, unsigned>>(bmp::rect(3.3, 4.4, 5.5, 6.6))),
-        bmp::rect(3, 4u, 5, 6u));
     EXPECT_EQ((static_cast<bmp::rect<int, unsigned, float>>(bmp::rect(3.3, 4.4, 5.5, 6.6))),
         bmp::rect(3, 4u, 5.5f, 6u));
     EXPECT_EQ((static_cast<bmp::rect<int, unsigned, float, long>>(bmp::rect(3.3, 4.4, 5.5, 6.6))),
@@ -567,7 +565,7 @@ TEST(RectTest, TypeCast) {
 }
 
 TEST(RectTest, ContainsPoint) {
-    bmp::rect r(2, 3, 4u, 5u);
+    bmp::rect r(2, 4u, 3, 5u);
 
     EXPECT_TRUE(contains(r, bmp::point(2, 4u)));
     EXPECT_TRUE(contains(r, bmp::point(4, 4u)));
@@ -585,43 +583,43 @@ TEST(RectTest, ContainsPoint) {
 }
 
 TEST(RectTest, ContainsRect) {
-    bmp::rect r(2, 3, 4u, 5u);
+    bmp::rect r(2, 4u, 3, 5u);
 
-    EXPECT_TRUE(contains(r, bmp::rect(2, 3, 4u, 5u)));
+    EXPECT_TRUE(contains(r, bmp::rect(2, 4u, 3, 5u)));
 
-    EXPECT_FALSE(contains(r, bmp::rect(1, 4, 4u, 5u)));
-    EXPECT_FALSE(contains(r, bmp::rect(2, 4, 4u, 5u)));
-    EXPECT_FALSE(contains(r, bmp::rect(2, 3, 3u, 6u)));
-    EXPECT_FALSE(contains(r, bmp::rect(2, 3, 4u, 6u)));
+    EXPECT_FALSE(contains(r, bmp::rect(1, 4u, 4, 5u)));
+    EXPECT_FALSE(contains(r, bmp::rect(2, 4u, 4, 5u)));
+    EXPECT_FALSE(contains(r, bmp::rect(2, 3u, 3, 6u)));
+    EXPECT_FALSE(contains(r, bmp::rect(2, 4u, 3, 6u)));
 
-    EXPECT_TRUE(contains(bmp::rect(1, 4, 4u, 5u), r));
-    EXPECT_TRUE(contains(bmp::rect(2, 4, 4u, 5u), r));
-    EXPECT_TRUE(contains(bmp::rect(2, 3, 3u, 6u), r));
-    EXPECT_TRUE(contains(bmp::rect(2, 3, 4u, 6u), r));
+    EXPECT_TRUE(contains(bmp::rect(1, 4u, 4, 5u), r));
+    EXPECT_TRUE(contains(bmp::rect(2, 4u, 4, 5u), r));
+    EXPECT_TRUE(contains(bmp::rect(2, 3u, 3, 6u), r));
+    EXPECT_TRUE(contains(bmp::rect(2, 4u, 3, 6u), r));
 }
 
 TEST(RectTest, JoinRects) {
-    bmp::rect r(2, 3, 4u, 5u);
+    bmp::rect r(2, 4u, 3, 5u);
 
-    EXPECT_EQ(join(r, bmp::rect(2, 3, 4u, 5u)), bmp::rect(2, 3, 4u, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 4u, 3, 5u)), bmp::rect(2, 4u, 3, 5u));
 
-    EXPECT_EQ(join(r, bmp::rect(3, 2, 4u, 5u)), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(r, bmp::rect(2, 2, 4u, 5u)), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(r, bmp::rect(2, 3, 5u, 4u)), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(r, bmp::rect(2, 3, 4u, 4u)), bmp::rect(2, 3, 4u, 5u));
+    EXPECT_EQ(join(r, bmp::rect(3, 4u, 2, 5u)), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 4u, 2, 5u)), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 5u, 3, 4u)), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 4u, 3, 4u)), bmp::rect(2, 4u, 3, 5u));
 
-    EXPECT_EQ(join(bmp::rect(3, 2, 4u, 5u), r), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(bmp::rect(2, 2, 4u, 5u), r), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(bmp::rect(2, 3, 5u, 4u), r), bmp::rect(2, 3, 4u, 5u));
-    EXPECT_EQ(join(bmp::rect(2, 3, 4u, 4u), r), bmp::rect(2, 3, 4u, 5u));
+    EXPECT_EQ(join(bmp::rect(3, 4u, 2, 5u), r), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(bmp::rect(2, 4u, 2, 5u), r), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(bmp::rect(2, 5u, 3, 4u), r), bmp::rect(2, 4u, 3, 5u));
+    EXPECT_EQ(join(bmp::rect(2, 4u, 3, 4u), r), bmp::rect(2, 4u, 3, 5u));
 
-    EXPECT_EQ(join(r, bmp::rect(1, 3, 4u, 5u)), bmp::rect(1, 4, 4u, 5u));
-    EXPECT_EQ(join(r, bmp::rect(2, 4, 4u, 5u)), bmp::rect(2, 4, 4u, 5u));
-    EXPECT_EQ(join(r, bmp::rect(2, 3, 3u, 5u)), bmp::rect(2, 3, 3u, 6u));
-    EXPECT_EQ(join(r, bmp::rect(2, 3, 4u, 6u)), bmp::rect(2, 3, 4u, 6u));
+    EXPECT_EQ(join(r, bmp::rect(1, 4u, 3, 5u)), bmp::rect(1, 4u, 4, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 4u, 4, 5u)), bmp::rect(2, 4u, 4, 5u));
+    EXPECT_EQ(join(r, bmp::rect(2, 3u, 3, 5u)), bmp::rect(2, 3u, 3, 6u));
+    EXPECT_EQ(join(r, bmp::rect(2, 4u, 3, 6u)), bmp::rect(2, 4u, 3, 6u));
 
-    EXPECT_EQ(join(bmp::rect(1, 3, 4u, 5u), r), bmp::rect(1, 4, 4u, 5u));
-    EXPECT_EQ(join(bmp::rect(2, 4, 4u, 5u), r), bmp::rect(2, 4, 4u, 5u));
-    EXPECT_EQ(join(bmp::rect(2, 3, 3u, 5u), r), bmp::rect(2, 3, 3u, 6u));
-    EXPECT_EQ(join(bmp::rect(2, 3, 4u, 6u), r), bmp::rect(2, 3, 4u, 6u));
+    EXPECT_EQ(join(bmp::rect(1, 4u, 3, 5u), r), bmp::rect(1, 4u, 4, 5u));
+    EXPECT_EQ(join(bmp::rect(2, 4u, 4, 5u), r), bmp::rect(2, 4u, 4, 5u));
+    EXPECT_EQ(join(bmp::rect(2, 3u, 3, 5u), r), bmp::rect(2, 3u, 3, 6u));
+    EXPECT_EQ(join(bmp::rect(2, 4u, 3, 6u), r), bmp::rect(2, 4u, 3, 6u));
 }
