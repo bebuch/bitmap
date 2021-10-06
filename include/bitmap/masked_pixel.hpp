@@ -13,7 +13,7 @@ namespace bmp::pixel {
         T v;
         bool m;
 
-        [[nodiscard]] bool operator==(basic_masked_pixel const&)const = default;
+        [[nodiscard]] bool operator==(basic_masked_pixel const&) const = default;
     };
 
 

@@ -17,7 +17,7 @@ namespace bmp::pixel {
         using with_channel_type = basic_ga<U>;
 
         static basic_ga<T>
-            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible_v<T>) {
             return {v, v};
         }
 
@@ -29,7 +29,7 @@ namespace bmp::pixel {
         T g;
         T a;
 
-        [[nodiscard]] bool operator==(basic_ga const&)const = default;
+        [[nodiscard]] bool operator==(basic_ga const&) const = default;
     };
 
     using ga8 = basic_ga<std::int8_t>;
@@ -54,7 +54,7 @@ namespace bmp::pixel {
         using with_channel_type = basic_rgb<U>;
 
         static basic_rgb<T>
-            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible_v<T>) {
             return {v, v, v};
         }
 
@@ -67,7 +67,7 @@ namespace bmp::pixel {
         T g;
         T b;
 
-        [[nodiscard]] bool operator==(basic_rgb const&)const = default;
+        [[nodiscard]] bool operator==(basic_rgb const&) const = default;
     };
 
     using rgb8 = basic_rgb<std::int8_t>;
@@ -92,7 +92,7 @@ namespace bmp::pixel {
         using with_channel_type = basic_rgba<U>;
 
         static basic_rgba<T>
-            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible_v<T>) {
             return {v, v, v, v};
         }
 
@@ -106,7 +106,7 @@ namespace bmp::pixel {
         T b;
         T a;
 
-        [[nodiscard]] bool operator==(basic_rgba const&)const = default;
+        [[nodiscard]] bool operator==(basic_rgba const&) const = default;
     };
 
     using rgba8 = basic_rgba<std::int8_t>;
@@ -187,8 +187,8 @@ namespace bmp::pixel {
 
     template <typename T>
     struct fill_channels_type<T, true> {
-        constexpr auto
-            operator()(channel_type_t<T> const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
+        constexpr auto operator()(channel_type_t<T> const& v) noexcept(
+            std::is_nothrow_copy_constructible_v<T>) {
             return T::fill_channels(v);
         }
     };
