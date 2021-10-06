@@ -1,8 +1,5 @@
-#include <bitmap/matrix3x3_io.hpp>
 #include <bitmap/rect_io.hpp>
 #include <bitmap/rect_transform.hpp>
-
-#include <io_tools/io_std_array.hpp>
 
 #include <gtest/gtest.h>
 
