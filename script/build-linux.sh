@@ -16,7 +16,7 @@ cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=/mnt/install -DBITMAP_BUILD_TESTS=ON $P
 make -j $(nproc)
 
 # Run tests
-test -x test/tests.exe && test/tests.exe
+test/tests
 
 # Install
 make install
@@ -30,4 +30,4 @@ mkdir -p /mnt/build-package-test
 cd /mnt/build-package-test
 cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install $PROJECT_DIR/test-package
 make -j $(nproc)
-test -x ./test_bitmap_package.exe && ./test_bitmap_package.exe
+./test_bitmap_package
