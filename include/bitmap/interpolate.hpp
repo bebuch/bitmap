@@ -2,6 +2,7 @@
 
 #include "pixel.hpp"
 
+#include <cmath>
 #include <type_traits>
 
 
@@ -10,7 +11,11 @@ namespace bmp {
 
     template <typename FT, typename T>
     constexpr std::common_type_t<T, FT> interpolate(FT ratio, T a, T b) noexcept {
-        return (1 - ratio) * a + ratio * b;
+        using type = std::common_type_t<T, FT>;
+        return std::lerp(
+            static_cast<type const&>(a),
+            static_cast<type const&>(b),
+            static_cast<type const&>(ratio));
     }
 
     template <typename FT, typename T>
