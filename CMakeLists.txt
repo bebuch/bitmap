@@ -37,14 +37,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
 
 # other subdirectories
 option(BITMAP_BUILD_TESTS "build tests" OFF)
-option(BITMAP_BUILD_EXAMPLES "build examples" OFF)
 
 if(${BITMAP_BUILD_TESTS})
     enable_testing()
     add_subdirectory(test)
     add_test(NAME tests COMMAND tests)
-endif()
-
-if(${BITMAP_BUILD_EXAMPLES})
-    add_subdirectory(example)
 endif()

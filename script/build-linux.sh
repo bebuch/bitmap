@@ -10,24 +10,24 @@ mkdir -p /mnt/install
 # Configure Project
 mkdir -p /mnt/build
 cd /mnt/build
-cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=/mnt/install -DBITMAP_BUILD_EXAMPLES=ON -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
+cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=/mnt/install -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
 
 # Build test
-make -j 32
+make -j $(nproc)
 
 # Run tests
-test/tests
+test -x test/tests.exe && test/tests.exe
 
 # Install
 make install
 
 # Check install
-git diff --no-index /mnt/install/include/bitmap $PROJECT_DIR/include/bitmap
+git diff --no-index /mnt/install/include $PROJECT_DIR/include
 test -f /mnt/install/lib/cmake/bitmap/bitmap-config.cmake
 
 # Check install by example project
 mkdir -p /mnt/build-package-test
 cd /mnt/build-package-test
 cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install $PROJECT_DIR/test-package
-make -j 32
-./test_bitmap_package
+make -j $(nproc)
+test -x ./test_bitmap_package.exe && ./test_bitmap_package.exe
