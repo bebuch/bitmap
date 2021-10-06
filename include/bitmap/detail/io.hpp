@@ -109,5 +109,3 @@ namespace bmp::detail {
 
 
 }
-
-#endif
