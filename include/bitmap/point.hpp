@@ -22,7 +22,6 @@ namespace bmp::detail {
 namespace bmp {
 
 
-
     /// \brief A class for representing points
     /// \tparam XT Type of the x position data
     /// \tparam YT Type of the y position data

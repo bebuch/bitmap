@@ -102,8 +102,8 @@ namespace bmp::detail {
             os << "[float -> max(y) = " << std::floor(tl.y()) << " + 1]";
         }
         os << "), size(w = " << rect_size.w() << ", h = " << rect_size.h()
-           << ")) is outside the original bitmap(w = " << bmp_size.w()
-           << ", h = " << bmp_size.h() << ")";
+           << ")) is outside the original bitmap(w = " << bmp_size.w() << ", h = " << bmp_size.h()
+           << ")";
         return os.str();
     }
 
@@ -111,8 +111,7 @@ namespace bmp::detail {
     std::string neg_size_msg(rect<XT, YT, WT, HT> const& rect) {
         std::ostringstream os;
         os << "subbitmap: rect(point(x = " << rect.x() << ", y = " << rect.y()
-           << "), size(w = " << rect.w() << ", h = " << rect.h()
-           << ")) has negetive size";
+           << "), size(w = " << rect.w() << ", h = " << rect.h() << ")) has negetive size";
         return os.str();
     }
 
@@ -156,8 +155,7 @@ namespace bmp::detail {
         point<XT, YT> const& top_left,
         rect<std::size_t> const& int_rect) {
         if constexpr(std::is_integral_v<XT> && std::is_integral_v<YT>) {
-            if(int_rect.x() + int_rect.w() > org.w()
-               || int_rect.y() + int_rect.h() > org.h()) {
+            if(int_rect.x() + int_rect.w() > org.w() || int_rect.y() + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -165,8 +163,7 @@ namespace bmp::detail {
             copy(result, org, int_rect);
             return result;
         } else if constexpr(std::is_integral_v<XT>) {
-            if(int_rect.x() + int_rect.w() > org.w()
-               || int_rect.y() + 1 + int_rect.h() > org.h()) {
+            if(int_rect.x() + int_rect.w() > org.w() || int_rect.y() + 1 + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -175,8 +172,7 @@ namespace bmp::detail {
             y_interpolate(result, org, int_rect, y_ratio);
             return result;
         } else if constexpr(std::is_integral_v<YT>) {
-            if(int_rect.x() + 1 + int_rect.w() > org.w()
-               || int_rect.y() + int_rect.h() > org.h()) {
+            if(int_rect.x() + 1 + int_rect.w() > org.w() || int_rect.y() + int_rect.h() > org.h()) {
                 throw std::out_of_range(out_of_range_msg(org.size(), top_left, int_rect.size()));
             }
 
@@ -212,8 +208,7 @@ namespace bmp {
         detail::subbitmap_check_rect(rect);
 
         if(rect.x() < 0 || rect.y() < 0) {
-            throw std::out_of_range(
-                detail::out_of_range_msg(org.size(), rect.pos(), rect.size()));
+            throw std::out_of_range(detail::out_of_range_msg(org.size(), rect.pos(), rect.size()));
         }
 
         auto const int_rect = ::bmp::rect(

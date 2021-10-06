@@ -16,29 +16,21 @@ namespace bmp::pixel {
         template <typename U>
         using with_channel_type = basic_ga<U>;
 
-        static basic_ga<T> fill_channels(T const& v) {
+        static basic_ga<T>
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
             return {v, v};
         }
 
         template <typename U>
-        explicit constexpr
-            operator basic_ga<U>() noexcept(noexcept(static_cast<U>(std::declval<T>()))) {
+        explicit constexpr operator basic_ga<U>() noexcept(std::is_nothrow_convertible_v<T, U>) {
             return {static_cast<U>(g), static_cast<U>(a)};
         }
 
         T g;
         T a;
+
+        bool operator==(basic_ga const&) = default;
     };
-
-    template <typename T>
-    constexpr bool operator==(basic_ga<T> const& l, basic_ga<T> const& r) {
-        return l.g == r.g && l.a == r.a;
-    }
-
-    template <typename T>
-    constexpr bool operator!=(basic_ga<T> const& l, basic_ga<T> const& r) {
-        return !(l == r);
-    }
 
     using ga8 = basic_ga<std::int8_t>;
     using ga16 = basic_ga<std::int16_t>;
@@ -61,30 +53,22 @@ namespace bmp::pixel {
         template <typename U>
         using with_channel_type = basic_rgb<U>;
 
-        static basic_rgb<T> fill_channels(T const& v) {
+        static basic_rgb<T>
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
             return {v, v, v};
         }
 
         template <typename U>
-        explicit constexpr
-            operator basic_rgb<U>() noexcept(noexcept(static_cast<U>(std::declval<T>()))) {
+        explicit constexpr operator basic_rgb<U>() noexcept(std::is_nothrow_convertible_v<T, U>) {
             return {static_cast<U>(r), static_cast<U>(g), static_cast<U>(b)};
         }
 
         T r;
         T g;
         T b;
+
+        bool operator==(basic_rgb const&) = default;
     };
-
-    template <typename T>
-    constexpr bool operator==(basic_rgb<T> const& l, basic_rgb<T> const& r) {
-        return l.r == r.r && l.g == r.g && l.b == r.b;
-    }
-
-    template <typename T>
-    constexpr bool operator!=(basic_rgb<T> const& l, basic_rgb<T> const& r) {
-        return !(l == r);
-    }
 
     using rgb8 = basic_rgb<std::int8_t>;
     using rgb16 = basic_rgb<std::int16_t>;
@@ -107,13 +91,13 @@ namespace bmp::pixel {
         template <typename U>
         using with_channel_type = basic_rgba<U>;
 
-        static basic_rgba<T> fill_channels(T const& v) {
+        static basic_rgba<T>
+            fill_channels(T const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
             return {v, v, v, v};
         }
 
         template <typename U>
-        explicit constexpr
-            operator basic_rgba<U>() noexcept(noexcept(static_cast<U>(std::declval<T>()))) {
+        explicit constexpr operator basic_rgba<U>() noexcept(std::is_nothrow_convertible_v<T, U>) {
             return {static_cast<U>(r), static_cast<U>(g), static_cast<U>(b), static_cast<U>(a)};
         }
 
@@ -121,17 +105,9 @@ namespace bmp::pixel {
         T g;
         T b;
         T a;
+
+        bool operator==(basic_rgba const&) = default;
     };
-
-    template <typename T>
-    constexpr bool operator==(basic_rgba<T> const& l, basic_rgba<T> const& r) {
-        return l.r == r.r && l.g == r.g && l.b == r.b && l.a == r.a;
-    }
-
-    template <typename T>
-    constexpr bool operator!=(basic_rgba<T> const& l, basic_rgba<T> const& r) {
-        return !(l == r);
-    }
 
     using rgba8 = basic_rgba<std::int8_t>;
     using rgba16 = basic_rgba<std::int16_t>;
@@ -211,7 +187,8 @@ namespace bmp::pixel {
 
     template <typename T>
     struct fill_channels_type<T, true> {
-        constexpr auto operator()(channel_type_t<T> const& v) {
+        constexpr auto
+            operator()(channel_type_t<T> const& v) noexcept(std::is_nothrow_copy_constructible<T>) {
             return T::fill_channels(v);
         }
     };

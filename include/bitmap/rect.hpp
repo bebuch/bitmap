@@ -205,12 +205,12 @@ namespace bmp::detail {
 }
 
 
-namespace bmp{
+namespace bmp {
 
 
     /// \brief A class for manipulating rectangles
     template <typename XT, typename YT = XT, typename WT = XT, typename HT = YT>
-    struct rect: detail::rect_hv_base<XT, YT, WT, HT>{
+    struct rect: detail::rect_hv_base<XT, YT, WT, HT> {
         using detail::rect_hv_base<XT, YT, WT, HT>::rect_hv_base;
 
         /// \brief Enable static casts
@@ -244,33 +244,27 @@ namespace bmp{
 
     /// \brief Get true, if point is in rect
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr bool contains(
-        rect<XT, YT, XT, YT> const& rect,
-        point<XT, YT> const& point
-    ) {
-        return point.x() >= rect.l() && point.x() <= rect.r()
-            && point.y() >= rect.t() && point.y() <= rect.b();
+    [[nodiscard]] constexpr bool
+        contains(rect<XT, YT, XT, YT> const& rect, point<XT, YT> const& point) {
+        return point.x() >= rect.l() && point.x() <= rect.r() && point.y() >= rect.t()
+            && point.y() <= rect.b();
     }
 
     /// \brief Get true, if test is in ref
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr bool contains(
-        rect<XT, YT, XT, YT> const& ref,
-        rect<XT, YT, XT, YT> const& test
-    ) {
-        return test.l() >= ref.l() && test.r() <= ref.r()
-            && test.t() >= ref.t() && test.b() <= ref.b();
+    [[nodiscard]] constexpr bool
+        contains(rect<XT, YT, XT, YT> const& ref, rect<XT, YT, XT, YT> const& test) {
+        return test.l() >= ref.l() && test.r() <= ref.r() && test.t() >= ref.t()
+            && test.b() <= ref.b();
     }
 
 
     /// \brief Get a rect that contains both rects
     template <typename XT, typename YT>
-    [[nodiscard]] constexpr rect<XT, YT, XT, YT> join(
-        rect<XT, YT, XT, YT> const& l,
-        rect<XT, YT, XT, YT> const& r
-    ) {
-        using std::min;
+    [[nodiscard]] constexpr rect<XT, YT, XT, YT>
+        join(rect<XT, YT, XT, YT> const& l, rect<XT, YT, XT, YT> const& r) {
         using std::max;
+        using std::min;
         return {
             ::bmp::point(min(l.l(), r.l()), min(l.t(), r.t())),
             ::bmp::point(max(l.r(), r.r()), max(l.b(), r.b()))};
@@ -307,18 +301,23 @@ namespace bmp::detail {
         /// \brief Constructs a rect on position (0, 0), with size
         ///        bottom_right.x + 1 as width and rb.y + 1 as height
         constexpr rect_hv_base(pos_type const& rb)
-            : rect_base<XT, YT, XT, YT>(to_size(pos_type(
-                static_cast<horizontal_type>(is_x_half_open),
-                static_cast<vertical_type>(is_y_half_open)) + rb)) {}
+            : rect_base<XT, YT, XT, YT>(to_size(
+                pos_type(
+                    static_cast<horizontal_type>(is_x_half_open),
+                    static_cast<vertical_type>(is_y_half_open))
+                + rb)) {}
 
         /// \brief Constructs a rect on position (top_left.x, top_left.y), with
         ///        size bottom_right.x + 1 - top_left.x as width and
         ///        bottom_right.y + 1 - top_left.x as height
         constexpr rect_hv_base(pos_type const& lt, pos_type const& rb)
-            : rect_base<XT, YT, XT, YT>(lt, to_size(pos_type(
-                static_cast<horizontal_type>(is_x_half_open),
-                static_cast<vertical_type>(is_y_half_open)) + rb - lt))
-            {}
+            : rect_base<XT, YT, XT, YT>(
+                lt,
+                to_size(
+                    pos_type(
+                        static_cast<horizontal_type>(is_x_half_open),
+                        static_cast<vertical_type>(is_y_half_open))
+                    + rb - lt)) {}
 
 
         using rect_base<XT, YT, XT, YT>::x;

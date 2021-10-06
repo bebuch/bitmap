@@ -1,9 +1,8 @@
 #pragma once
 
-#include "size.hpp"
+#include "detail/io.hpp"
 
-#include <io_tools/expect.hpp>
-#include <io_tools/input_wrapper.hpp>
+#include "size.hpp"
 
 
 namespace bmp {
@@ -12,7 +11,21 @@ namespace bmp {
     template <typename CharT, typename Traits, typename WT, typename HT>
     std::basic_ostream<CharT, Traits>&
         operator<<(std::basic_ostream<CharT, Traits>& os, size<WT, HT> const& data) {
-        return os << data.w() << "x" << data.h();
+        if constexpr(detail::is_char_v<WT>) {
+            os << static_cast<int>(data.w());
+        } else {
+            os << data.w();
+        }
+
+        os << "x";
+
+        if constexpr(detail::is_char_v<HT>) {
+            os << static_cast<int>(data.h());
+        } else {
+            os << data.h();
+        }
+
+        return os;
     }
 
 
@@ -20,10 +33,10 @@ namespace bmp {
     std::basic_istream<CharT, Traits>&
         operator>>(std::basic_istream<CharT, Traits>& is, size<WT, HT>& data) {
         size<WT, HT> tmp;
-        is >> io_tools::input_wrapper(tmp.w());
-        if(!io_tools::expect(is, 'x'))
+        is >> detail::input_wrapper(tmp.w());
+        if(!detail::expect(is, 'x'))
             return is;
-        is >> io_tools::input_wrapper(tmp.h());
+        is >> detail::input_wrapper(tmp.h());
 
         if(is) {
             data = std::move(tmp);

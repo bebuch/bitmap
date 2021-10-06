@@ -69,8 +69,7 @@ namespace bmp {
         template <typename InputIterator>
         bitmap(size_type const& size, InputIterator first, InputIterator last)
             : size_(size)
-            , data_(first, last)
-        {
+            , data_(first, last) {
             if(data_.size() != point_count()) {
                 throw std::logic_error(
                     "bitmap constructor size (" + std::to_string(size_.w()) + "x"

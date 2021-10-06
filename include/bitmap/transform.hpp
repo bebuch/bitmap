@@ -36,8 +36,7 @@ namespace bmp {
         bool const mirror_v = (transform & simple_bitmap_transform::mirror_vectical) != 0;
 
 
-        bitmap<result_type> result(
-            rotation ? size_type(image.h(), image.w()) : image.size());
+        bitmap<result_type> result(rotation ? size_type(image.h(), image.w()) : image.size());
 
         for(std::size_t y = 0; y < result.h(); ++y) {
             for(std::size_t x = 0; x < result.w(); ++x) {

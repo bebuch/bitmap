@@ -12,17 +12,10 @@ namespace bmp::pixel {
 
         T v;
         bool m;
+
+        bool operator==(basic_masked_pixel const&) = default;
     };
 
-    template <typename T>
-    constexpr bool operator==(basic_masked_pixel<T> const& l, basic_masked_pixel<T> const& r) {
-        return l.v == r.v && l.m == r.m;
-    }
-
-    template <typename T>
-    constexpr bool operator!=(basic_masked_pixel<T> const& l, basic_masked_pixel<T> const& r) {
-        return !(l == r);
-    }
 
     using masked_g8 = basic_masked_pixel<std::int8_t>;
     using masked_g16 = basic_masked_pixel<std::int16_t>;

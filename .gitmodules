@@ -1,3 +1,0 @@
-[submodule "3rdparty/io_tools"]
-	path = 3rdparty/io_tools
-	url = https://gitlab.tu-ilmenau.de/FakMB/QBV/topics/cpp/io_tools.git

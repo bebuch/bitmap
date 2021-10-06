@@ -155,8 +155,7 @@ namespace bmp {
     auto transform_bitmap(
         matrix3x3<T> const& homography,
         bitmap<VT> const& image,
-        rect<long, long, std::size_t, std::size_t> const& target_contour
-    ) {
+        rect<long, long, std::size_t, std::size_t> const& target_contour) {
         return transform_bitmap<VT, VT, T>(homography, image, target_contour);
     }
 

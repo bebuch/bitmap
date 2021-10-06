@@ -14,10 +14,11 @@ namespace bmp::detail {
 
     template <typename T>
     struct is_valid_binary_format<T, true>
-        : std::bool_constant<std::is_arithmetic_v<typename T::value_type>
-            && !std::is_same_v<typename T::value_type, long double>
-            && !std::is_same_v<typename T::value_type, bool>>
-        {};
+        : std::bool_constant<
+              std::is_arithmetic_v<
+                  typename T::
+                      value_type> && !std::is_same_v<typename T::value_type, long double> && !std::is_same_v<typename T::value_type, bool>> {
+    };
 
 
     template <typename T>
