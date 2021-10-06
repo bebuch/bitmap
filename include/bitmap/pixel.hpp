@@ -29,7 +29,7 @@ namespace bmp::pixel {
         T g;
         T a;
 
-        bool operator==(basic_ga const&) = default;
+        [[nodiscard]] bool operator==(basic_ga const&)const = default;
     };
 
     using ga8 = basic_ga<std::int8_t>;
@@ -67,7 +67,7 @@ namespace bmp::pixel {
         T g;
         T b;
 
-        bool operator==(basic_rgb const&) = default;
+        [[nodiscard]] bool operator==(basic_rgb const&)const = default;
     };
 
     using rgb8 = basic_rgb<std::int8_t>;
@@ -106,7 +106,7 @@ namespace bmp::pixel {
         T b;
         T a;
 
-        bool operator==(basic_rgba const&) = default;
+        [[nodiscard]] bool operator==(basic_rgba const&)const = default;
     };
 
     using rgba8 = basic_rgba<std::int8_t>;
