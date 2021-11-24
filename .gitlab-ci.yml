@@ -4,10 +4,10 @@ markdown-links-verificator:
 
 # build x86_64 Windows
 build-windows:
-  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/mingw/qbv:2021-10-05
+  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/mingw/qbv:2021-11-24
   script: script/build-windows.sh
 
 # build x86_64 Linux
 build-linux:
-  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/gcc/qbv:2021-10-05
+  image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/gcc/qbv:2021-11-24
   script: script/build-linux.sh
