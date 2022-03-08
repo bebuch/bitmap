@@ -29,7 +29,7 @@ namespace bmp {
     /// \brief Read binary bitmap format header from std::istream
     ///
     /// \throw binary_io_error
-    binary_header binary_read_header(std::istream& is) {
+    inline binary_header binary_read_header(std::istream& is) {
         using namespace boost::endian;
 
         // read the file header
