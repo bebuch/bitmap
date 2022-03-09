@@ -59,7 +59,6 @@ namespace bmp {
         bitmap(bitmap&&) = default;
 
         /// \brief Constructs a bitmap with size, initialize all values with value
-        /// \throw std::out_of_range
         bitmap(size_type const& size, value_type const& value = value_type())
             : size_(size)
             , data_(point_count(), value) {}
@@ -79,10 +78,18 @@ namespace bmp {
         }
 
         /// \brief Constructs a bitmap with size w and h, initialize all values with value
-        /// \throw std::out_of_range
         bitmap(std::size_t w, std::size_t h, value_type const& value = value_type())
             : size_(w, h)
             , data_(point_count(), value) {}
+
+        /// \brief Constructs a bitmap by a two dimensional array
+        template <std::size_t W, std::size_t H>
+        bitmap(T const(&array)[H][W])
+            : size_(W, H)
+            , data_(
+                std::begin(reinterpret_cast<T const(&)[W*H]>(array)),
+                std::end(reinterpret_cast<T const(&)[W*H]>(array)))
+            {}
 
 
         /// \brief Standard destructor

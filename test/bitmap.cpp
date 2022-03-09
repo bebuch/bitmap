@@ -24,6 +24,19 @@ TEST(BitmapTest, SizeConstruction) {
     EXPECT_EQ(image.h(), 5);
 }
 
+TEST(BitmapTest, ArrayConstruction) {
+    bmp::bitmap<int> image({{1, 2, 3}, {4, 5, 6}});
+
+    ASSERT_EQ(image.w(), 3);
+    ASSERT_EQ(image.h(), 2);
+    EXPECT_EQ(image(0, 0), 1);
+    EXPECT_EQ(image(1, 0), 2);
+    EXPECT_EQ(image(2, 0), 3);
+    EXPECT_EQ(image(0, 1), 4);
+    EXPECT_EQ(image(1, 1), 5);
+    EXPECT_EQ(image(2, 1), 6);
+}
+
 TEST(BitmapTest, CapacityAs) {
     {
         bmp::bitmap<int> image(bmp::size<std::size_t>(127, 1));
