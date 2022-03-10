@@ -178,6 +178,12 @@ namespace bmp {
             size_ = size;
         }
 
+        /// \brief Resize to zero
+        void resize()noexcept {
+            data_.clear()
+            size_ = {0, 0};
+        }
+
 
         /// \brief Get the width
         std::size_t w() const {
