@@ -180,7 +180,7 @@ namespace bmp {
 
         /// \brief Resize to zero
         void resize()noexcept {
-            data_.clear()
+            data_.clear();
             size_ = {0, 0};
         }
 
