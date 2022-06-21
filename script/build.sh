@@ -26,7 +26,9 @@ cmake --install .
 
 # Check install
 git diff --no-index /mnt/install/include $PROJECT_DIR/include
-test -f /mnt/install/lib/cmake/bitmap/bitmap-config.cmake
+test -f /mnt/install/lib/cmake/bitmap/bitmapTargets.cmake
+test -f /mnt/install/lib/cmake/bitmap/bitmapConfig.cmake
+test -f /mnt/install/lib/cmake/bitmap/bitmapConfigVersion.cmake
 
 # Check install by example project
 mkdir -p /mnt/build-package-test
