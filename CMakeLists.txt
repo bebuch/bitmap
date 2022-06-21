@@ -24,7 +24,7 @@ endif()
 
 project(bitmap VERSION "${GIT_VERSION_FROM_TAG}" LANGUAGES CXX)
 
-message(STATUS "This is bebuch::${PROJECT_NAME} Version ${PROJECT_VERSION}")
+message(NOTICE "This is bebuch::${PROJECT_NAME} Version ${PROJECT_VERSION}")
 
 
 set(DEFAULT_BUILD_TYPE "Release")
