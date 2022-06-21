@@ -11,6 +11,8 @@ execute_process(COMMAND ${GIT_EXECUTABLE} "describe"
 if(GIT_RETURN_VALUE EQUAL 0)
     string(REGEX REPLACE "^v" "" GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
     string(REGEX REPLACE "\n$" "" GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
+    string(REGEX REPLACE "\-........$" "" GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
+    string(REGEX REPLACE "-" "." GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
 else()
     execute_process(COMMAND ${GIT_EXECUTABLE} "rev-list" "--all" "--count"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
