@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.23)
 
 find_package(Git REQUIRED)
 
-execute_process(COMMAND ${GIT_EXECUTABLE} "describe" "--tagsgit a"
+execute_process(COMMAND ${GIT_EXECUTABLE} "describe" "--tags"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     RESULT_VARIABLE GIT_RETURN_VALUE
     OUTPUT_VARIABLE GIT_VERSION_FROM_TAG)

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 
 project(test_bitmap_package)
 
-find_package(bitmap 2.1 REQUIRED)
+find_package(bitmap 2.3 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
