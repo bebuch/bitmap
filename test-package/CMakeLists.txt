@@ -4,9 +4,12 @@ project(test_bitmap_package)
 
 find_package(bitmap REQUIRED)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME} test.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${bitmap_INCLUDE_DIR})
+
+enable_testing()
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

@@ -1,9 +1,18 @@
 #!/bin/bash
 
+if [ $# -lt 1 ] || [ "$1" != "linux" ] && [ "$1" != "windows" ]; then
+    echo "Usage: $0 OS"
+    echo "    where OS is linux or windows"
+    exit 1
+fi
+
+echo "Build for $1"
+
 # exit script on any error
 set -e
 set -o xtrace
 
+# build
 PROJECT_DIR=$(pwd)
 mkdir -p /mnt/install
 
@@ -11,15 +20,9 @@ mkdir -p /mnt/install
 mkdir -p /mnt/build
 cd /mnt/build
 cmake $CMAKE_VARS -DCMAKE_INSTALL_PREFIX=/mnt/install -DBITMAP_BUILD_TESTS=ON $PROJECT_DIR
-
-# Build test
-make -j $(nproc)
-
-# Run tests
-test/tests
-
-# Install
-make install
+cmake --build . --parallel
+ctest
+cmake --install .
 
 # Check install
 git diff --no-index /mnt/install/include $PROJECT_DIR/include
@@ -29,5 +32,5 @@ test -f /mnt/install/lib/cmake/bitmap/bitmap-config.cmake
 mkdir -p /mnt/build-package-test
 cd /mnt/build-package-test
 cmake $CMAKE_VARS -DCMAKE_PREFIX_PATH=/mnt/install $PROJECT_DIR/test-package
-make -j $(nproc)
-./test_bitmap_package
+cmake --build . --parallel
+ctest

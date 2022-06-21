@@ -86,6 +86,44 @@ TEST(SizeTest, Compare){
     EXPECT_NE(bmp::size(4_tv0, 5_tv1), bmp::size(4_tv0, 3_tv1));
 }
 
+TEST(SizeTest, Plus){
+    EXPECT_EQ(bmp::size(14_tv0, 17_tv1) + bmp::size(2_tv0, 3_tv1), bmp::size(16_tv0, 20_tv1));
+
+    EXPECT_EQ(bmp::size(14  , 17  ) + bmp::size(2  , 3  ), bmp::size(16  , 20  ));
+    EXPECT_EQ(bmp::size(14.2, 17  ) + bmp::size(2.3, 3  ), bmp::size(16.5, 20  ));
+    EXPECT_EQ(bmp::size(14  , 17.2) + bmp::size(2  , 3.3), bmp::size(16  , 20.5));
+}
+
+TEST(SizeTest, Minus){
+    EXPECT_EQ(bmp::size(14_tv0, 17_tv1) - bmp::size(2_tv0, 3_tv1), bmp::size(12_tv0, 14_tv1));
+
+    EXPECT_EQ(bmp::size(14  , 17  ) - bmp::size(2  , 3  ), bmp::size(      12  ,       14  ));
+    EXPECT_EQ(bmp::size(14.2, 17  ) - bmp::size(2.4, 3  ), bmp::size(14.2 - 2.4,       14  ));
+    EXPECT_EQ(bmp::size(14  , 17.2) - bmp::size(2  , 3.4), bmp::size(      12  , 17.2 - 3.4));
+}
+
+TEST(SizeTest, Multiply){
+    EXPECT_EQ(bmp::size(14_tv0, 17_tv1) * bmp::size(2_tv0, 3_tv1), bmp::size(28_tv0, 51_tv1));
+
+    EXPECT_EQ(bmp::size(14  , 17  ) * bmp::size(2  ,   3), bmp::size(28   , 51   ));
+    EXPECT_EQ(bmp::size(14.2, 17  ) * bmp::size(2.3,   3), bmp::size(32.66, 51   ));
+    EXPECT_EQ(bmp::size(14  , 17.2) * bmp::size(2  , 3.3), bmp::size(28   , 56.76));
+}
+
+TEST(SizeTest, Divide){
+    EXPECT_EQ(bmp::size(14_tv0, 17_tv1) * bmp::size(2_tv0, 3_tv1), bmp::size(28_tv0, 51_tv1));
+
+    EXPECT_EQ(bmp::size(14  , 17  ) * bmp::size(2  ,   3), bmp::size(28   , 51   ));
+    EXPECT_EQ(bmp::size(14.0, 17  ) / bmp::size(4.0, 5  ), bmp::size(3.5, 3  ));
+    EXPECT_EQ(bmp::size(14  , 17.0) / bmp::size(4  , 5.0), bmp::size(3  , 3.4));
+}
+
+TEST(SizeTest, Modulo){
+    EXPECT_EQ(bmp::size(14_tv0, 15_tv1) % bmp::size(4_tv0, 6_tv1), bmp::size(2_tv0, 3_tv1));
+
+    EXPECT_EQ(bmp::size(14, 15) % bmp::size(4, 6), bmp::size(2, 3));
+}
+
 
 TEST(SizeTest, TypeCast) {
     EXPECT_EQ(static_cast<bmp::size<int>>(bmp::size(3.3, 4.4)), bmp::size(3, 4));

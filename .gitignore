@@ -1,6 +1,7 @@
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-CMakeFiles
-build
-test-package-build
+# packages (first three lines ignore extension-less files)
+/*
+!/*/
+!/*.*
+/*.tar.xz
+/*.ini
+/*.exe

@@ -11,4 +11,5 @@
 int main() {
     bmp::bitmap<float> x;
     (void)x;
+    return 0;
 }
