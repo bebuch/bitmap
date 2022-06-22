@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 
+# generate project version from Git tags
 find_package(Git REQUIRED)
 
 execute_process(COMMAND ${GIT_EXECUTABLE} "describe" "--tags"
@@ -22,14 +23,20 @@ else()
 endif()
 
 
+# project name and version
 project(bitmap VERSION "${GIT_VERSION_FROM_TAG}" LANGUAGES CXX)
 
-message(NOTICE "This is bebuch::${PROJECT_NAME} Version ${PROJECT_VERSION}")
+message(NOTICE "This is tuiqbv::${PROJECT_NAME} Version ${PROJECT_VERSION}")
 
 
+# global build settings
 set(DEFAULT_BUILD_TYPE "Release")
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Werror)
+endif()
 
 
 # interface target
@@ -57,7 +64,7 @@ write_basic_package_version_file(
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion)
 install(EXPORT ${PROJECT_NAME}Targets
-    NAMESPACE bebuch::
+    NAMESPACE tuiqbv::
     DESTINATION lib/cmake/${PROJECT_NAME})
 configure_package_config_file(Config.cmake.in ${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
@@ -68,11 +75,7 @@ install(FILES
     DESTINATION lib/cmake/${PROJECT_NAME})
 
 
-# other subdirectories
-option(BITMAP_BUILD_TESTS "build tests" OFF)
-
-if(${BITMAP_BUILD_TESTS})
-    enable_testing()
+include(CTest)
+if(BUILD_TESTING)
     add_subdirectory(test)
-    add_test(NAME tests COMMAND tests)
 endif()

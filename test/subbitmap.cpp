@@ -7,7 +7,7 @@
 
 template <typename F>
 auto calc(std::size_t const w, std::size_t const h, F const& f) {
-    bmp::bitmap<float> bmp(w, h);
+    bmp::bitmap<double> bmp(w, h);
     for(std::size_t y = 0; y < h; ++y) {
         for(std::size_t x = 0; x < w; ++x) {
             bmp(x, y) = f(x + 1, y + 1);
@@ -21,27 +21,27 @@ using bmp::rect;
 
 // TODO: Use all possible integer types
 TEST(SubBitmapTest, IntIntThrow) {
-    auto bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto bmp = calc(3, 2, [](auto x, auto y) { return static_cast<double>((1 + x) * y); });
 
     EXPECT_EQ(subbitmap(bmp, rect{0, 0, 3, 2}), calc(3, 2, [](auto x, auto y) {
-                  return (1 + x) * y;
+                  return static_cast<double>((1 + x) * y);
               }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{0, 0, 1, 1}), calc(1, 1, [](auto, auto) { return 2; }));
+    EXPECT_EQ(subbitmap(bmp, rect{0, 0, 1, 1}), calc(1, 1, [](auto, auto) { return 2.; }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{1, 0, 1, 1}), calc(1, 1, [](auto, auto) { return 3; }));
+    EXPECT_EQ(subbitmap(bmp, rect{1, 0, 1, 1}), calc(1, 1, [](auto, auto) { return 3.; }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{0, 1, 1, 1}), calc(1, 1, [](auto, auto) { return 4; }));
+    EXPECT_EQ(subbitmap(bmp, rect{0, 1, 1, 1}), calc(1, 1, [](auto, auto) { return 4.; }));
 
     EXPECT_EQ(subbitmap(bmp, rect{0, 1, 2, 1}), calc(2, 1, [](auto x, auto y) {
-                  return (1 + x) * (1 + y);
+                  return static_cast<double>((1 + x) * (1 + y));
               }));
 
     EXPECT_EQ(subbitmap(bmp, rect{1, 0, 1, 2}), calc(1, 2, [](auto x, auto y) {
-                  return (2 + x) * y;
+                  return static_cast<double>((2 + x) * y);
               }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{2, 1, 1, 1}), calc(1, 1, [](auto, auto) { return 8; }));
+    EXPECT_EQ(subbitmap(bmp, rect{2, 1, 1, 1}), calc(1, 1, [](auto, auto) { return 8.; }));
 
     EXPECT_THROW(subbitmap(bmp, rect{0, 0, -1, 1}), std::logic_error);
 
@@ -68,27 +68,27 @@ TEST(SubBitmapTest, IntIntThrow) {
 
 // TODO: Use all possible integer types
 TEST(SubBitmapTest, FloatIFloatIThrow) {
-    auto bmp = calc(3, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto bmp = calc(3, 2, [](auto x, auto y) { return static_cast<double>((1 + x) * y); });
 
     EXPECT_EQ(subbitmap(bmp, rect{0., 0., 3, 2}), calc(3, 2, [](auto x, auto y) {
-                  return (1 + x) * y;
+                  return static_cast<double>((1 + x) * y);
               }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{0., 0., 1, 1}), calc(1, 1, [](auto, auto) { return 2; }));
+    EXPECT_EQ(subbitmap(bmp, rect{0., 0., 1, 1}), calc(1, 1, [](auto, auto) { return 2.; }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{1., 0., 1, 1}), calc(1, 1, [](auto, auto) { return 3; }));
+    EXPECT_EQ(subbitmap(bmp, rect{1., 0., 1, 1}), calc(1, 1, [](auto, auto) { return 3.; }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{0., 1., 1, 1}), calc(1, 1, [](auto, auto) { return 4; }));
+    EXPECT_EQ(subbitmap(bmp, rect{0., 1., 1, 1}), calc(1, 1, [](auto, auto) { return 4.; }));
 
     EXPECT_EQ(subbitmap(bmp, rect{0., 1., 2, 1}), calc(2, 1, [](auto x, auto y) {
-                  return (1 + x) * (1 + y);
+                  return static_cast<double>((1 + x) * (1 + y));
               }));
 
     EXPECT_EQ(subbitmap(bmp, rect{1., 0., 1, 2}), calc(1, 2, [](auto x, auto y) {
-                  return (2 + x) * y;
+                  return static_cast<double>((2 + x) * y);
               }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{2., 1., 1, 1}), calc(1, 1, [](auto, auto) { return 8; }));
+    EXPECT_EQ(subbitmap(bmp, rect{2., 1., 1, 1}), calc(1, 1, [](auto, auto) { return 8.; }));
 
     EXPECT_THROW(subbitmap(bmp, rect{0., 0., -1, 1}), std::logic_error);
 
@@ -116,7 +116,7 @@ TEST(SubBitmapTest, FloatIFloatIThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, IntFloatThrow) {
-    auto bmp = calc(3, 3, [](auto x, auto y) { return (1 + x) * y; });
+    auto bmp = calc(3, 3, [](auto x, auto y) { return static_cast<double>((1 + x) * y); });
 
     EXPECT_EQ(subbitmap(bmp, rect{0, 0.25, 3, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{
@@ -138,7 +138,7 @@ TEST(SubBitmapTest, IntFloatThrow) {
                   return std::array<double, 2>{{5.25, 8.25}}[y - 1];
               }));
 
-    EXPECT_EQ(subbitmap(bmp, rect{2, 1.25, 1, 1}), calc(1, 1, [](auto, auto) { return 11; }));
+    EXPECT_EQ(subbitmap(bmp, rect{2, 1.25, 1, 1}), calc(1, 1, [](auto, auto) { return 11.; }));
 
     EXPECT_THROW(subbitmap(bmp, rect{0, 0.25, -1, 1}), std::logic_error);
 
@@ -165,7 +165,7 @@ TEST(SubBitmapTest, IntFloatThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, FloatIntThrow) {
-    auto bmp = calc(4, 2, [](auto x, auto y) { return (1 + x) * y; });
+    auto bmp = calc(4, 2, [](auto x, auto y) { return static_cast<double>((1 + x) * y); });
 
     EXPECT_EQ(subbitmap(bmp, rect{0.25, 0, 3, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{
@@ -214,7 +214,7 @@ TEST(SubBitmapTest, FloatIntThrow) {
 
 // TODO; use all possible float types
 TEST(SubBitmapTest, FloatFloatThrow) {
-    auto bmp = calc(4, 3, [](auto x, auto y) { return (1 + x) * y; });
+    auto bmp = calc(4, 3, [](auto x, auto y) { return static_cast<double>((1 + x) * y); });
 
     EXPECT_EQ(subbitmap(bmp, rect{0.25, 0.25, 3, 2}), calc(3, 2, [](auto x, auto y) {
                   return std::array<std::array<double, 3>, 2>{

@@ -230,19 +230,21 @@ namespace bmp {
         /// \brief Get the width with requested type
         template <typename U>
         U w_as() const {
-            if(w() > std::numeric_limits<U>::max()) {
-                throw std::runtime_error("w is to big for requested type");
+            auto const result = static_cast<U>(w());
+            if(w() != static_cast<std::size_t>(result)) {
+                throw std::runtime_error("value of width changed during conversion to the requested type");
             }
-            return static_cast<U>(w());
+            return result;
         }
 
         /// \brief Get the height with requested type
         template <typename U>
         U h_as() const {
-            if(h() > std::numeric_limits<U>::max()) {
-                throw std::runtime_error("h is to big for requested type");
+            auto const result = static_cast<U>(h());
+            if(h() != static_cast<std::size_t>(result)) {
+                throw std::runtime_error("value of height changed during conversion to the requested type");
             }
-            return static_cast<U>(h());
+            return result;
         }
 
         /// \brief Get the size with requested type
@@ -255,10 +257,11 @@ namespace bmp {
         template <typename U>
         U point_count_as() const {
             auto const count = point_count();
-            if(count > std::numeric_limits<U>::max()) {
-                throw std::runtime_error("point count is to big for requested type");
+            auto const result = static_cast<U>(count);
+            if(count != static_cast<std::size_t>(result)) {
+                throw std::runtime_error("value of point count changed during conversion to the requested type");
             }
-            return static_cast<U>(count);
+            return result;
         }
 
 

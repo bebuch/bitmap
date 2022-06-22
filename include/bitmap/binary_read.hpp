@@ -6,6 +6,8 @@
 #include "detail/binary_io_flags.hpp"
 #include "detail/valid_binary_format.hpp"
 
+#include <algorithm>
+#include <array>
 #include <cstdint>
 #include <fstream>
 #include <string>
@@ -30,7 +32,7 @@ namespace bmp {
         // read the file header
         uint32_t magic;
         is.read(reinterpret_cast<char*>(&magic), 4);
-        if(magic != detail::io_magic) {
+        if(magic != detail::big_endian_io_magic) {
             throw binary_io_error("wrong magic number");
         }
 
@@ -45,23 +47,23 @@ namespace bmp {
         std::uint8_t channel_size;
         std::uint8_t channel_count;
         std::uint8_t flags;
-        std::uint64_t w;
-        std::uint64_t h;
+        std::uint64_t w_bytes;
+        std::uint64_t h_bytes;
 
         is.read(reinterpret_cast<char*>(&channel_size), 1);
         is.read(reinterpret_cast<char*>(&channel_count), 1);
         is.read(reinterpret_cast<char*>(&flags), 1);
-        is.read(reinterpret_cast<char*>(&w), 8);
-        is.read(reinterpret_cast<char*>(&h), 8);
+        is.read(reinterpret_cast<char*>(&w_bytes), 8);
+        is.read(reinterpret_cast<char*>(&h_bytes), 8);
 
-        w = big_to_native(w);
-        h = big_to_native(h);
+        w_bytes = detail::byteswap_on_little_endian(w_bytes);
+        h_bytes = detail::byteswap_on_little_endian(h_bytes);
 
         if(!is.good()) {
             throw binary_io_error("can't read binary bitmap format header");
         }
 
-        return {version, channel_size, channel_count, flags, w, h};
+        return {version, channel_size, channel_count, flags, w_bytes, h_bytes};
     }
 
     /// \brief Read binary bitmap format data from std::istream
@@ -81,8 +83,6 @@ namespace bmp {
         using value_type = pixel::channel_type_t<T>;
         using detail::binary_endian_flags;
         using detail::binary_type_flags;
-
-        using namespace boost::endian;
 
         static_assert(sizeof(value_type) <= 256);
         static_assert(sizeof(T) == sizeof(value_type) * channel_count_v<T>);
@@ -159,12 +159,12 @@ namespace bmp {
             }
         };
 
-        if constexpr(std::is_floating_point_v<value_type>) {
+        if constexpr(!detail::endian_supported<value_type>) {
             if(test_endian_flag != ref_endian_flag) {
-                throw std::runtime_error("floating point data in "
+                throw std::runtime_error("data in "
                     + print_endian(test_endian_flag) + " endian, expected "
                     + print_endian(ref_endian_flag) + " endian, conversion is "
-                    "not supported for floating point types");
+                    "not supported for requested type");
             }
         } else {
             print_endian(test_endian_flag); // throws if not valid
@@ -179,18 +179,34 @@ namespace bmp {
             for(std::size_t i = 0; i < pixel_count; ++i) {
                 *(bitmap.begin() + i) = (buffer[i / 8] & (1 << (7 - (i % 8)))) != 0;
             }
-        } else {
+        } else if(test_endian_flag == ref_endian_flag) {
+            is.read(reinterpret_cast<char*>(bitmap.data()), pixel_count * sizeof(T));
+        } else if constexpr(std::integral<value_type>) {
             is.read(reinterpret_cast<char*>(bitmap.data()), pixel_count * sizeof(T));
 
-            // fix endianness if necessary
-            if(test_endian_flag != ref_endian_flag) {
-                for(auto& v: bitmap) {
-                    for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
-                        auto& c = *(reinterpret_cast<value_type*>(&v) + i);
-                        c = detail::byteswap(c);
-                    }
+            // fix endianness
+            for(auto& v: bitmap) {
+                for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
+                    auto& c = *(reinterpret_cast<value_type*>(&v) + i);
+                    c = std::byteswap(c);
                 }
             }
+        } else {
+            using buffer_value_type = detail::integer_type<value_type>;
+            using buffer_type = std::array<buffer_value_type, channel_count_v<T>>;
+            bmp::bitmap<buffer_type> buffer(header.w, header.h);
+
+            is.read(reinterpret_cast<char*>(buffer.data()), pixel_count * sizeof(T));
+
+            // fix endianness
+            std::ranges::transform(buffer, bitmap.begin(),
+                [](buffer_type const& channels){
+                    T pixel;
+                    for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
+                        *(reinterpret_cast<value_type*>(&pixel) + i) = detail::byteswap_to<value_type>(channels[i]);
+                    }
+                    return pixel;
+                });
         }
 
         if(!is.good()) {

@@ -6,8 +6,8 @@
 #include "detail/binary_io_flags.hpp"
 #include "detail/valid_binary_format.hpp"
 
-#include <boost/endian/arithmetic.hpp>
-
+#include <algorithm>
+#include <array>
 #include <cstdint>
 #include <fstream>
 #include <string>
@@ -20,25 +20,19 @@ namespace bmp {
     ///
     /// \throw binary_io_error
     template <typename T>
-    void binary_write(
-        bitmap<T> const& bitmap,
-        std::ostream& os,
-        std::endian endianness = std::endian::native) {
+    void binary_write(bitmap<T> const& bitmap, std::ostream& os, std::endian endianness = std::endian::native) {
         static_assert(
             detail::is_valid_binary_format_v<T>,
             "Your value_type is not supported by bmp::binary_write");
 
-        using namespace boost::endian;
         using pixel::channel_count_v;
         using value_type = pixel::channel_type_t<T>;
 
         static_assert(sizeof(value_type) <= 256);
         static_assert(sizeof(T) == sizeof(value_type) * channel_count_v<T>);
-        if constexpr(std::is_floating_point_v<value_type>) {
+        if constexpr(!detail::endian_supported<value_type>) {
             if(endianness != std::endian::native) {
-                throw std::runtime_error(
-                    "endian conversion is "
-                    "not supported for floating point types");
+                throw std::runtime_error("endian conversion is not supported for requested type");
             }
         }
 
@@ -61,24 +55,24 @@ namespace bmp {
             return (detail::binary_io_flags_v<value_type> & 0x0F) | std::uint8_t(endian_flag);
         }();
 
-        std::uint64_t const w = detail::native_to_big(bitmap.w());
-        std::uint64_t const h = detail::native_to_big(bitmap.h());
+        std::uint64_t const w_bytes = detail::byteswap_on_little_endian(bitmap.w());
+        std::uint64_t const h_bytes = detail::byteswap_on_little_endian(bitmap.h());
 
         // write the file header
-        os.write(reinterpret_cast<char const*>(&detail::io_magic), 4);
+        os.write(reinterpret_cast<char const*>(&detail::big_endian_io_magic), 4);
         os.write(reinterpret_cast<char const*>(&version), 1);
         os.write(reinterpret_cast<char const*>(&size_in_byte), 1);
         os.write(reinterpret_cast<char const*>(&channel_count), 1);
         os.write(reinterpret_cast<char const*>(&flags), 1);
-        os.write(reinterpret_cast<char const*>(&w), 8);
-        os.write(reinterpret_cast<char const*>(&h), 8);
+        os.write(reinterpret_cast<char const*>(&w_bytes), 8);
+        os.write(reinterpret_cast<char const*>(&h_bytes), 8);
 
         if(!os.good()) {
             throw binary_io_error("can't write binary bitmap format header");
         }
 
         if constexpr(std::is_same_v<T, bool>) {
-            big_uint8_t data = 0;
+            uint8_t data = 0;
             std::size_t i = 0;
             for(bool v: bitmap) {
                 data <<= 1;
@@ -93,14 +87,14 @@ namespace bmp {
                 os.write(reinterpret_cast<char const*>(&data), 1);
             }
         } else if(endianness == std::endian::native) {
-            os.write(reinterpret_cast<char const*>(bitmap.data()), w * h * sizeof(T));
+            os.write(reinterpret_cast<char const*>(bitmap.data()), bitmap.point_count() * sizeof(T));
         } else {
-            for(auto v: bitmap) {
-                for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
-                    auto& c = *(reinterpret_cast<value_type*>(&v) + i);
-                    c = detail::byteswap(c);
+            for(auto const v: bitmap) {
+                std::array<detail::integer_type<value_type>, channel_count_v<T>> buffer;
+                for(std::size_t i = 0; i < buffer.size(); ++i) {
+                    buffer[i] = detail::byteswap_to_integer(*(reinterpret_cast<value_type const*>(&v) + i));
                 }
-                os.write(reinterpret_cast<char const*>(&v), sizeof(T));
+                os.write(reinterpret_cast<char const*>(buffer.data()), sizeof(T));
             }
         }
 

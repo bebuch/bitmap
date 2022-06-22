@@ -118,8 +118,8 @@ namespace bmp {
                 auto const source_x = std::floor(source_point.x());
                 auto const source_y = std::floor(source_point.y());
 
-                if(source_x < 0 || source_y < 0 || source_x + 1 >= image.w()
-                   || source_y + 1 >= image.h()) {
+                if(source_x < 0 || source_y < 0 ||
+                    source_x + 1 >= image.template w_as<T>() || source_y + 1 >= image.template h_as<T>()) {
                     if constexpr(has_quiet_NaN) {
                         result(x, y) = pixel::fill_channels<TVT>(
                             std::numeric_limits<pixel::channel_type_t<TVT>>::quiet_NaN());

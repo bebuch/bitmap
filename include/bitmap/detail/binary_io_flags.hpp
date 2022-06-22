@@ -10,39 +10,55 @@ namespace bmp::detail {
 
 
     template <typename T>
-    concept endian_supporting = std::intergral<T> || std::same_as<T, float> || std::same_as<T, double>;
+    concept endian_supported = std::integral<T> || std::same_as<T, float> || std::same_as<T, double>;
 
-    template <endian_supporting T>
-    constexpr T byteswap(T const value) noexcept {
-        if constexpr(std::intergral<T>){
+    template <endian_supported T>
+    struct integer_type_t{
+        using type = T;
+    };
+
+    template <>
+    struct integer_type_t<float>{
+        using type = std::uint32_t;
+    };
+
+    template <>
+    struct integer_type_t<double>{
+        using type = std::uint64_t;
+    };
+
+    template <endian_supported T>
+    using integer_type = integer_type_t<T>::type;
+
+    template <endian_supported T>
+    constexpr integer_type<T> byteswap_to_integer(T const value) noexcept {
+        if constexpr(std::integral<T>){
             return std::byteswap(value);
-        }else if constexpr(std::same_as<T, float>){
-            return std::bit_cast<T>(std::byteswap(std::bit_cast<std::uint32_t>(value)));
         }else{
-            return std::bit_cast<T>(std::byteswap(std::bit_cast<std::uint64_t>(value)));
+            return std::byteswap(std::bit_cast<integer_type<T>>(value));
         }
     }
 
-    template <endian_supporting T>
-    constexpr T native_to_big(T const value) noexcept {
-        if constexpr(std::endian::big == std::endian::native){
+    template <endian_supported T>
+    constexpr T byteswap_to(integer_type<T> const value) noexcept {
+        if constexpr(std::integral<T>){
+            return std::byteswap(value);
+        }else{
+            return std::bit_cast<T>(std::byteswap(value));
+        }
+    }
+
+    template <std::integral T>
+    constexpr T byteswap_on_little_endian(T const value) noexcept {
+        if constexpr(std::endian::native == std::endian::little){
+            return std::byteswap(value);
+        }else{
             return value;
-        }else{
-            return byteswap(value);
-        }
-    }
-
-    template <endian_supporting T>
-    constexpr T big_to_native(T const value) noexcept {
-        if constexpr(std::endian::big == std::endian::native){
-            return value;
-        }else{
-            return byteswap(value);
         }
     }
 
 
-    constexpr std::uint32_t big_io_magic = native_to_big(std::uint32_t(0x62626621));
+    constexpr auto big_endian_io_magic = byteswap_on_little_endian(std::uint32_t(0x62626621));
 
     enum class binary_type_flags : std::uint8_t {
         is_unsigned = 0x00,
