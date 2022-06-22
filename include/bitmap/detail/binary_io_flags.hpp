@@ -1,15 +1,48 @@
 #pragma once
 
+#include <bit>
+#include <concepts>
 #include <cstdint>
 #include <type_traits>
-
-#include <boost/endian/conversion.hpp>
 
 
 namespace bmp::detail {
 
 
-    constexpr std::uint32_t io_magic = 0x62626621;
+    template <typename T>
+    concept endian_supporting = std::intergral<T> || std::same_as<T, float> || std::same_as<T, double>;
+
+    template <endian_supporting T>
+    constexpr T byteswap(T const value) noexcept {
+        if constexpr(std::intergral<T>){
+            return std::byteswap(value);
+        }else if constexpr(std::same_as<T, float>){
+            return std::bit_cast<T>(std::byteswap(std::bit_cast<std::uint32_t>(value)));
+        }else{
+            return std::bit_cast<T>(std::byteswap(std::bit_cast<std::uint64_t>(value)));
+        }
+    }
+
+    template <endian_supporting T>
+    constexpr T native_to_big(T const value) noexcept {
+        if constexpr(std::endian::big == std::endian::native){
+            return value;
+        }else{
+            return byteswap(value);
+        }
+    }
+
+    template <endian_supporting T>
+    constexpr T big_to_native(T const value) noexcept {
+        if constexpr(std::endian::big == std::endian::native){
+            return value;
+        }else{
+            return byteswap(value);
+        }
+    }
+
+
+    constexpr std::uint32_t big_io_magic = native_to_big(std::uint32_t(0x62626621));
 
     enum class binary_type_flags : std::uint8_t {
         is_unsigned = 0x00,
@@ -30,9 +63,9 @@ namespace bmp::detail {
             : std::is_signed_v<T>
             ? binary_type_flags::is_signed
             : binary_type_flags::is_unsigned)
-        | static_cast<std::uint8_t>(boost::endian::order::native == boost::endian::order::little
-            ? binary_endian_flags::is_little_endian
-            : binary_endian_flags::is_big_endian);
+        | static_cast<std::uint8_t>(std::endian::big == std::endian::native
+            ? binary_endian_flags::is_big_endian
+            : binary_endian_flags::is_little_endian);
     // clang-format on
 
 

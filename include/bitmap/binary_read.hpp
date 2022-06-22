@@ -6,8 +6,6 @@
 #include "detail/binary_io_flags.hpp"
 #include "detail/valid_binary_format.hpp"
 
-#include <boost/endian/arithmetic.hpp>
-
 #include <cstdint>
 #include <fstream>
 #include <string>
@@ -17,29 +15,26 @@ namespace bmp {
 
 
     struct binary_header {
-        uint8_t version;
-        uint8_t channel_size;
-        uint8_t channel_count;
-        uint8_t flags;
-
-        size_t w;
-        size_t h;
+        std::uint8_t version;
+        std::uint8_t channel_size;
+        std::uint8_t channel_count;
+        std::uint8_t flags;
+        std::uint64_t w;
+        std::uint64_t h;
     };
 
     /// \brief Read binary bitmap format header from std::istream
     ///
     /// \throw binary_io_error
     inline binary_header binary_read_header(std::istream& is) {
-        using namespace boost::endian;
-
         // read the file header
-        big_uint32_t magic;
+        uint32_t magic;
         is.read(reinterpret_cast<char*>(&magic), 4);
         if(magic != detail::io_magic) {
             throw binary_io_error("wrong magic number");
         }
 
-        big_uint8_t version;
+        uint8_t version;
         is.read(reinterpret_cast<char*>(&version), 1);
         if(version != 0x00) {
             throw binary_io_error(
@@ -47,17 +42,20 @@ namespace bmp {
                 + ", but only version 0 is supported");
         }
 
-        big_uint8_t channel_size;
-        big_uint8_t channel_count;
-        big_uint8_t flags;
-        big_uint64_t w;
-        big_uint64_t h;
+        std::uint8_t channel_size;
+        std::uint8_t channel_count;
+        std::uint8_t flags;
+        std::uint64_t w;
+        std::uint64_t h;
 
         is.read(reinterpret_cast<char*>(&channel_size), 1);
         is.read(reinterpret_cast<char*>(&channel_count), 1);
         is.read(reinterpret_cast<char*>(&flags), 1);
         is.read(reinterpret_cast<char*>(&w), 8);
         is.read(reinterpret_cast<char*>(&h), 8);
+
+        w = big_to_native(w);
+        h = big_to_native(h);
 
         if(!is.good()) {
             throw binary_io_error("can't read binary bitmap format header");
@@ -176,8 +174,8 @@ namespace bmp {
         bitmap.resize(header.w, header.h);
         auto pixel_count = bitmap.point_count();
         if constexpr(std::is_same_v<T, bool>) {
-            std::vector<big_uint8_t> buffer((pixel_count + 7) / 8);
-            is.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
+            std::vector<char> buffer((pixel_count + 7) / 8);
+            is.read(buffer.data(), buffer.size());
             for(std::size_t i = 0; i < pixel_count; ++i) {
                 *(bitmap.begin() + i) = (buffer[i / 8] & (1 << (7 - (i % 8)))) != 0;
             }
@@ -185,13 +183,11 @@ namespace bmp {
             is.read(reinterpret_cast<char*>(bitmap.data()), pixel_count * sizeof(T));
 
             // fix endianness if necessary
-            if constexpr(!std::is_floating_point_v<value_type>) {
-                if(test_endian_flag != ref_endian_flag) {
-                    for(auto& v: bitmap) {
-                        for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
-                            auto& c = *(reinterpret_cast<value_type*>(&v) + i);
-                            c = endian_reverse(c);
-                        }
+            if(test_endian_flag != ref_endian_flag) {
+                for(auto& v: bitmap) {
+                    for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
+                        auto& c = *(reinterpret_cast<value_type*>(&v) + i);
+                        c = detail::byteswap(c);
                     }
                 }
             }

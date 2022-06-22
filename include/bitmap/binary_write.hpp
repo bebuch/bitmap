@@ -23,7 +23,7 @@ namespace bmp {
     void binary_write(
         bitmap<T> const& bitmap,
         std::ostream& os,
-        boost::endian::order endianness = boost::endian::order::native) {
+        std::endian endianness = std::endian::native) {
         static_assert(
             detail::is_valid_binary_format_v<T>,
             "Your value_type is not supported by bmp::binary_write");
@@ -35,7 +35,7 @@ namespace bmp {
         static_assert(sizeof(value_type) <= 256);
         static_assert(sizeof(T) == sizeof(value_type) * channel_count_v<T>);
         if constexpr(std::is_floating_point_v<value_type>) {
-            if(endianness != boost::endian::order::native) {
+            if(endianness != std::endian::native) {
                 throw std::runtime_error(
                     "endian conversion is "
                     "not supported for floating point types");
@@ -43,31 +43,29 @@ namespace bmp {
         }
 
         // header informations
-        big_uint32_t const magic = detail::io_magic;
-
-        big_uint8_t const version = 0x00;
-        big_uint8_t const size_in_byte = sizeof(value_type);
-        big_uint8_t const channel_count = channel_count_v<T>;
+        std::uint8_t const version = 0x00;
+        std::uint8_t const size_in_byte = sizeof(value_type);
+        std::uint8_t const channel_count = channel_count_v<T>;
         auto const endian_flag = [endianness] {
             switch(endianness) {
-            case boost::endian::order::little:
+            case std::endian::little:
                 return detail::binary_endian_flags::is_little_endian;
-            case boost::endian::order::big:
+            case std::endian::big:
                 return detail::binary_endian_flags::is_big_endian;
             default:
                 throw std::logic_error(
-                    "unknown boost::endian::order: " + std::to_string(std::uint32_t(endianness)));
+                    "unknown std::endian: " + std::to_string(std::uint32_t(endianness)));
             }
         }();
-        big_uint8_t const flags = [endian_flag]() -> std::uint8_t {
+        std::uint8_t const flags = [endian_flag]() -> std::uint8_t {
             return (detail::binary_io_flags_v<value_type> & 0x0F) | std::uint8_t(endian_flag);
         }();
 
-        big_uint64_t const w = bitmap.w();
-        big_uint64_t const h = bitmap.h();
+        std::uint64_t const w = detail::native_to_big(bitmap.w());
+        std::uint64_t const h = detail::native_to_big(bitmap.h());
 
         // write the file header
-        os.write(reinterpret_cast<char const*>(&magic), 4);
+        os.write(reinterpret_cast<char const*>(&detail::io_magic), 4);
         os.write(reinterpret_cast<char const*>(&version), 1);
         os.write(reinterpret_cast<char const*>(&size_in_byte), 1);
         os.write(reinterpret_cast<char const*>(&channel_count), 1);
@@ -94,13 +92,13 @@ namespace bmp {
                 data <<= (8 - (i % 8));
                 os.write(reinterpret_cast<char const*>(&data), 1);
             }
-        } else if(endianness == boost::endian::order::native) {
+        } else if(endianness == std::endian::native) {
             os.write(reinterpret_cast<char const*>(bitmap.data()), w * h * sizeof(T));
-        } else if constexpr(!std::is_floating_point_v<value_type>) {
+        } else {
             for(auto v: bitmap) {
                 for(std::size_t i = 0; i < channel_count_v<T>; ++i) {
                     auto& c = *(reinterpret_cast<value_type*>(&v) + i);
-                    c = endian_reverse(c);
+                    c = detail::byteswap(c);
                 }
                 os.write(reinterpret_cast<char const*>(&v), sizeof(T));
             }
@@ -119,7 +117,7 @@ namespace bmp {
     void binary_write(
         bitmap<T> const& bitmap,
         std::string const& filename,
-        boost::endian::order endianness = boost::endian::order::native) {
+        std::endian endianness = std::endian::native) {
         std::ofstream os(filename.c_str(), std::ios_base::binary);
 
         if(!os.is_open()) {
