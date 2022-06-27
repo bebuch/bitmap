@@ -5,9 +5,9 @@ markdown-links-verificator:
 # build x86_64 Windows
 build-windows:
   image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/mingw/mingw:2022-06-22
-  script: script/build.sh windows
+  script: script/build.sh
 
 # build x86_64 Linux
 build-linux:
   image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/gcc/gcc:2022-06-22
-  script: script/build.sh linux
+  script: script/build.sh
