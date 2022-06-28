@@ -8,7 +8,7 @@ execute_process(COMMAND ${GIT_EXECUTABLE} "describe" "--tags"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     RESULT_VARIABLE GIT_RETURN_VALUE
     OUTPUT_VARIABLE GIT_VERSION_FROM_TAG)
-
+ex
 if(GIT_RETURN_VALUE EQUAL 0)
     string(REGEX REPLACE "^v" "" GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
     string(REGEX REPLACE "\n$" "" GIT_VERSION_FROM_TAG "${GIT_VERSION_FROM_TAG}")
@@ -42,11 +42,8 @@ endif()
 # interface target
 add_library(${PROJECT_NAME} INTERFACE)
 
-target_include_directories(${PROJECT_NAME}
-    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-target_include_directories(${PROJECT_NAME}
-    SYSTEM INTERFACE $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
-target_compile_definitions(${PROJECT_NAME} INTERFACE)
+target_include_directories(${PROJECT_NAME} INTERFACE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+target_include_directories(${PROJECT_NAME} SYSTEM INTERFACE $<INSTALL_INTERFACE:include>)
 
 
 # Setup package config
@@ -55,26 +52,16 @@ set(LIB_INSTALL_DIR lib)
 set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/${PROJECT_NAME})
 
 # Install target
-install(DIRECTORY include/${PROJECT_NAME} DESTINATION ${INCLUDE_INSTALL_DIR})
-install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets)
-
 include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    ${PROJECT_NAME}ConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
-install(EXPORT ${PROJECT_NAME}Targets
-    NAMESPACE tuiqbv::
-    DESTINATION lib/cmake/${PROJECT_NAME})
-configure_package_config_file(Config.cmake.in ${PROJECT_NAME}Config.cmake
-    INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
-    PATH_VARS INCLUDE_INSTALL_DIR)
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-    DESTINATION lib/cmake/${PROJECT_NAME})
+configure_package_config_file(Config.cmake.in ${PROJECT_NAME}Config.cmake INSTALL_DESTINATION lib/cmake/${PROJECT_NAME} PATH_VARS INCLUDE_INSTALL_DIR)
+write_basic_package_version_file(${PROJECT_NAME}ConfigVersion.cmake VERSION ${PROJECT_VERSION} COMPATIBILITY SameMinorVersion)
+install(EXPORT ${PROJECT_NAME}Targets NAMESPACE tuiqbv:: DESTINATION lib/cmake/${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}Targets)
+install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake ${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake DESTINATION lib/cmake/${PROJECT_NAME})
+install(DIRECTORY include/${PROJECT_NAME} DESTINATION ${INCLUDE_INSTALL_DIR})
 
 
+# other subdirectories
 include(CTest)
 if(BUILD_TESTING)
     add_subdirectory(test)
