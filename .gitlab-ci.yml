@@ -4,8 +4,8 @@ markdown-links-verificator:
 
 build-linux:
   image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/gcc/gcc:2022-06-22
-  script: script/build.sh
+  script: script/setup.sh && script/build.sh
 
 build-windows:
   image: gitlab-registry.rz.tu-ilmenau.de/fakmb/qbv/topics/docker/mingw/mingw:2022-06-22
-  script: script/build.sh
+  script: script/setup.sh && script/build.sh
